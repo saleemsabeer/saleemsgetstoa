@@ -97,7 +97,7 @@ const navS = {
 /* ══════════════════════════════════════════════════════
    MAIN PAGE
    ══════════════════════════════════════════════════════ */
-export default function StoaHome() {
+export default function StoaHome({ onBuild }) {
   const [heroVis, setHeroVis] = useState(false)
   const [heroVidLoaded, setHeroVidLoaded] = useState(false)
 
@@ -167,7 +167,7 @@ export default function StoaHome() {
             transition: 'all 1s cubic-bezier(.16,1,.3,1)',
             transitionDelay: '1.8s',
           }}>
-            <a href="#work" style={hero.btnPrimary}>See Our Work</a>
+            <button onClick={onBuild} style={hero.btnPrimary}>Build Your Platform</button>
             <a href="#contact" style={hero.btnGhost}>Book a Demo</a>
           </div>
         </div>
