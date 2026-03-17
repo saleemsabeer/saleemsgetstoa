@@ -1,15 +1,58 @@
-import { useState, lazy, Suspense } from 'react'
-
-const MedSpaDemo = lazy(() => import('../pages/MedSpaDemo'))
-const MuseumDemo = lazy(() => import('../pages/MuseumDemo'))
+import { useState } from 'react'
 
 const INDUSTRIES = [
-  { id: 'medspa', label: "I'm a MedSpa", icon: '◈', desc: 'Booking, clinical charts, DM inbox, patient portal, memberships, retention' },
-  { id: 'museum', label: "I'm a Museum / Nonprofit", icon: '✦', desc: 'Gift shop, events, POS, donations, volunteer portal, email marketing' },
+  {
+    id: 'medspa',
+    label: "I'm a MedSpa",
+    icon: '◈',
+    desc: 'Booking, clinical charts, DM inbox, patient portal, memberships, retention',
+    url: 'https://medspaglow.vercel.app',
+    pages: [
+      { label: 'Dashboard', path: '/admin?embed' },
+      { label: 'Schedule', path: '/admin/schedule?embed' },
+      { label: 'Patients', path: '/admin/patients?embed' },
+      { label: 'DM Inbox', path: '/admin/inbox?embed' },
+      { label: 'Clinical Charts', path: '/admin/charts?embed' },
+      { label: 'Treatment Plans', path: '/admin/treatments?embed' },
+      { label: 'Memberships', path: '/admin/memberships?embed' },
+      { label: 'Check-In', path: '/admin/checkin?embed' },
+      { label: 'Retention', path: '/admin/retention?embed' },
+      { label: 'Reviews', path: '/admin/reviews?embed' },
+      { label: 'Email', path: '/admin/email?embed' },
+      { label: 'Reports', path: '/admin/reports?embed' },
+      { label: 'Patient Portal', path: '/portal' },
+      { label: 'Online Booking', path: '/book' },
+    ],
+  },
+  {
+    id: 'museum',
+    label: "I'm a Museum / Nonprofit",
+    icon: '✦',
+    desc: 'Gift shop, events, POS, donations, volunteer portal, email marketing',
+    url: 'https://project-4pnn4.vercel.app',
+    pages: [
+      { label: 'Storefront', path: '/' },
+      { label: 'Shop', path: '/shop' },
+      { label: 'Events', path: '/events' },
+      { label: 'Membership', path: '/membership' },
+      { label: 'Dashboard', path: '/admin' },
+      { label: 'Orders', path: '/admin/orders' },
+      { label: 'Inventory', path: '/admin/inventory' },
+      { label: 'Events Admin', path: '/admin/events' },
+      { label: 'Email', path: '/admin/emails' },
+      { label: 'Social Media', path: '/admin/social-media' },
+      { label: 'Donations', path: '/admin/donations' },
+      { label: 'Reports', path: '/admin/reports' },
+    ],
+  },
 ]
 
 export default function FeatureShowcase() {
   const [selected, setSelected] = useState(null)
+  const [currentPage, setCurrentPage] = useState(0)
+
+  const industry = INDUSTRIES.find(i => i.id === selected)
+  const page = industry?.pages[currentPage]
 
   return (
     <section id="features" style={{ padding: '80px 0 40px' }}>
@@ -27,7 +70,7 @@ export default function FeatureShowcase() {
           fontFamily: 'var(--font-ui)', fontSize: 16, lineHeight: 1.7,
           color: 'var(--text2)', maxWidth: 500, margin: '0 auto',
         }}>
-          Pick your industry. Click through every page of a live platform we built.
+          Pick your industry. Click through every page of a real platform.
         </p>
       </div>
 
@@ -37,7 +80,7 @@ export default function FeatureShowcase() {
         flexWrap: 'wrap',
       }}>
         {INDUSTRIES.map(ind => (
-          <button key={ind.id} onClick={() => setSelected(selected === ind.id ? null : ind.id)} style={{
+          <button key={ind.id} onClick={() => { setSelected(selected === ind.id ? null : ind.id); setCurrentPage(0); }} style={{
             padding: '24px 28px', borderRadius: 16, cursor: 'pointer',
             textAlign: 'left', minWidth: 280, maxWidth: 400, flex: '1 1 280px',
             background: '#fff',
@@ -67,49 +110,59 @@ export default function FeatureShowcase() {
         ))}
       </div>
 
-      {/* Live Demo — renders directly, no iframe */}
-      {selected && (
+      {/* Live Demo */}
+      {industry && (
         <div style={{
           maxWidth: 1300, margin: '0 auto', padding: '0 16px',
           animation: 'fadeIn 0.4s ease',
         }}>
-          {/* Browser frame */}
+          {/* Page tabs */}
           <div style={{
-            borderRadius: 16, overflow: 'hidden',
+            display: 'flex', gap: 6, padding: '12px 16px',
+            background: '#fff', borderRadius: '16px 16px 0 0',
+            border: '1px solid var(--border)', borderBottom: 'none',
+            overflowX: 'auto', scrollbarWidth: 'none',
+          }}>
+            <style>{`.stoa-demo-tabs::-webkit-scrollbar{display:none}`}</style>
+            <div className="stoa-demo-tabs" style={{ display: 'flex', gap: 6, overflowX: 'auto', scrollbarWidth: 'none', flex: 1 }}>
+              {industry.pages.map((p, i) => (
+                <button key={p.path} onClick={() => setCurrentPage(i)} style={{
+                  padding: '8px 16px', borderRadius: 100, whiteSpace: 'nowrap',
+                  fontFamily: 'var(--font-ui)', fontSize: 12, fontWeight: 600,
+                  background: currentPage === i ? 'var(--brand)' : '#F5F3F0',
+                  color: currentPage === i ? '#000' : 'var(--text2)',
+                  border: 'none', cursor: 'pointer',
+                  transition: 'all 0.15s',
+                }}>{p.label}</button>
+              ))}
+            </div>
+            <a href={industry.url + page.path.split('?')[0]} target="_blank" rel="noopener" style={{
+              padding: '8px 16px', borderRadius: 100, whiteSpace: 'nowrap',
+              fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 500,
+              background: 'transparent', color: 'var(--brand)',
+              border: '1px solid rgba(212,175,55,0.3)',
+              textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4,
+              flexShrink: 0,
+            }}>
+              Full Screen ↗
+            </a>
+          </div>
+
+          {/* Browser frame + iframe */}
+          <div style={{
+            borderRadius: '0 0 16px 16px', overflow: 'hidden',
             border: '1px solid var(--border)',
             boxShadow: '0 20px 60px rgba(0,0,0,0.08)',
           }}>
-            {/* Chrome bar */}
-            <div style={{
-              background: '#F5F5F5', padding: '8px 16px',
-              display: 'flex', alignItems: 'center', gap: 10,
-              borderBottom: '1px solid var(--border)',
-            }}>
-              <div style={{ display: 'flex', gap: 5 }}>
-                <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#FF5F57' }} />
-                <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#FFBD2E' }} />
-                <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#28C840' }} />
-              </div>
-              <div style={{
-                flex: 1, background: '#fff', borderRadius: 8,
-                padding: '6px 14px', fontFamily: 'var(--font-mono)', fontSize: 12,
-                color: '#999', textAlign: 'center', border: '1px solid #E5E5E5',
-              }}>
-                {selected === 'medspa' ? 'yourmedspa.com' : 'yourmuseum.org'}
-              </div>
-              <button onClick={() => setSelected(null)} style={{
-                padding: '4px 12px', borderRadius: 100, background: '#eee',
-                fontFamily: 'var(--font-ui)', fontSize: 11, color: '#666',
-              }}>Close Demo</button>
-            </div>
-
-            {/* Demo content */}
-            <div style={{ height: 700, overflow: 'auto', background: '#F5F3F0' }}>
-              <Suspense fallback={<div style={{ padding: 60, textAlign: 'center', color: '#999' }}>Loading demo...</div>}>
-                {selected === 'medspa' && <MedSpaDemo />}
-                {selected === 'museum' && <MuseumDemo />}
-              </Suspense>
-            </div>
+            <iframe
+              key={industry.url + page.path}
+              src={industry.url + page.path}
+              style={{
+                width: '100%', height: 750, border: 'none',
+                background: '#F5F3F0',
+              }}
+              title={`${industry.label} — ${page.label}`}
+            />
           </div>
 
           <div style={{
@@ -117,7 +170,7 @@ export default function FeatureShowcase() {
             fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.1em',
             color: 'var(--muted)',
           }}>
-            FULLY INTERACTIVE · CLICK THROUGH EVERYTHING · THIS IS REAL SOFTWARE
+            {industry.pages.length} PAGES · FULLY INTERACTIVE · THIS IS THE REAL PLATFORM
           </div>
         </div>
       )}
