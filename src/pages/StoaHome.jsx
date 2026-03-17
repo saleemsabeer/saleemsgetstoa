@@ -565,26 +565,59 @@ export default function StoaHome({ onBuild }) {
               <div style={{ width: 1, height: 24, background: '#333' }} />
             </>
           )}
-          <button onClick={() => { setEditMode(!editMode); setShowColorPicker(false) }} style={{
-            width: editMode ? 'auto' : 48, height: 48, borderRadius: editMode ? 100 : '50%',
-            padding: editMode ? '0 20px' : 0,
+          <button onClick={() => {
+            setEditMode(!editMode)
+            setShowColorPicker(false)
+            if (!editMode) localStorage.setItem('stoa_pencil_clicked', 'true')
+          }} style={{
+            width: editMode ? 'auto' : 56, height: 56, borderRadius: editMode ? 100 : '50%',
+            padding: editMode ? '0 24px' : 0,
             background: editMode ? brandColor : 'rgba(255,255,255,0.08)',
             border: editMode ? 'none' : '1px solid rgba(255,255,255,0.12)',
             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             transition: 'all 0.25s cubic-bezier(.16,1,.3,1)',
-            boxShadow: editMode ? `0 0 20px ${brandColor}40` : 'none',
+            boxShadow: editMode ? `0 0 20px ${brandColor}40` : `0 0 0 0 ${brandColor}40`,
+            animation: editMode ? 'none' : 'pencilGlow 2s ease-in-out infinite',
           }}>
             {editMode ? (
               <span style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: 13, fontWeight: 600, color: '#000' }}>✓ Done Editing</span>
             ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round">
                 <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
                 <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
               </svg>
             )}
           </button>
+          {/* "Edit This Site" label — shown until first click */}
+          {!editMode && !localStorage.getItem('stoa_pencil_clicked') && (
+            <div style={{
+              position: 'absolute', right: 72, bottom: 12,
+              background: 'rgba(4,4,12,0.95)', backdropFilter: 'blur(20px)',
+              borderRadius: 8, padding: '8px 14px', whiteSpace: 'nowrap',
+              fontFamily: "'Plus Jakarta Sans'", fontSize: 12, fontWeight: 600,
+              color: '#D4AF37', letterSpacing: '0.02em',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+              border: '1px solid rgba(212,175,55,0.2)',
+              animation: 'fadeIn 0.5s ease',
+            }}>
+              Edit This Site
+              <div style={{
+                position: 'absolute', right: -6, top: '50%', transform: 'translateY(-50%) rotate(45deg)',
+                width: 12, height: 12, background: 'rgba(4,4,12,0.95)',
+                borderRight: '1px solid rgba(212,175,55,0.2)',
+                borderBottom: '1px solid rgba(212,175,55,0.2)',
+              }} />
+            </div>
+          )}
         </div>
       </div>
+
+      <style>{`
+        @keyframes pencilGlow {
+          0%, 100% { box-shadow: 0 0 8px rgba(212,175,55,0.3), 0 0 20px rgba(212,175,55,0.1); }
+          50% { box-shadow: 0 0 16px rgba(212,175,55,0.6), 0 0 40px rgba(212,175,55,0.25); }
+        }
+      `}</style>
 
       {/* Edit mode banner */}
       {editMode && (

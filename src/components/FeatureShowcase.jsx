@@ -3,7 +3,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 /* ═══════════════════════════════════════════════════════
    BROWSER FRAME — wraps every mini-demo
    ═══════════════════════════════════════════════════════ */
-function BrowserFrame({ url, children, dark = true }) {
+function BrowserFrame({ url, children }) {
   return (
     <div style={bf.wrap}>
       <div style={bf.bar}>
@@ -15,33 +15,33 @@ function BrowserFrame({ url, children, dark = true }) {
         <div style={bf.url}>{url}</div>
         <div style={{ width: 48 }} />
       </div>
-      <div style={{ ...bf.body, background: dark ? '#0d0d1a' : '#fafafa' }}>
+      <div style={bf.body}>
         {children}
       </div>
     </div>
   )
 }
 const bf = {
-  wrap: { borderRadius: 12, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' },
-  bar: { background: '#1a1a2e', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 10 },
+  wrap: { borderRadius: 12, overflow: 'hidden', border: '1px solid #E5E5E5', boxShadow: '0 20px 60px rgba(0,0,0,0.08)' },
+  bar: { background: '#F5F5F5', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 10 },
   dots: { display: 'flex', gap: 5 },
   dot: { width: 10, height: 10, borderRadius: '50%', display: 'block' },
-  url: { fontFamily: 'var(--font-mono)', fontSize: 10, color: '#555', flex: 1, textAlign: 'center' },
-  body: { height: 280, overflow: 'hidden', position: 'relative', padding: 16 },
+  url: { fontFamily: 'var(--font-mono)', fontSize: 12, color: '#999', flex: 1, textAlign: 'center' },
+  body: { height: 280, overflow: 'hidden', position: 'relative', padding: 16, background: '#FAFAF8' },
 }
 
 /* ─── Shared pill button ─── */
 function Pill({ children, active, onClick, small }) {
   return (
     <button onClick={onClick} style={{
-      padding: small ? '4px 10px' : '6px 14px',
+      padding: small ? '8px 14px' : '10px 18px',
       borderRadius: 100,
-      fontSize: small ? 10 : 11,
+      fontSize: small ? 12 : 13,
       fontWeight: 600,
       fontFamily: 'var(--font-ui)',
-      background: active ? 'var(--brand)' : 'rgba(255,255,255,0.06)',
-      color: active ? '#000' : '#aaa',
-      border: active ? 'none' : '1px solid rgba(255,255,255,0.1)',
+      background: active ? 'var(--brand)' : '#fff',
+      color: active ? '#000' : '#666',
+      border: active ? 'none' : '1px solid #E5E5E5',
       cursor: 'pointer',
       transition: 'all 0.2s',
       whiteSpace: 'nowrap',
@@ -74,8 +74,8 @@ function BookingDemo() {
     <BrowserFrame url="book.hausofc.com">
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 12 }}>
         <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(74,222,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>&#10003;</div>
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, color: 'var(--text)' }}>Booked!</div>
-        <div style={{ fontSize: 11, color: 'var(--text2)' }}>{service} &middot; {date} &middot; {time}</div>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, color: '#111' }}>Booked!</div>
+        <div style={{ fontSize: 13, color: '#666' }}>{service} &middot; {date} &middot; {time}</div>
       </div>
     </BrowserFrame>
   )
@@ -88,20 +88,20 @@ function BookingDemo() {
           {['Service', 'Date', 'Time'].map((s, i) => (
             <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{
-                width: 20, height: 20, borderRadius: '50%', fontSize: 9, fontWeight: 700,
+                width: 22, height: 22, borderRadius: '50%', fontSize: 11, fontWeight: 700,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: step >= i ? 'var(--brand)' : 'rgba(255,255,255,0.06)',
-                color: step >= i ? '#000' : '#555',
+                background: step >= i ? 'var(--brand)' : '#F0F0F0',
+                color: step >= i ? '#000' : '#999',
               }}>{i + 1}</div>
-              <span style={{ fontSize: 10, color: step >= i ? 'var(--text)' : '#555', fontFamily: 'var(--font-ui)' }}>{s}</span>
-              {i < 2 && <div style={{ width: 20, height: 1, background: 'rgba(255,255,255,0.1)' }} />}
+              <span style={{ fontSize: 12, color: step >= i ? '#111' : '#999', fontFamily: 'var(--font-ui)' }}>{s}</span>
+              {i < 2 && <div style={{ width: 20, height: 1, background: '#E5E5E5' }} />}
             </div>
           ))}
         </div>
 
         {step === 0 && (
           <>
-            <div style={{ fontSize: 11, color: 'var(--text2)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em' }}>SELECT SERVICE</div>
+            <div style={{ fontSize: 13, color: '#666', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em' }}>SELECT SERVICE</div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {services.map(s => <Pill key={s} active={service === s} onClick={() => { setService(s); setTimeout(() => setStep(1), 300) }}>{s}</Pill>)}
             </div>
@@ -110,7 +110,7 @@ function BookingDemo() {
 
         {step === 1 && (
           <>
-            <div style={{ fontSize: 11, color: 'var(--text2)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em' }}>SELECT DATE</div>
+            <div style={{ fontSize: 13, color: '#666', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em' }}>SELECT DATE</div>
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               {dates.map(d => <Pill key={d} small active={date === d} onClick={() => { setDate(d); setTimeout(() => setStep(2), 300) }}>{d}</Pill>)}
             </div>
@@ -119,15 +119,15 @@ function BookingDemo() {
 
         {step === 2 && (
           <>
-            <div style={{ fontSize: 11, color: 'var(--text2)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em' }}>SELECT TIME</div>
+            <div style={{ fontSize: 13, color: '#666', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em' }}>SELECT TIME</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
               {times.map(t => <Pill key={t} small active={time === t} onClick={() => setTime(t)}>{t}</Pill>)}
             </div>
             {time && (
               <button onClick={handleBook} style={{
-                marginTop: 4, padding: '8px 20px', borderRadius: 100,
+                marginTop: 4, padding: '10px 24px', borderRadius: 100,
                 background: 'linear-gradient(135deg, var(--brand), var(--brand-hover))',
-                color: '#000', fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-ui)',
+                color: '#000', fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-ui)',
                 boxShadow: '0 0 20px var(--brand-glow)',
               }}>Book Appointment</button>
             )}
@@ -173,41 +173,41 @@ function InboxDemo() {
     <BrowserFrame url="inbox.hausofc.com">
       <div style={{ display: 'flex', height: '100%', gap: 0, margin: -16 }}>
         {/* Left panel */}
-        <div style={{ width: 140, borderRight: '1px solid rgba(255,255,255,0.06)', padding: '8px 0', display: 'flex', flexDirection: 'column', gap: 0, flexShrink: 0 }}>
-          <div style={{ display: 'flex', gap: 8, padding: '4px 10px 8px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-            <span style={{ fontSize: 8, fontFamily: 'var(--font-mono)', background: 'rgba(225,48,108,0.15)', color: '#E1306C', padding: '2px 6px', borderRadius: 4 }}>IG: $47K</span>
-            <span style={{ fontSize: 8, fontFamily: 'var(--font-mono)', background: 'rgba(0,0,0,0.3)', color: '#ccc', padding: '2px 6px', borderRadius: 4 }}>TT: $8.4K</span>
+        <div style={{ width: 140, borderRight: '1px solid #E5E5E5', padding: '8px 0', display: 'flex', flexDirection: 'column', gap: 0, flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: 8, padding: '8px 10px 8px', borderBottom: '1px solid #E5E5E5' }}>
+            <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', background: 'rgba(225,48,108,0.1)', color: '#E1306C', padding: '2px 6px', borderRadius: 4 }}>IG: $47K</span>
+            <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', background: '#F0F0F0', color: '#666', padding: '2px 6px', borderRadius: 4 }}>TT: $8.4K</span>
           </div>
           {threads.map((t, i) => (
             <button key={i} onClick={() => { setSelected(i); setThreads(prev => prev.map((th, j) => j === i ? { ...th, unread: false } : th)) }} style={{
-              padding: '8px 10px', textAlign: 'left', cursor: 'pointer',
-              background: selected === i ? 'rgba(255,255,255,0.04)' : 'transparent',
+              padding: '10px 10px', textAlign: 'left', cursor: 'pointer',
+              background: selected === i ? '#fff' : 'transparent',
               borderLeft: selected === i ? '2px solid var(--brand)' : '2px solid transparent',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text)' }}>{t.name}</span>
+                <span style={{ fontSize: 12, fontWeight: 600, color: '#111' }}>{t.name}</span>
                 <span style={{
-                  fontSize: 7, padding: '1px 4px', borderRadius: 3,
-                  background: t.platform === 'IG' ? 'rgba(225,48,108,0.2)' : 'rgba(255,255,255,0.1)',
-                  color: t.platform === 'IG' ? '#E1306C' : '#aaa',
+                  fontSize: 9, padding: '1px 4px', borderRadius: 3,
+                  background: t.platform === 'IG' ? 'rgba(225,48,108,0.1)' : '#F0F0F0',
+                  color: t.platform === 'IG' ? '#E1306C' : '#666',
                 }}>{t.platform}</span>
                 {t.unread && <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--brand)', marginLeft: 'auto' }} />}
               </div>
-              <div style={{ fontSize: 9, color: '#555', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 110 }}>{t.preview}</div>
+              <div style={{ fontSize: 11, color: '#999', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 110 }}>{t.preview}</div>
             </button>
           ))}
         </div>
 
         {/* Right panel */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 10 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text)', marginBottom: 8, fontFamily: 'var(--font-ui)' }}>{threads[selected].name}</div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#111', marginBottom: 8, fontFamily: 'var(--font-ui)' }}>{threads[selected].name}</div>
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6, overflowY: 'auto' }}>
             {threads[selected].msgs.map((m, i) => (
               <div key={i} style={{
                 alignSelf: m.from === 'staff' ? 'flex-end' : 'flex-start',
-                background: m.from === 'staff' ? 'var(--brand)' : 'rgba(255,255,255,0.06)',
-                color: m.from === 'staff' ? '#000' : 'var(--text)',
-                padding: '6px 10px', borderRadius: 10, fontSize: 10, maxWidth: '80%',
+                background: m.from === 'staff' ? 'var(--brand)' : '#F0F0F0',
+                color: m.from === 'staff' ? '#000' : '#111',
+                padding: '8px 12px', borderRadius: 10, fontSize: 12, maxWidth: '80%',
                 fontFamily: 'var(--font-ui)',
               }}>{m.text}</div>
             ))}
@@ -218,14 +218,14 @@ function InboxDemo() {
               onKeyDown={e => e.key === 'Enter' && sendReply()}
               placeholder="Reply..."
               style={{
-                flex: 1, padding: '6px 10px', borderRadius: 8,
-                background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
-                color: 'var(--text)', fontSize: 10, fontFamily: 'var(--font-ui)', outline: 'none',
+                flex: 1, padding: '8px 12px', borderRadius: 8,
+                background: '#fff', border: '1px solid #E5E5E5',
+                color: '#111', fontSize: 12, fontFamily: 'var(--font-ui)', outline: 'none',
               }}
             />
             <button onClick={sendReply} style={{
-              padding: '6px 12px', borderRadius: 8, background: 'var(--brand)',
-              color: '#000', fontSize: 10, fontWeight: 700, fontFamily: 'var(--font-ui)',
+              padding: '8px 16px', borderRadius: 8, background: 'var(--brand)',
+              color: '#000', fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-ui)',
             }}>Send</button>
           </div>
         </div>
@@ -260,21 +260,21 @@ function FaceMapDemo() {
         <div style={{ flex: '0 0 200px', position: 'relative' }}>
           <svg viewBox="0 0 200 200" style={{ width: '100%', height: 'auto' }}>
             {/* Face outline */}
-            <ellipse cx="100" cy="105" rx="60" ry="78" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" />
+            <ellipse cx="100" cy="105" rx="60" ry="78" fill="none" stroke="#E5E5E5" strokeWidth="1.5" />
             {/* Hairline */}
-            <path d="M50 65 Q70 25 100 20 Q130 25 150 65" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+            <path d="M50 65 Q70 25 100 20 Q130 25 150 65" fill="none" stroke="#E5E5E5" strokeWidth="1" />
             {/* Eyes */}
-            <ellipse cx="78" cy="88" rx="12" ry="6" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
-            <ellipse cx="122" cy="88" rx="12" ry="6" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
+            <ellipse cx="78" cy="88" rx="12" ry="6" fill="none" stroke="#ddd" strokeWidth="1" />
+            <ellipse cx="122" cy="88" rx="12" ry="6" fill="none" stroke="#ddd" strokeWidth="1" />
             {/* Nose */}
-            <path d="M100 95 L95 120 Q100 124 105 120 L100 95" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+            <path d="M100 95 L95 120 Q100 124 105 120 L100 95" fill="none" stroke="#E5E5E5" strokeWidth="1" />
             {/* Mouth */}
-            <path d="M82 148 Q100 158 118 148" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+            <path d="M82 148 Q100 158 118 148" fill="none" stroke="#E5E5E5" strokeWidth="1" />
             {/* Zones */}
             {zones.map(z => (
               <ellipse key={z.id} cx={z.cx} cy={z.cy} rx={z.rx} ry={z.ry}
-                fill={activeZone === z.id ? 'rgba(var(--brand), 0.2)' : 'transparent'}
-                stroke={activeZone === z.id ? 'var(--brand)' : 'rgba(255,255,255,0.08)'}
+                fill={activeZone === z.id ? 'rgba(212,175,55,0.12)' : 'transparent'}
+                stroke={activeZone === z.id ? 'var(--brand)' : '#E5E5E5'}
                 strokeWidth={activeZone === z.id ? 2 : 1}
                 strokeDasharray={activeZone === z.id ? 'none' : '3 3'}
                 style={{ cursor: 'pointer', transition: 'all 0.2s' }}
@@ -288,12 +288,12 @@ function FaceMapDemo() {
             return (
               <div style={{
                 position: 'absolute', left: z.cx - 40, top: z.cy + z.ry + 6,
-                background: 'rgba(26,26,46,0.95)', border: '1px solid var(--brand)',
-                borderRadius: 8, padding: '6px 10px', zIndex: 5,
-                boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                background: '#fff', border: '1px solid var(--brand)',
+                borderRadius: 8, padding: '8px 12px', zIndex: 5,
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
               }}>
-                <div style={{ fontSize: 9, color: 'var(--brand)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{z.label}</div>
-                <div style={{ fontSize: 10, color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>{z.detail}</div>
+                <div style={{ fontSize: 11, color: 'var(--brand)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{z.label}</div>
+                <div style={{ fontSize: 12, color: '#111', fontFamily: 'var(--font-ui)' }}>{z.detail}</div>
               </div>
             )
           })()}
@@ -301,16 +301,16 @@ function FaceMapDemo() {
 
         {/* SOAP Notes */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div style={{ fontSize: 10, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', color: 'var(--text2)', marginBottom: 4 }}>SOAP NOTES</div>
+          <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', color: '#666', marginBottom: 4 }}>SOAP NOTES</div>
           {soap.map(s => (
             <div key={s.letter} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
               <div style={{
-                width: 20, height: 20, borderRadius: 4, flexShrink: 0,
-                background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                width: 22, height: 22, borderRadius: 4, flexShrink: 0,
+                background: '#fff', border: '1px solid #E5E5E5',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 10, fontWeight: 700, color: 'var(--brand)', fontFamily: 'var(--font-mono)',
+                fontSize: 12, fontWeight: 700, color: 'var(--brand)', fontFamily: 'var(--font-mono)',
               }}>{s.letter}</div>
-              <div style={{ fontSize: 9, color: 'var(--text2)', lineHeight: 1.5, fontFamily: 'var(--font-ui)' }}>{s.text}</div>
+              <div style={{ fontSize: 11, color: '#666', lineHeight: 1.5, fontFamily: 'var(--font-ui)' }}>{s.text}</div>
             </div>
           ))}
         </div>
@@ -351,25 +351,25 @@ function DashboardDemo() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
           {kpis.map(k => (
             <div key={k.label} style={{
-              background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: 8, padding: '8px 10px',
+              background: '#fff', border: '1px solid #E5E5E5',
+              borderRadius: 8, padding: '10px 10px',
             }}>
-              <div style={{ fontSize: 8, color: 'var(--text2)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', marginBottom: 4 }}>{k.label.toUpperCase()}</div>
+              <div style={{ fontSize: 10, color: '#666', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', marginBottom: 4 }}>{k.label.toUpperCase()}</div>
               <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-                <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>{k.value}</div>
-                {k.delta && <div style={{ fontSize: 8, color: 'var(--success)', fontFamily: 'var(--font-mono)' }}>{k.delta}</div>}
+                <div style={{ fontSize: 16, fontWeight: 700, color: '#111', fontFamily: 'var(--font-ui)' }}>{k.value}</div>
+                {k.delta && <div style={{ fontSize: 10, color: 'var(--success)', fontFamily: 'var(--font-mono)' }}>{k.delta}</div>}
               </div>
               <div style={{ marginTop: 6 }}>{sparkline(k.spark)}</div>
             </div>
           ))}
         </div>
-        <div style={{ fontSize: 9, fontFamily: 'var(--font-mono)', color: 'var(--text2)', letterSpacing: '0.1em' }}>ACTIVITY</div>
+        <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: '#666', letterSpacing: '0.1em' }}>ACTIVITY</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {feed.map((f, i) => (
             <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <div style={{ width: 4, height: 4, borderRadius: '50%', background: f.color, flexShrink: 0 }} />
-              <div style={{ fontSize: 10, color: 'var(--text)', fontFamily: 'var(--font-ui)', flex: 1 }}>{f.text}</div>
-              <div style={{ fontSize: 8, color: '#555', fontFamily: 'var(--font-mono)', flexShrink: 0 }}>{f.time}</div>
+              <div style={{ fontSize: 12, color: '#111', fontFamily: 'var(--font-ui)', flex: 1 }}>{f.text}</div>
+              <div style={{ fontSize: 10, color: '#999', fontFamily: 'var(--font-mono)', flexShrink: 0 }}>{f.time}</div>
             </div>
           ))}
         </div>
@@ -383,8 +383,8 @@ function DashboardDemo() {
    ═══════════════════════════════════════════════════════ */
 function CheckInDemo() {
   const statuses = ['Not Arrived', 'Checked In', 'With Provider', 'Complete']
-  const colors = ['#555', 'var(--brand)', '#0ea5e9', 'var(--success)']
-  const bgs = ['rgba(255,255,255,0.04)', 'rgba(212,175,55,0.08)', 'rgba(14,165,233,0.08)', 'rgba(74,222,128,0.08)']
+  const colors = ['#999', 'var(--brand)', '#0ea5e9', 'var(--success)']
+  const bgs = ['#fff', 'rgba(212,175,55,0.08)', 'rgba(14,165,233,0.08)', 'rgba(74,222,128,0.08)']
 
   const [patients, setPatients] = useState([
     { name: 'Sarah Mitchell', service: 'Botox — 10:00 AM', status: 0 },
@@ -401,26 +401,26 @@ function CheckInDemo() {
   return (
     <BrowserFrame url="checkin.hausofc.com">
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, height: '100%' }}>
-        <div style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text2)', letterSpacing: '0.1em' }}>TODAY'S PATIENTS</div>
+        <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: '#666', letterSpacing: '0.1em' }}>TODAY'S PATIENTS</div>
         {patients.map((p, i) => (
           <div key={i} onClick={() => advance(i)} style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            padding: '10px 12px', borderRadius: 10, cursor: 'pointer',
-            background: bgs[p.status], border: `1px solid ${p.status > 0 ? colors[p.status] : 'rgba(255,255,255,0.06)'}`,
+            padding: '12px 14px', borderRadius: 10, cursor: 'pointer',
+            background: bgs[p.status], border: `1px solid ${p.status > 0 ? colors[p.status] : '#E5E5E5'}`,
             transition: 'all 0.3s',
           }}>
             <div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>{p.name}</div>
-              <div style={{ fontSize: 9, color: 'var(--text2)', marginTop: 2 }}>{p.service}</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#111', fontFamily: 'var(--font-ui)' }}>{p.name}</div>
+              <div style={{ fontSize: 11, color: '#666', marginTop: 2 }}>{p.service}</div>
             </div>
             <div style={{
-              padding: '4px 10px', borderRadius: 100, fontSize: 9, fontWeight: 700,
+              padding: '6px 12px', borderRadius: 100, fontSize: 11, fontWeight: 700,
               fontFamily: 'var(--font-mono)', color: colors[p.status],
-              background: 'rgba(0,0,0,0.2)', transition: 'all 0.3s',
+              background: '#F0F0F0', transition: 'all 0.3s',
             }}>{statuses[p.status]}</div>
           </div>
         ))}
-        <div style={{ fontSize: 8, color: '#444', fontFamily: 'var(--font-ui)', textAlign: 'center', marginTop: 'auto' }}>Click a patient to advance status</div>
+        <div style={{ fontSize: 10, color: '#999', fontFamily: 'var(--font-ui)', textAlign: 'center', marginTop: 'auto' }}>Click a patient to advance status</div>
       </div>
     </BrowserFrame>
   )
@@ -458,19 +458,19 @@ function BeforeAfterDemo() {
         onTouchStart={() => { dragging.current = true }}
       >
         {/* Before side */}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #1a1520, #251a2e)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #f0eee8, #e8e4de)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'rgba(255,255,255,0.05)', margin: '0 auto 10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg>
+            <div style={{ width: 60, height: 60, borderRadius: '50%', background: '#E5E5E5', margin: '0 auto 10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="1.5"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg>
             </div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text2)', fontFamily: 'var(--font-mono)', letterSpacing: '0.15em' }}>BEFORE</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#666', fontFamily: 'var(--font-mono)', letterSpacing: '0.15em' }}>BEFORE</div>
           </div>
         </div>
 
         {/* After side (clipped) */}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #1a2520, #152a1a)', clipPath: `inset(0 ${100 - pos}% 0 0)`, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: dragging.current ? 'none' : 'clip-path 0.1s' }}>
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #e8f0e8, #deeede)', clipPath: `inset(0 ${100 - pos}% 0 0)`, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: dragging.current ? 'none' : 'clip-path 0.1s' }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'rgba(74,222,128,0.1)', margin: '0 auto 10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'rgba(74,222,128,0.15)', margin: '0 auto 10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="1.5"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg>
             </div>
             <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--success)', fontFamily: 'var(--font-mono)', letterSpacing: '0.15em' }}>AFTER</div>
@@ -485,11 +485,11 @@ function BeforeAfterDemo() {
         }}>
           <div style={{
             position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-            width: 28, height: 28, borderRadius: '50%', background: 'var(--brand)',
+            width: 32, height: 32, borderRadius: '50%', background: 'var(--brand)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             boxShadow: '0 0 16px var(--brand-glow)',
           }}>
-            <span style={{ fontSize: 12, color: '#000', fontWeight: 700 }}>&harr;</span>
+            <span style={{ fontSize: 14, color: '#000', fontWeight: 700 }}>&harr;</span>
           </div>
         </div>
       </div>
@@ -517,45 +517,45 @@ function EventBookingDemo() {
     <BrowserFrame url="events.darksky.org">
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12, height: '100%' }}>
         <div style={{
-          background: 'linear-gradient(135deg, rgba(30,20,60,0.8), rgba(15,15,30,0.9))',
-          borderRadius: 10, padding: 14, border: '1px solid rgba(255,255,255,0.06)',
+          background: '#fff',
+          borderRadius: 10, padding: 16, border: '1px solid #E5E5E5',
         }}>
-          <div style={{ fontSize: 9, fontFamily: 'var(--font-mono)', color: 'var(--brand)', letterSpacing: '0.15em', marginBottom: 6 }}>UPCOMING EVENT</div>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, color: 'var(--text)', marginBottom: 4 }}>Star Party</div>
-          <div style={{ fontSize: 11, color: 'var(--text2)', fontFamily: 'var(--font-ui)', marginBottom: 10 }}>March 25 &middot; 8:00 PM &middot; {spots} spots left</div>
+          <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--brand)', letterSpacing: '0.15em', marginBottom: 6 }}>UPCOMING EVENT</div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, color: '#111', marginBottom: 4 }}>Star Party</div>
+          <div style={{ fontSize: 13, color: '#666', fontFamily: 'var(--font-ui)', marginBottom: 10 }}>March 25 &middot; 8:00 PM &middot; {spots} spots left</div>
 
           {/* Capacity bar */}
-          <div style={{ height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.06)', marginBottom: 12, overflow: 'hidden' }}>
+          <div style={{ height: 4, borderRadius: 2, background: '#F0F0F0', marginBottom: 12, overflow: 'hidden' }}>
             <div style={{ height: '100%', width: `${((20 - spots) / 20) * 100}%`, background: 'var(--brand)', borderRadius: 2, transition: 'width 0.5s' }} />
           </div>
 
           {step === 0 && (
             <button onClick={() => setStep(1)} style={{
-              width: '100%', padding: '8px', borderRadius: 8,
+              width: '100%', padding: '10px', borderRadius: 8,
               background: 'linear-gradient(135deg, var(--brand), var(--brand-hover))',
-              color: '#000', fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-ui)',
+              color: '#000', fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-ui)',
             }}>Reserve Spot</button>
           )}
 
           {step === 1 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <input value={name} onChange={e => setName(e.target.value)} placeholder="Your name"
-                style={{ padding: '6px 10px', borderRadius: 6, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'var(--text)', fontSize: 11, fontFamily: 'var(--font-ui)', outline: 'none' }} />
+                style={{ padding: '8px 12px', borderRadius: 6, background: '#fff', border: '1px solid #E5E5E5', color: '#111', fontSize: 13, fontFamily: 'var(--font-ui)', outline: 'none' }} />
               <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address"
-                style={{ padding: '6px 10px', borderRadius: 6, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'var(--text)', fontSize: 11, fontFamily: 'var(--font-ui)', outline: 'none' }} />
+                style={{ padding: '8px 12px', borderRadius: 6, background: '#fff', border: '1px solid #E5E5E5', color: '#111', fontSize: 13, fontFamily: 'var(--font-ui)', outline: 'none' }} />
               <button onClick={reserve} style={{
-                padding: '8px', borderRadius: 8,
+                padding: '10px', borderRadius: 8,
                 background: 'linear-gradient(135deg, var(--brand), var(--brand-hover))',
-                color: '#000', fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-ui)',
+                color: '#000', fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-ui)',
               }}>Confirm Reservation</button>
             </div>
           )}
 
           {step === 2 && (
-            <div style={{ textAlign: 'center', padding: 8 }}>
+            <div style={{ textAlign: 'center', padding: 10 }}>
               <div style={{ fontSize: 20, marginBottom: 4 }}>&#10003;</div>
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--success)', fontFamily: 'var(--font-ui)' }}>Reserved!</div>
-              <div style={{ fontSize: 10, color: 'var(--text2)' }}>Confirmation sent to {email}</div>
+              <div style={{ fontSize: 12, color: '#666' }}>Confirmation sent to {email}</div>
             </div>
           )}
         </div>
@@ -591,7 +591,7 @@ function POSDemo() {
     <BrowserFrame url="pos.hausofc.com">
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 8 }}>
         <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(74,222,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, color: 'var(--success)' }}>&#10003;</div>
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, color: 'var(--text)' }}>Paid</div>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, color: '#111' }}>Paid</div>
         <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--brand)', fontFamily: 'var(--font-ui)' }}>${total.toLocaleString()}</div>
       </div>
     </BrowserFrame>
@@ -600,30 +600,30 @@ function POSDemo() {
   return (
     <BrowserFrame url="pos.hausofc.com">
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, height: '100%' }}>
-        <div style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text2)', letterSpacing: '0.1em' }}>CHECKOUT</div>
+        <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: '#666', letterSpacing: '0.1em' }}>CHECKOUT</div>
         {items.map((item, i) => (
-          <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-            <span style={{ fontSize: 12, color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>{item.name}</span>
-            <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>${item.price}</span>
+          <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #E5E5E5' }}>
+            <span style={{ fontSize: 13, color: '#111', fontFamily: 'var(--font-ui)' }}>{item.name}</span>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#111', fontFamily: 'var(--font-mono)' }}>${item.price}</span>
           </div>
         ))}
         <div>
-          <div style={{ fontSize: 9, color: 'var(--text2)', fontFamily: 'var(--font-mono)', marginBottom: 6, letterSpacing: '0.1em' }}>ADD TIP</div>
+          <div style={{ fontSize: 11, color: '#666', fontFamily: 'var(--font-mono)', marginBottom: 6, letterSpacing: '0.1em' }}>ADD TIP</div>
           <div style={{ display: 'flex', gap: 6 }}>
             {tipOptions.map(t => (
               <Pill key={t} small active={tipPct === t} onClick={() => setTipPct(tipPct === t ? null : t)}>{t}%{tipPct === t ? ` ($${Math.round(subtotal * t / 100)})` : ''}</Pill>
             ))}
           </div>
         </div>
-        <div style={{ marginTop: 'auto', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 8 }}>
+        <div style={{ marginTop: 'auto', borderTop: '1px solid #E5E5E5', paddingTop: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>Total</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: '#111', fontFamily: 'var(--font-ui)' }}>Total</span>
             <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--brand)', fontFamily: 'var(--font-mono)' }}>${total.toLocaleString()}</span>
           </div>
           <button onClick={pay} disabled={processing} style={{
-            width: '100%', padding: '10px', borderRadius: 8,
-            background: processing ? 'rgba(255,255,255,0.06)' : 'linear-gradient(135deg, var(--brand), var(--brand-hover))',
-            color: processing ? 'var(--text2)' : '#000', fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-ui)',
+            width: '100%', padding: '12px', borderRadius: 8,
+            background: processing ? '#F0F0F0' : 'linear-gradient(135deg, var(--brand), var(--brand-hover))',
+            color: processing ? '#666' : '#000', fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-ui)',
             opacity: processing ? 0.7 : 1,
           }}>
             {processing ? 'Processing...' : 'Process Payment'}
@@ -643,14 +643,14 @@ function CMSDemo() {
   const [paragraph, setParagraph] = useState('Join us for stargazing events, workshops, and telescope nights in the heart of the Sonoran Desert.')
 
   return (
-    <BrowserFrame url="cms.darksky.org" dark={false}>
+    <BrowserFrame url="cms.darksky.org">
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 10, position: 'relative' }}>
         {/* Toggle */}
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <button onClick={() => setEditing(!editing)} style={{
-            display: 'flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 6,
-            background: editing ? 'var(--brand)' : '#e8e8e8',
-            color: editing ? '#000' : '#555', fontSize: 9, fontWeight: 700, fontFamily: 'var(--font-mono)',
+            display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 6,
+            background: editing ? 'var(--brand)' : '#F0F0F0',
+            color: editing ? '#000' : '#666', fontSize: 11, fontWeight: 700, fontFamily: 'var(--font-mono)',
           }}>
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             {editing ? 'EDITING' : 'EDIT'}
@@ -659,7 +659,7 @@ function CMSDemo() {
 
         {/* Preview area */}
         <div style={{
-          background: editing ? 'rgba(0,0,0,0.02)' : 'transparent',
+          background: editing ? '#FAFAF8' : 'transparent',
           borderRadius: 8, padding: 12, transition: 'all 0.3s',
           border: editing ? '1px dashed rgba(212,175,55,0.4)' : '1px solid transparent',
         }}>
@@ -668,7 +668,7 @@ function CMSDemo() {
             suppressContentEditableWarning
             onBlur={e => setHeadline(e.target.innerText)}
             style={{
-              fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 500, color: '#1a1a2e',
+              fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 500, color: '#111',
               marginBottom: 8, outline: 'none',
               textDecoration: editing ? `underline dashed rgba(212,175,55,0.5)` : 'none',
               textDecorationOffset: '4px',
@@ -679,7 +679,7 @@ function CMSDemo() {
             suppressContentEditableWarning
             onBlur={e => setParagraph(e.target.innerText)}
             style={{
-              fontSize: 12, lineHeight: 1.6, color: '#666', outline: 'none',
+              fontSize: 13, lineHeight: 1.6, color: '#666', outline: 'none',
               fontFamily: 'var(--font-ui)',
               textDecoration: editing ? `underline dashed rgba(212,175,55,0.5)` : 'none',
               textDecorationOffset: '4px',
@@ -689,9 +689,9 @@ function CMSDemo() {
 
         {editing && (
           <div style={{
-            fontSize: 9, color: 'var(--brand)', fontFamily: 'var(--font-mono)',
+            fontSize: 11, color: 'var(--brand)', fontFamily: 'var(--font-mono)',
             textAlign: 'center', background: 'rgba(212,175,55,0.08)',
-            padding: '4px 8px', borderRadius: 4,
+            padding: '6px 10px', borderRadius: 4,
           }}>Click any text above to edit it live</div>
         )}
       </div>
@@ -713,24 +713,24 @@ function MembershipDemo() {
   return (
     <BrowserFrame url="members.hausofc.com">
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, height: '100%' }}>
-        <div style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text2)', letterSpacing: '0.1em', textAlign: 'center' }}>CHOOSE YOUR TIER</div>
+        <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: '#666', letterSpacing: '0.1em', textAlign: 'center' }}>CHOOSE YOUR TIER</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, flex: 1 }}>
           {tiers.map((t, i) => (
             <button key={t.name} onClick={() => setSelected(i)} style={{
-              background: selected === i ? 'rgba(212,175,55,0.06)' : 'rgba(255,255,255,0.02)',
-              border: selected === i ? '1.5px solid var(--brand)' : '1px solid rgba(255,255,255,0.06)',
-              borderRadius: 10, padding: '12px 8px', cursor: 'pointer',
+              background: selected === i ? 'rgba(212,175,55,0.06)' : '#fff',
+              border: selected === i ? '1.5px solid var(--brand)' : '1px solid #E5E5E5',
+              borderRadius: 10, padding: '14px 10px', cursor: 'pointer',
               transition: 'all 0.25s', textAlign: 'center',
               transform: selected === i ? 'scale(1.03)' : 'scale(1)',
               boxShadow: selected === i ? '0 0 20px var(--brand-glow)' : 'none',
               display: 'flex', flexDirection: 'column', gap: 6,
             }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: selected === i ? 'var(--brand)' : 'var(--text2)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em' }}>{t.name.toUpperCase()}</div>
-              <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>${t.price}<span style={{ fontSize: 10, fontWeight: 400, color: 'var(--text2)' }}>/mo</span></div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: selected === i ? 'var(--brand)' : '#666', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em' }}>{t.name.toUpperCase()}</div>
+              <div style={{ fontSize: 22, fontWeight: 700, color: '#111', fontFamily: 'var(--font-ui)' }}>${t.price}<span style={{ fontSize: 12, fontWeight: 400, color: '#666' }}>/mo</span></div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                 {t.perks.map(p => (
-                  <div key={p} style={{ fontSize: 8, color: 'var(--text2)', fontFamily: 'var(--font-ui)', display: 'flex', alignItems: 'center', gap: 4, textAlign: 'left' }}>
-                    <span style={{ color: 'var(--brand)', fontSize: 8, flexShrink: 0 }}>&#10003;</span>
+                  <div key={p} style={{ fontSize: 10, color: '#666', fontFamily: 'var(--font-ui)', display: 'flex', alignItems: 'center', gap: 4, textAlign: 'left' }}>
+                    <span style={{ color: 'var(--brand)', fontSize: 10, flexShrink: 0 }}>&#10003;</span>
                     {p}
                   </div>
                 ))}
@@ -862,8 +862,8 @@ export default function FeatureShowcase() {
             {/* Text side */}
             <div style={{ direction: 'ltr' }}>
               <span style={{
-                fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.2em',
-                color: 'var(--brand)', padding: '4px 10px', borderRadius: 4,
+                fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.2em',
+                color: 'var(--brand)', padding: '6px 12px', borderRadius: 4,
                 background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.12)',
               }}>{demo.tag}</span>
               <h3 style={{
@@ -883,8 +883,8 @@ export default function FeatureShowcase() {
                 ))}
               </div>
               <div style={{
-                fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em',
-                color: 'var(--muted)', paddingTop: 8, borderTop: '1px solid rgba(255,255,255,0.04)',
+                fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: '0.1em',
+                color: '#999', paddingTop: 8, borderTop: '1px solid #E5E5E5',
               }}>
                 ↑ Try it — this demo is fully interactive
               </div>
@@ -894,16 +894,16 @@ export default function FeatureShowcase() {
             <div style={{ direction: 'ltr' }}>
               <div style={{
                 borderRadius: 14, overflow: 'hidden',
-                border: '1px solid rgba(255,255,255,0.08)',
-                boxShadow: '0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.03)',
+                border: '1px solid #E5E5E5',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.03)',
                 transition: 'transform 0.3s, box-shadow 0.3s',
               }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 30px 80px rgba(0,0,0,0.5)' }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.4)' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 30px 80px rgba(0,0,0,0.1)' }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.06)' }}
               >
                 {/* Browser chrome */}
                 <div style={{
-                  background: '#1a1a2e', padding: '8px 14px',
+                  background: '#F5F5F5', padding: '8px 14px',
                   display: 'flex', alignItems: 'center', gap: 10,
                 }}>
                   <div style={{ display: 'flex', gap: 5 }}>
@@ -912,13 +912,13 @@ export default function FeatureShowcase() {
                     <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#28C840' }} />
                   </div>
                   <div style={{
-                    flex: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 6,
-                    padding: '4px 12px', fontFamily: 'var(--font-mono)', fontSize: 9,
-                    color: '#555', textAlign: 'center',
+                    flex: 1, background: '#fff', borderRadius: 6,
+                    padding: '6px 12px', fontFamily: 'var(--font-mono)', fontSize: 11,
+                    color: '#999', textAlign: 'center', border: '1px solid #E5E5E5',
                   }}>yoursite.com/{demo.tag.toLowerCase().replace(/\s+/g, '-')}</div>
                 </div>
                 {/* Demo content */}
-                <div style={{ minHeight: 300 }}>
+                <div style={{ minHeight: 340, background: '#FAFAF8', padding: 20 }}>
                   <demo.Component />
                 </div>
               </div>
