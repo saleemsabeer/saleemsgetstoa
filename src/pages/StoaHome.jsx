@@ -1,6 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import LazyVideo from '../components/LazyVideo'
-import FeatureShowcase from '../components/FeatureShowcase'
+import { LandingSelector, MiniSwitcher } from '../components/IndustrySelector'
+import FeatureToggles from '../components/FeatureToggles'
+import Storefront from '../sections/Storefront'
+import Dashboard from '../sections/Dashboard'
+import Portal from '../sections/Portal'
+import { industries, getIndustry, getFeatures, FEATURES } from '../industries/index'
 
 const V = 'https://ssdozdtdcrkaoayzhrsa.supabase.co/storage/v1/object/public/videos/'
 
@@ -54,7 +59,7 @@ const vs = {
 }
 
 /* ── Glassmorphism Nav ── */
-function Nav() {
+function Nav({ selected, onReset }) {
   const [scrolled, setScrolled] = useState(false)
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 60)
@@ -70,16 +75,25 @@ function Nav() {
       borderBottomColor: scrolled ? 'rgba(0,0,0,0.06)' : 'transparent',
     }}>
       <div style={navS.inner}>
-        <div style={navS.brand}>
+        <button onClick={onReset} style={{ ...navS.brand, cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}>
           <img src="/images/logo.png" alt="STOA" style={navS.logo} />
           <span style={navS.brandText}>STOA</span>
-        </div>
+        </button>
         <div style={navS.links}>
-          {['Platform', 'Work', 'About'].map(l => (
-            <a key={l} href={`#${l.toLowerCase()}`} style={navS.link}>{l}</a>
-          ))}
+          {selected ? (
+            <>
+              <a href="#storefront" style={navS.link}>Storefront</a>
+              <a href="#dashboard" style={navS.link}>Dashboard</a>
+              <a href="#portal" style={navS.link}>Portal</a>
+            </>
+          ) : (
+            <>
+              <a href="#platform" style={navS.link}>Platform</a>
+              <a href="#about" style={navS.link}>About</a>
+            </>
+          )}
         </div>
-        <a href="#contact" style={navS.cta}>Get Started</a>
+        <a href="#contact" style={navS.cta}>Book a Demo</a>
       </div>
     </nav>
   )
@@ -104,13 +118,17 @@ const COLOR_KEY = 'stoa_color'
 function loadEdits() { try { return JSON.parse(localStorage.getItem(EDIT_KEY)) || {} } catch { return {} } }
 function saveEdits(e) { localStorage.setItem(EDIT_KEY, JSON.stringify(e)) }
 
-export default function StoaHome({ onBuild }) {
+export default function StoaHome() {
+  const [selectedIndustry, setSelectedIndustry] = useState(null)
+  const [enabled, setEnabled] = useState({})
   const [heroVis, setHeroVis] = useState(false)
   const [heroVidLoaded, setHeroVidLoaded] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [edits, setEdits] = useState(loadEdits)
   const [brandColor, setBrandColor] = useState(() => localStorage.getItem(COLOR_KEY) || '#D4AF37')
   const [showColorPicker, setShowColorPicker] = useState(false)
+  const [transforming, setTransforming] = useState(false)
+  const sectionsRef = useRef(null)
 
   useEffect(() => { setTimeout(() => setHeroVis(true), 300) }, [])
   useEffect(() => { saveEdits(edits) }, [edits])
@@ -119,7 +137,52 @@ export default function StoaHome({ onBuild }) {
     document.documentElement.style.setProperty('--brand', brandColor)
   }, [brandColor])
 
-  // Editable text component — wraps any text element
+  const industry = selectedIndustry ? getIndustry(selectedIndustry) : null
+  const features = selectedIndustry ? getFeatures(selectedIndustry) : {}
+
+  // Apply theme when industry changes
+  useEffect(() => {
+    if (!industry) {
+      // Reset to default STOA theme
+      const defaults = {
+        '--brand': '#D4AF37', '--bg': '#04040c', '--bg2': '#0a0a1a',
+        '--surface': '#0f0f1e', '--surface2': '#16162a', '--border': '#16162a',
+        '--text': '#F0EDE6', '--text2': '#908D9A', '--muted': '#5C5870',
+        '--font-display': "'Playfair Display', Georgia, serif",
+        '--font-body': "'DM Sans', system-ui, sans-serif",
+      }
+      Object.entries(defaults).forEach(([k, v]) => document.documentElement.style.setProperty(k, v))
+      return
+    }
+    Object.entries(industry.theme).forEach(([k, v]) => document.documentElement.style.setProperty(k, v))
+  }, [industry])
+
+  const handleSelectIndustry = useCallback((id) => {
+    setTransforming(true)
+    setTimeout(() => {
+      const ind = getIndustry(id)
+      setSelectedIndustry(id)
+      setEnabled({ ...ind.defaultEnabled })
+      setTransforming(false)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }, 400)
+  }, [])
+
+  const handleReset = useCallback(() => {
+    setTransforming(true)
+    setTimeout(() => {
+      setSelectedIndustry(null)
+      setEnabled({})
+      setTransforming(false)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }, 400)
+  }, [])
+
+  const handleToggle = useCallback((key) => {
+    setEnabled(prev => ({ ...prev, [key]: !prev[key] }))
+  }, [])
+
+  // Editable text component
   const E = ({ id, children, tag: Tag = 'span', style = {} }) => {
     const savedText = edits[id]
     if (!editMode) return <Tag style={style}>{savedText || children}</Tag>
@@ -146,610 +209,229 @@ export default function StoaHome({ onBuild }) {
     )
   }
 
-  /* Animated headline words */
-  const words = [
-    { t: 'We', em: false }, { t: 'Build', em: false },
-    { t: 'Platforms', em: false }, { t: 'That', em: false },
-    { t: 'Sell.', em: true },
-  ]
-
   return (
     <>
-      <Nav />
+      <Nav selected={selectedIndustry} onReset={handleReset} />
 
-      {/* ════ HERO ════ */}
-      <section style={hero.wrap}>
-        <video
-          style={{ ...hero.video, opacity: heroVidLoaded ? 1 : 0 }}
-          src={V + 'milky-way.mp4'}
-          autoPlay muted loop playsInline
-          onLoadedData={() => setHeroVidLoaded(true)}
-        />
-        <div style={hero.overlay} />
-        <div style={hero.gradient} />
-        <div style={hero.content}>
-          <div style={{
-            ...hero.tag,
-            opacity: heroVis ? 1 : 0,
-            transform: heroVis ? 'none' : 'translateY(16px)',
-            transition: 'all 0.9s cubic-bezier(.16,1,.3,1)',
-            transitionDelay: '0.2s',
-          }}>
-            <E id="hero-tag">THE SELLER'S PLATFORM</E>
-          </div>
-          <h1 style={hero.h1}>
-            {words.map((w, i) => (
-              <span key={i} style={{
-                display: 'inline-block',
-                opacity: heroVis ? 1 : 0,
-                transform: heroVis ? 'none' : 'translateY(24px)',
-                transition: 'all 0.7s cubic-bezier(.16,1,.3,1)',
-                transitionDelay: `${500 + i * 150}ms`,
-                marginRight: '0.22em',
-                fontStyle: w.em ? 'italic' : 'normal',
-                color: w.em ? '#D4AF37' : '#F0EDE6',
-              }}>
-                {w.t}
-              </span>
-            ))}
-          </h1>
-          <p style={{
-            ...hero.sub,
-            opacity: heroVis ? 1 : 0,
-            transform: heroVis ? 'none' : 'translateY(16px)',
-            transition: 'all 1s cubic-bezier(.16,1,.3,1)',
-            transitionDelay: '1.5s',
-          }}>
-            <E id="hero-sub">Full-stack platforms for businesses that want more than a website. Storefronts. Admin dashboards. AI tools. Built fast. Built beautiful.</E>
-          </p>
-          <div style={{
-            ...hero.actions,
-            opacity: heroVis ? 1 : 0,
-            transform: heroVis ? 'none' : 'translateY(16px)',
-            transition: 'all 1s cubic-bezier(.16,1,.3,1)',
-            transitionDelay: '1.8s',
-          }}>
-            <a href="#features" style={hero.btnPrimary}>See What We Build</a>
-            <a href="#contact" style={hero.btnGhost}>Book a Demo</a>
-          </div>
-        </div>
-        {/* Scroll indicator */}
+      {/* Transform overlay */}
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 150,
+        background: 'var(--bg)',
+        opacity: transforming ? 1 : 0,
+        pointerEvents: transforming ? 'all' : 'none',
+        transition: 'opacity 0.4s ease',
+      }} />
+
+      {/* ════ LANDING — "I Am A..." Selector ════ */}
+      {!selectedIndustry && (
         <div style={{
-          ...hero.scrollHint,
-          opacity: heroVis ? 1 : 0,
-          transition: 'opacity 1s ease 2.5s',
+          opacity: transforming ? 0 : 1,
+          transition: 'opacity 0.4s ease',
         }}>
-          <div style={hero.scrollLine} />
-        </div>
-      </section>
+          {/* Hero with video background */}
+          <section style={hero.wrap}>
+            <video
+              style={{ ...hero.video, opacity: heroVidLoaded ? 1 : 0 }}
+              src={V + 'milky-way.mp4'}
+              autoPlay muted loop playsInline
+              onLoadedData={() => setHeroVidLoaded(true)}
+            />
+            <div style={hero.overlay} />
+            <div style={hero.gradient} />
+            <div style={{ position: 'relative', zIndex: 2, width: '100%' }}>
+              <LandingSelector onSelect={handleSelectIndustry} />
+            </div>
+          </section>
 
-      {/* ════ MARQUEE ════ */}
-      <div style={marq.wrap}>
-        <div style={marq.track}>
-          {[...Array(2)].map((_, ri) => (
-            <div key={ri} style={marq.set}>
-              {['22+ Page Platforms', '·', 'AI-Powered', '·', 'Edit Everything Live', '·', 'Built in Weeks', '·', 'Zero Templates', '·', 'Real Working Software', '·'].map((t, i) => (
-                <span key={i} style={t === '·' ? marq.dot : marq.item}>{t}</span>
+          {/* ════ MARQUEE ════ */}
+          <div style={marq.wrap}>
+            <div style={marq.track}>
+              {[...Array(2)].map((_, ri) => (
+                <div key={ri} style={marq.set}>
+                  {['22+ Page Platforms', '·', 'AI-Powered', '·', 'Edit Everything Live', '·', 'Built in Weeks', '·', 'Zero Templates', '·', 'Real Working Software', '·'].map((t, i) => (
+                    <span key={i} style={t === '·' ? marq.dot : marq.item}>{t}</span>
+                  ))}
+                </div>
               ))}
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
 
-      {/* ════ "WHAT WE BUILD" INTRO ════ */}
-      <section id="platform" style={sec.wrap}>
-        <div style={sec.inner}>
-          <Reveal>
-            <div style={sec.tag}>WHAT WE BUILD</div>
-          </Reveal>
-          <Reveal delay={100}>
-            <h2 style={sec.h2}><E id="build-h2">Not websites. Platforms.</E></h2>
-          </Reveal>
-          <Reveal delay={200}>
-            <p style={sec.sub}>
-              <E id="build-sub">A website tells people about your business. A platform runs it. We build the whole thing — the storefront your customers see, the admin dashboard your team uses, and the AI tools that make both better.</E>
-            </p>
-          </Reveal>
-          <div style={sec.threeCol}>
-            {[
-              { icon: '◈', title: 'Customer-Facing', items: ['Video hero & animations', 'Online store & checkout', 'Events & ticket booking', 'Membership portals', 'Donations & fundraising'] },
-              { icon: '▦', title: 'Back Office', items: ['Admin dashboard & KPIs', 'Inventory & POS', 'Order management', 'Reports & CSV exports', 'Staff & volunteer tools'] },
-              { icon: '◇', title: 'AI & Creative', items: ['AI image generation', 'Social media creator', 'Email campaign builder', 'Content management', 'Live site editing (CMS)'] },
-            ].map((col, ci) => (
-              <Reveal key={col.title} delay={300 + ci * 150} style={sec.col}>
-                <div style={sec.colIcon}>{col.icon}</div>
-                <div style={sec.colTitle}>{col.title}</div>
-                <ul style={sec.colList}>
-                  {col.items.map(item => (
-                    <li key={item} style={sec.colItem}>
-                      <span style={sec.colCheck}>✦</span> {item}
-                    </li>
-                  ))}
-                </ul>
+          {/* ════ "WHAT WE BUILD" ════ */}
+          <section id="platform" style={sec.wrap}>
+            <div style={sec.inner}>
+              <Reveal><div style={sec.tag}>WHAT WE BUILD</div></Reveal>
+              <Reveal delay={100}><h2 style={sec.h2}><E id="build-h2">Not websites. Platforms.</E></h2></Reveal>
+              <Reveal delay={200}>
+                <p style={sec.sub}>
+                  <E id="build-sub">A website tells people about your business. A platform runs it. We build the whole thing — the storefront your customers see, the admin dashboard your team uses, and the AI tools that make both better.</E>
+                </p>
               </Reveal>
-            ))}
-          </div>
+              <div style={sec.threeCol}>
+                {[
+                  { icon: '◈', title: 'Customer-Facing', items: ['Video hero & animations', 'Online store & checkout', 'Events & ticket booking', 'Membership portals', 'Donations & fundraising'] },
+                  { icon: '▦', title: 'Back Office', items: ['Admin dashboard & KPIs', 'Inventory & POS', 'Order management', 'Reports & CSV exports', 'Staff & volunteer tools'] },
+                  { icon: '◇', title: 'AI & Creative', items: ['AI image generation', 'Social media creator', 'Email campaign builder', 'Content management', 'Live site editing (CMS)'] },
+                ].map((col, ci) => (
+                  <Reveal key={col.title} delay={300 + ci * 150} style={sec.col}>
+                    <div style={sec.colIcon}>{col.icon}</div>
+                    <div style={sec.colTitle}>{col.title}</div>
+                    <ul style={sec.colList}>
+                      {col.items.map(item => (
+                        <li key={item} style={sec.colItem}>
+                          <span style={sec.colCheck}>✦</span> {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ════ ABOUT / TEAM ════ */}
+          <section id="about" style={sec.wrap}>
+            <div style={sec.inner}>
+              <Reveal><div style={sec.tag}>WHO WE ARE</div></Reveal>
+              <Reveal delay={100}><h2 style={sec.h2}><E id="about-h2">Built by Two. Powered by AI.</E></h2></Reveal>
+              <Reveal delay={200}>
+                <p style={{ ...sec.sub, maxWidth: 540 }}>
+                  STOA is Tovah and Saleem — a designer and an engineer who build full platforms with AI.
+                  We don't outsource. We don't use templates. Every pixel and every feature is built specifically for your business.
+                </p>
+              </Reveal>
+              <Reveal delay={300}>
+                <div style={aboutS.row}>
+                  <div style={aboutS.card}>
+                    <div style={aboutS.avatar}>T</div>
+                    <div style={aboutS.name}>Tovah</div>
+                    <div style={aboutS.role}>Design & Brand</div>
+                  </div>
+                  <div style={aboutS.card}>
+                    <div style={aboutS.avatar}>S</div>
+                    <div style={aboutS.name}>Saleem</div>
+                    <div style={aboutS.role}>Engineering & AWS</div>
+                  </div>
+                </div>
+              </Reveal>
+            </div>
+          </section>
         </div>
-      </section>
+      )}
 
-      {/* ════ FEATURE SHOWCASE — LIVE DEMOS ════ */}
-      <FeatureShowcase />
+      {/* ════ INDUSTRY SELECTED — Interactive Builder ════ */}
+      {selectedIndustry && industry && (
+        <div style={{
+          opacity: transforming ? 0 : 1,
+          transition: 'opacity 0.4s ease 0.2s',
+        }}>
+          {/* Industry Hero */}
+          <section style={iHero.wrap}>
+            {industry.storefront.heroVideo ? (
+              <>
+                <LazyVideo src={industry.storefront.heroVideo} style={iHero.video} autoPlay muted loop playsInline />
+                <div style={{
+                  ...iHero.videoOverlay,
+                  background: industry.background === 'stars'
+                    ? 'linear-gradient(to bottom, rgba(4,4,12,0.3) 0%, rgba(4,4,12,0.75) 100%)'
+                    : 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.5) 100%)',
+                }} />
+              </>
+            ) : (
+              <div style={iHero.bg}>
+                <div style={{ ...iHero.orb, width: 500, height: 500, top: '-15%', right: '-8%', opacity: 0.06, background: 'var(--brand)' }} />
+                <div style={{ ...iHero.orb, width: 350, height: 350, bottom: '-10%', left: '-5%', opacity: 0.04, background: 'var(--brand)' }} />
+              </div>
+            )}
+            <div style={iHero.content}>
+              <div style={iHero.topBar}>
+                <button onClick={handleReset} style={iHero.backBtn}>← Back to Industries</button>
+                <div style={iHero.industryBadge}>
+                  <span>{industry.icon}</span>
+                  <span>{industry.industry}</span>
+                </div>
+              </div>
+              <div style={iHero.tag}>{industry.storefront.heroTag}</div>
+              <h1 style={iHero.h1}>
+                {industry.storefront.heroTitle.split('\n').map((line, i, arr) => (
+                  <span key={i}>
+                    {i > 0 && <br />}
+                    {i === arr.length - 1
+                      ? <em style={{ fontStyle: 'italic', color: 'var(--brand)' }}>{line}</em>
+                      : line
+                    }
+                  </span>
+                ))}
+              </h1>
+              <p style={iHero.sub}>{industry.storefront.heroSub}</p>
+              <div style={iHero.btns}>
+                <button style={iHero.btnPrimary}>{industry.storefront.heroCta}</button>
+                <button style={iHero.btnGhost}>{industry.storefront.heroCta2}</button>
+              </div>
+            </div>
+          </section>
 
-      {/* ════ VIDEO BREAK — "EDIT EVERYTHING" ════ */}
-      <VideoSection src={V + 'nebula.mp4'}>
-        <div style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto' }}>
-          <Reveal>
-            <div style={sec.tag}>LIVE EDITING</div>
-          </Reveal>
-          <Reveal delay={100}>
-            <h2 style={{ ...sec.h2, color: '#fff', textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}>
-              <E id="edit-h2">Click the pencil. Edit your site.</E>
-            </h2>
-          </Reveal>
-          <Reveal delay={200}>
-            <p style={{ ...sec.sub, color: 'rgba(255,255,255,0.8)', textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>
-              Every platform we build comes with a live CMS. Toggle admin mode, click any text,
-              and change it — headlines, descriptions, prices, everything. Publish instantly. No developer needed.
-            </p>
-          </Reveal>
+          {/* Industry Switcher */}
+          <div style={{ background: 'var(--bg2)', borderBottom: '1px solid var(--border)' }}>
+            <MiniSwitcher current={selectedIndustry} onSelect={handleSelectIndustry} />
+          </div>
+
+          {/* Section Navigation */}
+          <div style={sectionNav.wrap}>
+            <div style={sectionNav.inner}>
+              {['storefront', 'dashboard', 'portal'].map(sec => (
+                <a key={sec} href={`#${sec}`} style={sectionNav.link}>
+                  <span style={sectionNav.icon}>
+                    {sec === 'storefront' ? '◈' : sec === 'dashboard' ? '▦' : '◇'}
+                  </span>
+                  <span>{sec === 'storefront' ? 'Storefront' : sec === 'dashboard' ? 'Dashboard' : 'Portal'}</span>
+                </a>
+              ))}
+              <div style={sectionNav.featureCount}>
+                {Object.values(enabled).filter(Boolean).length} features active
+              </div>
+            </div>
+          </div>
+
+          {/* ── STOREFRONT SECTIONS ── */}
+          <div id="storefront">
+            <Storefront data={industry} enabled={enabled} />
+          </div>
+
+          {/* ── Section Divider ── */}
+          <div style={divider.wrap}>
+            <div style={divider.line} />
+            <div style={divider.label}>▦ ADMIN DASHBOARD</div>
+            <div style={divider.line} />
+          </div>
+
+          {/* ── DASHBOARD SECTIONS ── */}
+          <div id="dashboard">
+            <Dashboard data={industry} enabled={enabled} />
+          </div>
+
+          {/* ── Section Divider ── */}
+          <div style={divider.wrap}>
+            <div style={divider.line} />
+            <div style={divider.label}>◇ CLIENT PORTAL</div>
+            <div style={divider.line} />
+          </div>
+
+          {/* ── PORTAL SECTIONS ── */}
+          <div id="portal">
+            <Portal data={industry} enabled={enabled} />
+          </div>
+
+          {/* ── Feature Toggles Sidebar ── */}
+          <FeatureToggles
+            features={features}
+            enabled={enabled}
+            onToggle={handleToggle}
+          />
         </div>
-      </VideoSection>
-
-      {/* ════ OUR WORK — SHOWCASE ════ */}
-      <section id="work" style={{ ...sec.wrap, padding: '100px 48px' }}>
-        <div style={sec.inner}>
-          <Reveal><div style={sec.tag}>OUR WORK</div></Reveal>
-          <Reveal delay={100}><h2 style={sec.h2}><E id="work-h2">Platforms We've Built</E></h2></Reveal>
-          <Reveal delay={200}>
-            <p style={sec.sub}>
-              Each one is a complete platform — not a landing page, not a template. Real working software with storefronts, admin dashboards, and AI tools.
-            </p>
-          </Reveal>
-        </div>
-
-        {/* ── Dark Sky ── */}
-        <Reveal>
-          <div style={work.card}>
-            <div style={work.cardLeft}>
-              <div style={work.cardTag}>NONPROFIT · GIFT SHOP · EVENTS</div>
-              <h3 style={work.cardTitle}>Dark Sky Discovery Center</h3>
-              <p style={work.cardDesc}>
-                22+ page admin system for the International Dark Sky Discovery Center in Fountain Hills, AZ.
-                Storefront with video backgrounds and starfield. Gift shop with 67 products from Printify.
-                Events with ticket reservations. AI Design Studio. Social media post creator.
-                Point of sale. Facility booking. Volunteer portal.
-              </p>
-              <div style={work.chipRow}>
-                {['Video Hero', 'Edit Mode CMS', 'Online Store', 'AI Design Studio', 'Events', 'POS', 'Social Media', 'Donations', 'Volunteer Portal'].map(c => (
-                  <span key={c} style={work.chip}>{c}</span>
-                ))}
-              </div>
-              <a href="https://darksky-store.vercel.app" target="_blank" rel="noopener" style={work.cardLink}>
-                View Live Demo →
-              </a>
-            </div>
-            <div style={work.cardRight}>
-              <div style={work.browser}>
-                <div style={work.browserBar}>
-                  <div style={work.browserDots}><span /><span /><span /></div>
-                  <div style={work.browserUrl}>darksky-store.vercel.app</div>
-                </div>
-                <div style={work.browserBody}>
-                  <LazyVideo src={V + 'desert-night-sky.mp4'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay muted loop playsInline />
-                  <div style={work.browserOverlay}>
-                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(18px, 2.5vw, 28px)', color: '#fff', fontWeight: 400 }}>
-                      International Dark Sky<br /><em style={{ color: '#D4AF37' }}>Discovery Center</em>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* ── Woolson Audio ── */}
-        <Reveal>
-          <div style={{ ...work.card, flexDirection: 'row-reverse' }}>
-            <div style={work.cardLeft}>
-              <div style={work.cardTag}>VINTAGE AUDIO · E-COMMERCE · LUXURY RETAIL</div>
-              <h3 style={work.cardTitle}>Woolson Audio</h3>
-              <p style={work.cardDesc}>
-                Premium e-commerce storefront for a Phoenix vintage audio dealer. Curated collection of
-                professionally restored Marantz, Pioneer, JBL, Sansui, and Technics equipment. Dark luxury
-                aesthetic with product catalog, gallery, featured spotlight pieces, and newsletter signup.
-              </p>
-              <div style={work.chipRow}>
-                {['Product Catalog', 'Collections', 'Featured Spotlight', 'Gallery', 'Newsletter', 'Brand Marquee', 'Contact Form'].map(c => (
-                  <span key={c} style={work.chip}>{c}</span>
-                ))}
-              </div>
-              <a href="https://woolson-audio.vercel.app" target="_blank" rel="noopener" style={work.cardLink}>
-                View Live Site →
-              </a>
-            </div>
-            <div style={work.cardRight}>
-              <div style={work.browser}>
-                <div style={work.browserBar}>
-                  <div style={work.browserDots}><span /><span /><span /></div>
-                  <div style={work.browserUrl}>woolson-audio.vercel.app</div>
-                </div>
-                <div style={{ ...work.browserBody, background: 'linear-gradient(135deg, #0a0a0a, #1a1510)' }}>
-                  <div style={{ padding: 24, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 10 }}>
-                    <div style={{ fontSize: 9, letterSpacing: '0.3em', color: '#8B7355' }}>PHOENIX, ARIZONA</div>
-                    <div style={{ fontFamily: "'Playfair Display'", fontSize: 26, color: '#D4AF37', fontWeight: 400 }}>Woolson Audio</div>
-                    <div style={{ fontSize: 11, color: '#666', lineHeight: 1.5, maxWidth: 220 }}>Vintage &amp; high-end audio — sourced, tested, restored</div>
-                    <div style={{ display: 'flex', gap: 6, marginTop: 4, flexWrap: 'wrap', justifyContent: 'center' }}>
-                      {['Marantz', 'Pioneer', 'JBL', 'Sansui'].map(b => (
-                        <span key={b} style={{ padding: '4px 10px', borderRadius: 100, border: '1px solid rgba(212,175,55,0.2)', color: '#8B7355', fontSize: 9, letterSpacing: '0.1em' }}>{b}</span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* ── MedSpa Platform ── */}
-        <Reveal>
-          <div style={work.card}>
-            <div style={work.cardLeft}>
-              <div style={work.cardTag}>MEDSPA · 25 PAGES · FULL ADMIN</div>
-              <h3 style={work.cardTitle}>MedSpa Platform</h3>
-              <p style={work.cardDesc}>
-                25-page white-label platform for aesthetic clinics. Schedule with day/week/list views.
-                Clinical charts with SOAP notes and injection mapping. DM inbox tracking Instagram revenue.
-                Patient portal. Memberships with tiers. Retention engine. 32 services. 15 consent forms.
-                Text and email marketing. Before &amp; after photos. Inventory. POS check-in. Reports.
-              </p>
-              <div style={work.chipRow}>
-                {['Schedule & Booking', 'Clinical Charts', 'Injection Mapping', 'DM Inbox', 'Patient Portal', 'Memberships', 'Retention Engine', 'Consent Forms', 'Aftercare', 'Text & Email', 'Reports', 'POS Check-In'].map(c => (
-                  <span key={c} style={work.chip}>{c}</span>
-                ))}
-              </div>
-              <a href="/demo/medspa" style={work.cardLink}>
-                Explore Full Demo →
-              </a>
-            </div>
-            <div style={work.cardRight}>
-              <div style={work.browser}>
-                <div style={work.browserBar}>
-                  <div style={work.browserDots}><span /><span /><span /></div>
-                  <div style={work.browserUrl}>getstoa.io/demo/medspa</div>
-                </div>
-                <div style={{ ...work.browserBody, background: '#F5F3F0' }}>
-                  <div style={{ padding: 16, display: 'flex', gap: 12, height: '100%' }}>
-                    <div style={{ width: 120, background: '#fff', borderRadius: 10, padding: '14px 10px', display: 'flex', flexDirection: 'column', gap: 4, flexShrink: 0 }}>
-                      <div style={{ fontSize: 10, fontWeight: 700, color: '#111', marginBottom: 6 }}>Glow Aesthetics</div>
-                      {['Dashboard', 'Patients', 'Schedule', 'Charts', 'Inbox', 'Inventory'].map(n => (
-                        <div key={n} style={{ fontSize: 9, color: n === 'Dashboard' ? '#111' : '#999', padding: '3px 6px', borderRadius: 4, background: n === 'Dashboard' ? '#f5f5f5' : 'transparent' }}>{n}</div>
-                      ))}
-                    </div>
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      <div style={{ fontSize: 14, fontWeight: 600, color: '#111' }}>Good morning, team</div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-                        {[{ v: '8', l: 'Appointments' }, { v: '$4,200', l: 'Revenue' }, { v: '247', l: 'Patients' }, { v: '3', l: 'Alerts' }].map(k => (
-                          <div key={k.l} style={{ background: '#fff', borderRadius: 8, padding: '8px 10px', border: '1px solid rgba(0,0,0,0.04)' }}>
-                            <div style={{ fontSize: 14, fontWeight: 700, color: '#111' }}>{k.v}</div>
-                            <div style={{ fontSize: 8, color: '#999', textTransform: 'uppercase', letterSpacing: 0.5 }}>{k.l}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* ── MedFlow ── */}
-        <Reveal>
-          <div style={{ ...work.card, flexDirection: 'row-reverse' }}>
-            <div style={work.cardLeft}>
-              <div style={work.cardTag}>MEDICAL SALES · CRM · 3 PORTALS</div>
-              <h3 style={work.cardTitle}>MedFlow</h3>
-              <p style={work.cardDesc}>
-                Medical sales platform with 22 admin navigation items across 3 distinct portals — Admin,
-                Sales Rep, and Doctor. AI-powered coaching, pipeline visualization, commission tracking,
-                compliance (Sunshine Act), route planning, inventory management, and a full softphone.
-              </p>
-              <div style={work.chipRow}>
-                {['AI Coaching', 'Pipeline CRM', 'Commission Tiers', 'Compliance', 'Route Planner', 'Softphone', 'Doctor Portal', 'Inventory', 'Leaderboard'].map(c => (
-                  <span key={c} style={work.chip}>{c}</span>
-                ))}
-              </div>
-              <a href="https://medflow.createandsource.com" target="_blank" rel="noopener" style={work.cardLink}>
-                View Live Demo →
-              </a>
-            </div>
-            <div style={work.cardRight}>
-              <div style={work.browser}>
-                <div style={work.browserBar}>
-                  <div style={work.browserDots}><span /><span /><span /></div>
-                  <div style={work.browserUrl}>medflow.createandsource.com</div>
-                </div>
-                <div style={{ ...work.browserBody, background: '#f0fdf4' }}>
-                  <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    <div style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: 11, color: '#888', letterSpacing: '0.1em' }}>COMMAND CENTER</div>
-                    <div style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: 20, fontWeight: 700, color: '#1a1a2e' }}>MedFlow</div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
-                      {[{ v: '$8.9M', l: 'Pipeline' }, { v: '34%', l: 'Close Rate' }, { v: '4', l: 'Active Reps' }].map(k => (
-                        <div key={k.l} style={{ background: '#fff', borderRadius: 10, padding: '12px 10px', border: '1px solid #e5e5e5' }}>
-                          <div style={{ fontSize: 18, fontWeight: 700, color: '#1a1a2e' }}>{k.v}</div>
-                          <div style={{ fontSize: 9, color: '#888' }}>{k.l}</div>
-                        </div>
-                      ))}
-                    </div>
-                    <div style={{ background: '#2B8A6E15', borderRadius: 10, padding: 12 }}>
-                      <div style={{ fontSize: 10, color: '#2B8A6E', fontWeight: 600, marginBottom: 4 }}>✦ AI Summary</div>
-                      <div style={{ fontSize: 11, color: '#555', lineHeight: 1.5 }}>Revenue is up 12%. 14 doctors overdue. Clint is on a 5-day call streak.</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* ── Taco Boy's ── */}
-        <Reveal>
-          <div style={work.card}>
-            <div style={work.cardLeft}>
-              <div style={work.cardTag}>RESTAURANT · ORDERING · MEMBER PORTAL</div>
-              <h3 style={work.cardTitle}>Taco Boy's</h3>
-              <p style={work.cardDesc}>
-                Full restaurant platform for Taco Boy's — Sonoran Style Since 2019. Customer-facing menu
-                and ordering, admin dashboard for managing operations, and a member portal with loyalty rewards.
-                Not just a website — a system that runs the business.
-              </p>
-              <div style={work.chipRow}>
-                {['Online Menu', 'Ordering System', 'Admin Dashboard', 'Member Portal', 'Loyalty Rewards', 'Sign-In'].map(c => (
-                  <span key={c} style={work.chip}>{c}</span>
-                ))}
-              </div>
-            </div>
-            <div style={work.cardRight}>
-              <div style={work.browser}>
-                <div style={work.browserBar}>
-                  <div style={work.browserDots}><span /><span /><span /></div>
-                  <div style={work.browserUrl}>tacoboys.vercel.app</div>
-                </div>
-                <div style={{ ...work.browserBody, background: 'linear-gradient(135deg, #1a1a1a, #2d1f0e)' }}>
-                  <div style={{ padding: 24, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 12 }}>
-                    <div style={{ fontSize: 11, letterSpacing: '0.25em', color: '#D4AF37' }}>SONORAN STYLE SINCE 2019</div>
-                    <div style={{ fontFamily: "'Playfair Display'", fontSize: 28, color: '#fff', fontWeight: 500 }}>Taco Boy's</div>
-                    <div style={{ display: 'flex', gap: 8 }}>
-                      {['Menu', 'Order', 'Rewards'].map(s => (
-                        <span key={s} style={{ padding: '6px 14px', borderRadius: 100, background: 'rgba(212,175,55,0.15)', color: '#D4AF37', fontSize: 11, fontWeight: 600 }}>{s}</span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* ── Media4You ── */}
-        <Reveal>
-          <div style={{ ...work.card, flexDirection: 'row-reverse' }}>
-            <div style={work.cardLeft}>
-              <div style={work.cardTag}>SOCIAL MEDIA · MARKETING · ANALYTICS</div>
-              <h3 style={work.cardTitle}>Media4You</h3>
-              <p style={work.cardDesc}>
-                Social media marketing agency dashboard with campaign analytics, performance charts,
-                and content management. Built for agencies managing multiple client accounts across
-                Instagram, Facebook, and TikTok with real-time data visualization.
-              </p>
-              <div style={work.chipRow}>
-                {['Campaign Analytics', 'Performance Charts', 'Content Calendar', 'Client Management', 'Multi-Platform', 'Data Visualization'].map(c => (
-                  <span key={c} style={work.chip}>{c}</span>
-                ))}
-              </div>
-            </div>
-            <div style={work.cardRight}>
-              <div style={work.browser}>
-                <div style={work.browserBar}>
-                  <div style={work.browserDots}><span /><span /><span /></div>
-                  <div style={work.browserUrl}>media4you.vercel.app</div>
-                </div>
-                <div style={{ ...work.browserBody, background: 'linear-gradient(135deg, #f5f0ff, #ece5ff)' }}>
-                  <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    <div style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: 11, color: '#7C3AED', letterSpacing: '0.15em' }}>AGENCY DASHBOARD</div>
-                    <div style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: 20, fontWeight: 700, color: '#1a1a2e' }}>Media4You</div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
-                      {[{ v: '142K', l: 'Reach' }, { v: '8.2%', l: 'Engagement' }, { v: '24', l: 'Campaigns' }].map(k => (
-                        <div key={k.l} style={{ background: '#fff', borderRadius: 10, padding: '12px 10px', border: '1px solid #e5e5e5' }}>
-                          <div style={{ fontSize: 18, fontWeight: 700, color: '#1a1a2e' }}>{k.v}</div>
-                          <div style={{ fontSize: 9, color: '#888' }}>{k.l}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* ── Create & Source ── */}
-        <Reveal>
-          <div style={work.card}>
-            <div style={work.cardLeft}>
-              <div style={work.cardTag}>MERCHANDISE · SOURCING · OPERATIONS</div>
-              <h3 style={work.cardTitle}>Create &amp; Source</h3>
-              <p style={work.cardDesc}>
-                Two-app merchandise sourcing platform — a client portal where brands submit product requests and
-                track orders, and an internal ops dashboard for managing sourcing, quotes, suppliers, and fulfillment.
-                Built on React + TypeScript with an AWS Lambda backend.
-              </p>
-              <div style={work.chipRow}>
-                {['Client Portal', 'Ops Dashboard', 'Order Tracking', 'Supplier Management', 'Quote Builder', 'AWS Backend', 'TypeScript'].map(c => (
-                  <span key={c} style={work.chip}>{c}</span>
-                ))}
-              </div>
-              <a href="https://createandsource-website.vercel.app" target="_blank" rel="noopener" style={work.cardLink}>
-                View Company Site →
-              </a>
-            </div>
-            <div style={work.cardRight}>
-              <div style={work.browser}>
-                <div style={work.browserBar}>
-                  <div style={work.browserDots}><span /><span /><span /></div>
-                  <div style={work.browserUrl}>createandsource-website.vercel.app</div>
-                </div>
-                <div style={{ ...work.browserBody, background: '#faf8f5' }}>
-                  <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    <div style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: 11, color: '#8B6914', letterSpacing: '0.15em' }}>CLIENT PORTAL</div>
-                    <div style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: 20, fontWeight: 700, color: '#1a1a1a' }}>Create &amp; Source</div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
-                      {[{ v: '12', l: 'Active Orders' }, { v: '4', l: 'Pending Quotes' }, { v: '89%', l: 'On-Time' }].map(k => (
-                        <div key={k.l} style={{ background: '#fff', borderRadius: 10, padding: '12px 10px', border: '1px solid #e5e5e5' }}>
-                          <div style={{ fontSize: 18, fontWeight: 700, color: '#1a1a1a' }}>{k.v}</div>
-                          <div style={{ fontSize: 9, color: '#888' }}>{k.l}</div>
-                        </div>
-                      ))}
-                    </div>
-                    <div style={{ background: 'rgba(139,105,20,0.06)', borderRadius: 10, padding: 12 }}>
-                      <div style={{ fontSize: 10, color: '#8B6914', fontWeight: 600, marginBottom: 4 }}>◈ Recent Activity</div>
-                      <div style={{ fontSize: 11, color: '#555', lineHeight: 1.5 }}>New quote for 500 tees. Shipment #4821 arrived. Supplier invoice pending.</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* ── SEAR Festival ── */}
-        <Reveal>
-          <div style={{ ...work.card, flexDirection: 'row-reverse' }}>
-            <div style={work.cardLeft}>
-              <div style={work.cardTag}>FOOD FESTIVAL · TICKETS · MERCH SHOP</div>
-              <h3 style={work.cardTitle}>SEAR Festival</h3>
-              <p style={work.cardDesc}>
-                Salt. Smoke. Savagery. A primal feast experience in San Diego — July 2026.
-                Full event platform with chef profiles, ticket purchasing and checkout, merchandise shop,
-                user accounts, check-in system, and Supabase backend for real-time data.
-              </p>
-              <div style={work.chipRow}>
-                {['Ticket Sales', 'Chef Profiles', 'Merch Shop', 'Checkout', 'User Accounts', 'Check-In System', 'Supabase Backend'].map(c => (
-                  <span key={c} style={work.chip}>{c}</span>
-                ))}
-              </div>
-            </div>
-            <div style={work.cardRight}>
-              <div style={work.browser}>
-                <div style={work.browserBar}>
-                  <div style={work.browserDots}><span /><span /><span /></div>
-                  <div style={work.browserUrl}>sear-festival.vercel.app</div>
-                </div>
-                <div style={{ ...work.browserBody, background: 'linear-gradient(135deg, #1a0a00, #2d1200)' }}>
-                  <div style={{ padding: 24, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 12 }}>
-                    <div style={{ fontSize: 10, letterSpacing: '0.3em', color: '#E07A4F' }}>SALT · SMOKE · SAVAGERY</div>
-                    <div style={{ fontFamily: "'Playfair Display'", fontSize: 32, color: '#fff', fontWeight: 500 }}>SEAR</div>
-                    <div style={{ fontSize: 12, color: '#E07A4F', fontWeight: 500 }}>San Diego · July 18-19, 2026</div>
-                    <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-                      {['Tickets', 'Chefs', 'Merch'].map(s => (
-                        <span key={s} style={{ padding: '6px 14px', borderRadius: 100, background: 'rgba(224,122,79,0.15)', color: '#E07A4F', fontSize: 11, fontWeight: 600 }}>{s}</span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* ── Haus of Confidence ── */}
-        <Reveal>
-          <div style={work.card}>
-            <div style={work.cardLeft}>
-              <div style={work.cardTag}>MEDSPA · BOOKING · CLIENT PORTAL</div>
-              <h3 style={work.cardTitle}>Haus of Confidence</h3>
-              <p style={work.cardDesc}>
-                The original medspa platform built for Haus of Confidence in Scottsdale. 22 pages covering
-                appointment booking, service catalogs, client records, treatment tracking, staff management,
-                inventory, analytics, and payment processing. The foundation that became our white-label MedSpa product.
-              </p>
-              <div style={work.chipRow}>
-                {['Appointment Booking', 'Service Catalog', 'Client Portal', 'Staff Management', 'Treatment Tracking', 'Analytics', 'Payments'].map(c => (
-                  <span key={c} style={work.chip}>{c}</span>
-                ))}
-              </div>
-            </div>
-            <div style={work.cardRight}>
-              <div style={work.browser}>
-                <div style={work.browserBar}>
-                  <div style={work.browserDots}><span /><span /><span /></div>
-                  <div style={work.browserUrl}>medspa-platform.vercel.app</div>
-                </div>
-                <div style={{ ...work.browserBody, background: 'linear-gradient(135deg, #f8f0e8, #faf5ef)' }}>
-                  <div style={{ padding: 24, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 12 }}>
-                    <div style={{ fontSize: 11, letterSpacing: '0.2em', color: '#b08d6e' }}>HAUS OF CONFIDENCE</div>
-                    <div style={{ fontFamily: "'Playfair Display'", fontSize: 22, color: '#3d2e1e', fontWeight: 500 }}>Book Your Experience</div>
-                    <div style={{ display: 'flex', gap: 8 }}>
-                      {['Botox', 'Fillers', 'Facials'].map(s => (
-                        <span key={s} style={{ padding: '6px 14px', borderRadius: 100, background: '#b08d6e20', color: '#8b6f4e', fontSize: 11, fontWeight: 600 }}>{s}</span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* ════ VIDEO BREAK — SPEED ════ */}
-      <VideoSection src={V + 'observatory-hero.mp4'}>
-        <div style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto' }}>
-          <Reveal><div style={sec.tag}>SPEED</div></Reveal>
-          <Reveal delay={100}>
-            <h2 style={{ ...sec.h2, color: '#fff', textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}>
-              Weeks, not months.
-            </h2>
-          </Reveal>
-          <Reveal delay={200}>
-            <p style={{ ...sec.sub, color: 'rgba(255,255,255,0.8)', textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>
-              Every platform on this page was designed, built, and launched faster than a traditional agency
-              builds a brochure site. AI-assisted development means you get more, faster, for less.
-            </p>
-          </Reveal>
-        </div>
-      </VideoSection>
-
-      {/* ════ ABOUT / TEAM ════ */}
-      <section id="about" style={sec.wrap}>
-        <div style={sec.inner}>
-          <Reveal><div style={sec.tag}>WHO WE ARE</div></Reveal>
-          <Reveal delay={100}><h2 style={sec.h2}><E id="about-h2">Built by Two. Powered by AI.</E></h2></Reveal>
-          <Reveal delay={200}>
-            <p style={{ ...sec.sub, maxWidth: 540 }}>
-              STOA is Tovah and Saleem — a designer and an engineer who build full platforms with AI.
-              We don't outsource. We don't use templates. Every pixel and every feature is built specifically for your business.
-            </p>
-          </Reveal>
-          <Reveal delay={300}>
-            <div style={about.row}>
-              <div style={about.card}>
-                <div style={about.avatar}>T</div>
-                <div style={about.name}>Tovah</div>
-                <div style={about.role}>Design & Brand</div>
-              </div>
-              <div style={about.card}>
-                <div style={about.avatar}>S</div>
-                <div style={about.name}>Saleem</div>
-                <div style={about.role}>Engineering & AWS</div>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      )}
 
       {/* ════ CTA ════ */}
-      <section id="contact" style={cta.wrap}>
+      <section id="contact" style={ctaS.wrap}>
         <VideoSection src={V + 'andromeda.mp4'}>
           <div style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto' }}>
             <Reveal><div style={sec.tag}>LET'S GO</div></Reveal>
@@ -764,9 +446,9 @@ export default function StoaHome({ onBuild }) {
               </p>
             </Reveal>
             <Reveal delay={300}>
-              <div style={cta.btns}>
-                <a href="https://instagram.com/getstoa" target="_blank" rel="noopener" style={cta.btn}>@getstoa on Instagram</a>
-                <a href="mailto:hello@getstoa.io" style={cta.btnGold}>hello@getstoa.io</a>
+              <div style={ctaS.btns}>
+                <a href="https://instagram.com/getstoa" target="_blank" rel="noopener" style={ctaS.btn}>@getstoa on Instagram</a>
+                <a href="mailto:hello@getstoa.io" style={ctaS.btnGold}>hello@getstoa.io</a>
               </div>
             </Reveal>
           </div>
@@ -783,8 +465,9 @@ export default function StoaHome({ onBuild }) {
 
       {/* ════ FLOATING PENCIL TOOLBAR ════ */}
       <div style={{
-        position: 'fixed', bottom: 24, right: 24, zIndex: 300,
+        position: 'fixed', bottom: 24, right: selectedIndustry ? 80 : 24, zIndex: 300,
         display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8,
+        transition: 'right 0.4s ease',
       }}>
         {/* Color picker */}
         {showColorPicker && (
@@ -854,7 +537,7 @@ export default function StoaHome({ onBuild }) {
               </svg>
             )}
           </button>
-          {/* "Edit This Site" label — shown until first click */}
+          {/* "Edit This Site" label */}
           {!editMode && !localStorage.getItem('stoa_pencil_clicked') && (
             <div style={{
               position: 'absolute', right: 72, bottom: 12,
@@ -883,6 +566,18 @@ export default function StoaHome({ onBuild }) {
           0%, 100% { box-shadow: 0 0 8px rgba(212,175,55,0.3), 0 0 20px rgba(212,175,55,0.1); }
           50% { box-shadow: 0 0 16px rgba(212,175,55,0.6), 0 0 40px rgba(212,175,55,0.25); }
         }
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0); opacity: 0.4; }
+          50% { transform: translateY(8px); opacity: 1; }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
       `}</style>
 
       {/* Edit mode banner */}
@@ -910,15 +605,6 @@ const hero = {
   video: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'opacity 1.5s ease' },
   overlay: { position: 'absolute', inset: 0, zIndex: 1, background: 'radial-gradient(ellipse at center, transparent 40%, rgba(4,4,12,0.7) 100%)', pointerEvents: 'none' },
   gradient: { position: 'absolute', inset: '-30%', width: '160%', height: '160%', background: 'radial-gradient(ellipse at 30% 40%, rgba(26,16,64,0.5) 0%, transparent 50%), radial-gradient(ellipse at 70% 60%, rgba(18,13,48,0.35) 0%, transparent 40%), rgba(4,4,12,0.35)', zIndex: 0 },
-  content: { position: 'relative', zIndex: 2, textAlign: 'center', maxWidth: 800, padding: '0 24px' },
-  tag: { fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '0.3em', color: '#D4AF37', marginBottom: 28 },
-  h1: { fontFamily: "'Playfair Display', serif", fontSize: 'clamp(36px, 6vw, 72px)', fontWeight: 400, lineHeight: 1.1, margin: '0 0 28px', letterSpacing: '-0.02em' },
-  sub: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 300, fontSize: 'clamp(15px, 2vw, 20px)', lineHeight: 1.7, color: '#C8C4D0', margin: '0 0 48px' },
-  actions: { display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' },
-  btnPrimary: { display: 'inline-block', padding: '16px 36px', background: 'linear-gradient(135deg, #D4AF37, #E5C76B)', color: '#000', fontSize: 14, fontWeight: 600, borderRadius: 100, boxShadow: '0 0 30px rgba(212,175,55,0.3)', letterSpacing: '0.02em' },
-  btnGhost: { display: 'inline-block', padding: '16px 36px', background: 'transparent', color: '#D4AF37', fontSize: 14, fontWeight: 500, borderRadius: 100, border: '1px solid rgba(212,175,55,0.3)' },
-  scrollHint: { position: 'absolute', bottom: 40, left: '50%', transform: 'translateX(-50%)', zIndex: 2 },
-  scrollLine: { width: 1, height: 40, background: 'linear-gradient(to bottom, transparent, #D4AF37, transparent)', animation: 'float 2s ease-in-out infinite' },
 }
 
 const marq = {
@@ -935,8 +621,8 @@ const sec = {
   tag: { fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '0.25em', color: '#D4AF37', marginBottom: 16, textAlign: 'center' },
   h2: { fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 400, lineHeight: 1.15, color: 'var(--text)', margin: '0 0 16px', textAlign: 'center' },
   sub: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, lineHeight: 1.7, color: 'var(--text2)', maxWidth: 520, margin: '0 auto 48px', textAlign: 'center' },
-  threeCol: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, maxWidth: 900, margin: '0 auto', textAlign: 'left' },
-  col: { background: '#fff', border: '1px solid var(--border)', borderRadius: 20, padding: 28 },
+  threeCol: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 24, maxWidth: 900, margin: '0 auto', textAlign: 'left' },
+  col: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 20, padding: 28 },
   colIcon: { fontSize: 28, color: '#D4AF37', marginBottom: 16, filter: 'drop-shadow(0 0 8px rgba(212,175,55,0.3))' },
   colTitle: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 700, color: 'var(--text)', marginBottom: 16 },
   colList: { listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 10 },
@@ -944,33 +630,47 @@ const sec = {
   colCheck: { color: '#D4AF37', fontSize: 10 },
 }
 
-const work = {
-  card: { display: 'flex', gap: 48, alignItems: 'center', marginTop: 64, maxWidth: 1100, marginLeft: 'auto', marginRight: 'auto', flexWrap: 'wrap' },
-  cardLeft: { flex: '1 1 400px', minWidth: 300 },
-  cardRight: { flex: '1 1 400px', minWidth: 300 },
-  cardTag: { fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.2em', color: '#D4AF37', marginBottom: 8 },
-  cardTitle: { fontFamily: "'Playfair Display', serif", fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: 400, color: 'var(--text)', margin: '0 0 12px' },
-  cardDesc: { fontSize: 15, lineHeight: 1.7, color: 'var(--text2)', marginBottom: 16 },
-  chipRow: { display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 20 },
-  chip: { fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.05em', padding: '5px 10px', borderRadius: 100, background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.12)', color: '#D4AF37' },
-  cardLink: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 14, fontWeight: 600, color: '#D4AF37', display: 'inline-flex', alignItems: 'center', gap: 4 },
-  browser: { borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' },
-  browserBar: { background: '#1a1a2e', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 10 },
-  browserDots: { display: 'flex', gap: 5, '& span': {} },
-  browserUrl: { fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: '#666', flex: 1, textAlign: 'center' },
-  browserBody: { height: 260, overflow: 'hidden', position: 'relative' },
-  browserOverlay: { position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(4,4,12,0.5)', padding: 24 },
+const iHero = {
+  wrap: { position: 'relative', minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', paddingTop: 72 },
+  video: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' },
+  videoOverlay: { position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none' },
+  bg: { position: 'absolute', inset: 0, background: 'linear-gradient(160deg, var(--bg) 0%, var(--bg2) 40%, var(--bg) 100%)', overflow: 'hidden' },
+  orb: { position: 'absolute', borderRadius: '50%', filter: 'blur(80px)' },
+  content: { position: 'relative', zIndex: 2, textAlign: 'center', maxWidth: 700, padding: '60px 24px' },
+  topBar: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40, flexWrap: 'wrap', gap: 12 },
+  backBtn: { fontFamily: "'Plus Jakarta Sans'", fontSize: 13, fontWeight: 500, color: 'var(--text2)', background: 'rgba(128,128,128,0.1)', border: '1px solid var(--border)', borderRadius: 100, padding: '8px 20px', cursor: 'pointer', transition: 'all 0.3s ease' },
+  industryBadge: { display: 'flex', alignItems: 'center', gap: 8, fontFamily: "'JetBrains Mono'", fontSize: 11, letterSpacing: '0.1em', color: 'var(--brand)', background: 'var(--brand-glow)', border: '1px solid var(--brand)', borderRadius: 100, padding: '6px 16px' },
+  tag: { fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '0.3em', color: 'var(--brand)', marginBottom: 20 },
+  h1: { fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 5vw, 60px)', fontWeight: 400, lineHeight: 1.15, color: 'var(--text)', margin: '0 0 20px' },
+  sub: { fontFamily: 'var(--font-body)', fontSize: 'clamp(14px, 1.8vw, 17px)', lineHeight: 1.7, color: 'var(--text2)', margin: '0 0 32px' },
+  btns: { display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' },
+  btnPrimary: { display: 'inline-block', padding: '14px 32px', background: 'var(--brand)', color: 'var(--bg)', fontSize: 13, fontWeight: 600, borderRadius: 100, border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)', letterSpacing: '0.02em', transition: 'opacity 0.3s ease' },
+  btnGhost: { display: 'inline-block', padding: '14px 32px', background: 'transparent', color: 'var(--brand)', fontSize: 13, fontWeight: 500, borderRadius: 100, border: '1px solid var(--brand)', cursor: 'pointer', fontFamily: 'var(--font-body)', transition: 'background 0.3s ease, color 0.3s ease' },
 }
 
-const about = {
+const sectionNav = {
+  wrap: { position: 'sticky', top: 72, zIndex: 100, background: 'var(--surface)', borderBottom: '1px solid var(--border)', backdropFilter: 'blur(20px)' },
+  inner: { maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 32, padding: '12px 24px', flexWrap: 'wrap' },
+  link: { display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 600, color: 'var(--text2)', textDecoration: 'none', padding: '8px 16px', borderRadius: 100, transition: 'all 0.3s ease' },
+  icon: { fontSize: 14, color: 'var(--brand)' },
+  featureCount: { fontFamily: "'JetBrains Mono'", fontSize: 10, letterSpacing: '0.1em', color: 'var(--brand)', background: 'var(--brand-glow)', padding: '6px 14px', borderRadius: 100, fontWeight: 600 },
+}
+
+const divider = {
+  wrap: { display: 'flex', alignItems: 'center', gap: 20, maxWidth: 1100, margin: '0 auto', padding: '20px 24px' },
+  line: { flex: 1, height: 1, background: 'var(--border)' },
+  label: { fontFamily: "'JetBrains Mono'", fontSize: 10, letterSpacing: '0.2em', color: 'var(--brand)', whiteSpace: 'nowrap' },
+}
+
+const aboutS = {
   row: { display: 'flex', gap: 24, justifyContent: 'center', marginTop: 40 },
-  card: { background: '#fff', border: '1px solid var(--border)', borderRadius: 20, padding: '32px 40px', textAlign: 'center', minWidth: 180 },
+  card: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 20, padding: '32px 40px', textAlign: 'center', minWidth: 180 },
   avatar: { width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #D4AF37, #E5C76B)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 600, color: '#000', margin: '0 auto 12px', fontFamily: "'Playfair Display', serif" },
   name: { fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 500, color: 'var(--text)', marginBottom: 4 },
   role: { fontSize: 13, color: 'var(--text2)' },
 }
 
-const cta = {
+const ctaS = {
   wrap: {},
   btns: { display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' },
   btn: { display: 'inline-block', padding: '14px 32px', borderRadius: 100, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', fontSize: 14, fontWeight: 500, backdropFilter: 'blur(10px)' },
