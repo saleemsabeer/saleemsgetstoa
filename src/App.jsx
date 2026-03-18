@@ -1,23 +1,29 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import './App.css'
 import Stars from './components/Stars'
 import StoaHome from './pages/StoaHome'
-import PlatformBuilder from './pages/PlatformBuilder'
 
-const SAVE_KEY = 'stoa_platform'
+const MedSpaDemoApp = lazy(() => import('./demos/medspa/MedSpaDemoApp'))
 
 export default function App() {
-  const [mode, setMode] = useState(() => {
-    if (window.location.hash === '#builder') return 'builder'
-    if (localStorage.getItem(SAVE_KEY)) return 'builder'
-    return 'home'
-  })
+  const location = useLocation()
+  const isDemo = location.pathname.startsWith('/demo/')
+
+  if (isDemo) {
+    return (
+      <Suspense fallback={<div style={{ padding: 60, textAlign: 'center', color: '#999' }}>Loading demo...</div>}>
+        <Routes>
+          <Route path="/demo/medspa/*" element={<MedSpaDemoApp />} />
+        </Routes>
+      </Suspense>
+    )
+  }
 
   return (
     <div>
-      <Stars count={mode === 'home' ? 180 : 80} />
-      {mode === 'home' && <StoaHome onBuild={() => { setMode('builder'); window.location.hash = 'builder' }} />}
-      {mode === 'builder' && <PlatformBuilder onBack={() => { setMode('home'); window.location.hash = '' }} />}
+      <Stars count={180} />
+      <StoaHome />
     </div>
   )
 }
