@@ -345,9 +345,8 @@ export default function Charts() {
   const s = useStyles();
   const [, setTick] = useState(0);
   useEffect(() => subscribe(() => setTick(t => t + 1)), []);
-  useEffect(() => { initCharts(); setTick(t => t + 1); }, []);
-
   const [charts, setCharts] = useState(getCharts);
+  useEffect(() => { initCharts(); setCharts(getCharts()); }, []);
   const [activeId, setActiveId] = useState(null);
   const [showNew, setShowNew] = useState(false);
   const [search, setSearch] = useState('');

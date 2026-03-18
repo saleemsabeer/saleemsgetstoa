@@ -65,7 +65,7 @@ export default function Reviews() {
   const s = useStyles();
   const [, setTick] = useState(0);
   useEffect(() => subscribe(() => setTick(t => t + 1)), []);
-  useEffect(() => { seedReviews(); }, []);
+  useEffect(() => { seedReviews(); setTick(t => t + 1); }, []);
 
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');

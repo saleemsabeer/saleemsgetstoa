@@ -51,7 +51,7 @@ export default function Waitlist() {
   const s = useStyles();
   const [, setTick] = useState(0);
   useEffect(() => subscribe(() => setTick(t => t + 1)), []);
-  useEffect(() => { seedWaitlist(); }, []);
+  useEffect(() => { seedWaitlist(); setTick(t => t + 1); }, []);
 
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');

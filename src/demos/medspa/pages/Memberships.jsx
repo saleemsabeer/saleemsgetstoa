@@ -131,7 +131,7 @@ export default function Memberships() {
   const s = useStyles();
   const [, setTick] = useState(0);
   useEffect(() => subscribe(() => setTick(t => t + 1)), []);
-  useEffect(() => { seedMemberships(); }, []);
+  useEffect(() => { seedMemberships(); setTick(t => t + 1); }, []);
 
   const [tab, setTab] = useState('memberships');
   const [filter, setFilter] = useState('all');

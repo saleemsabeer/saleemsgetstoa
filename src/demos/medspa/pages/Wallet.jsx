@@ -86,7 +86,7 @@ export default function Wallet() {
   const s = useStyles();
   const [, setTick] = useState(0);
   useEffect(() => subscribe(() => setTick(t => t + 1)), []);
-  useEffect(() => { initWallet(); }, []);
+  useEffect(() => { initWallet(); setTick(t => t + 1); }, []);
 
   const [tab, setTab] = useState('overview');
   const [search, setSearch] = useState('');

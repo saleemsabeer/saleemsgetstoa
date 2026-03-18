@@ -283,10 +283,9 @@ export default function Inbox() {
   const s = useStyles();
   const [, setTick] = useState(0);
   useEffect(() => subscribe(() => setTick(t => t + 1)), []);
-  useEffect(() => { initInbox(); }, []);
-
   const [conversations, setConversations] = useState(loadConversations);
   const [assignments, setAssignments] = useState(loadAssignments);
+  useEffect(() => { initInbox(); setConversations(loadConversations()); setAssignments(loadAssignments()); }, []);
   const [activeId, setActiveId] = useState(null);
   const [reply, setReply] = useState('');
   const [filter, setFilter] = useState('all'); // 'all' | 'unread' | 'unassigned' | provider id

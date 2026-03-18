@@ -154,7 +154,7 @@ export default function Aftercare() {
   const s = useStyles();
   const [, setTick] = useState(0);
   useEffect(() => subscribe(() => setTick(t => t + 1)), []);
-  useEffect(() => { initAftercare(); }, []);
+  useEffect(() => { initAftercare(); setTick(t => t + 1); }, []);
 
   const [tab, setTab] = useState('dashboard');
   const [search, setSearch] = useState('');

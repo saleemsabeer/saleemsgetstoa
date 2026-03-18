@@ -48,7 +48,7 @@ export default function Referrals() {
   const s = useStyles();
   const [, setTick] = useState(0);
   useEffect(() => subscribe(() => setTick(t => t + 1)), []);
-  useEffect(() => { seedReferrals(); }, []);
+  useEffect(() => { seedReferrals(); setTick(t => t + 1); }, []);
 
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
