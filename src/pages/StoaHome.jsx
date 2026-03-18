@@ -120,6 +120,7 @@ function saveEdits(e) { localStorage.setItem(EDIT_KEY, JSON.stringify(e)) }
 
 export default function StoaHome() {
   const [selectedIndustry, setSelectedIndustry] = useState(null)
+  const [activeBubble, setActiveBubble] = useState(null)
   const [heroVis, setHeroVis] = useState(false)
   const [heroVidLoaded, setHeroVidLoaded] = useState(false)
   const [editMode, setEditMode] = useState(false)
@@ -154,10 +155,39 @@ export default function StoaHome() {
     Object.entries(industry.theme).forEach(([k, v]) => document.documentElement.style.setProperty(k, v))
   }, [industry])
 
+  // Feature bubbles per industry — maps to showcase page keys
+  const BUBBLES = {
+    medspa: [
+      { key: 'dashboard', label: 'Dashboard' },
+      { key: 'patients', label: 'Patients' },
+      { key: 'schedule', label: 'Schedule' },
+      { key: 'inventory', label: 'Inventory' },
+      { key: 'inbox', label: 'DM Inbox' },
+      { key: 'email', label: 'Email Marketing' },
+      { key: 'checkin', label: 'Check-In' },
+      { key: 'treatments', label: 'Treatment Plans' },
+      { key: 'charts', label: 'Clinical Charts' },
+      { key: 'photos', label: 'Before & After' },
+      { key: 'memberships', label: 'Memberships' },
+      { key: 'reports', label: 'Reports' },
+    ],
+    museum: [
+      { key: 'dashboard', label: 'Dashboard' },
+      { key: 'store', label: 'Gift Shop' },
+      { key: 'events', label: 'Events' },
+      { key: 'inventory', label: 'Inventory' },
+      { key: 'orders', label: 'Orders' },
+      { key: 'donations', label: 'Donations' },
+      { key: 'email', label: 'Email Marketing' },
+      { key: 'pos', label: 'Point of Sale' },
+    ],
+  }
+
   const handleSelectIndustry = useCallback((id) => {
     setTransforming(true)
     setTimeout(() => {
       setSelectedIndustry(id)
+      setActiveBubble(BUBBLES[id]?.[0]?.key || 'dashboard')
       setTransforming(false)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }, 400)
@@ -365,36 +395,73 @@ export default function StoaHome() {
             <MiniSwitcher current={selectedIndustry} onSelect={handleSelectIndustry} />
           </div>
 
-          {/* ── ACTUAL DEMO APP ── */}
-          <Suspense fallback={<div style={{ padding: 80, textAlign: 'center', color: 'var(--text2)' }}>Loading demo...</div>}>
-            {selectedIndustry === 'medspa' && (
-              <div style={demoWrap}>
-                <MedSpaShowcase />
+          {/* ── PLATFORM SHOWCASE ── */}
+          <div style={showcase.section}>
+            <Reveal>
+              <div style={showcase.label}>
+                <span style={{ color: 'var(--brand)', marginRight: 8 }}>▦</span>
+                THIS IS THE APP WE BUILT
               </div>
+            </Reveal>
+
+            {/* Feature Bubbles */}
+            {BUBBLES[selectedIndustry] && (
+              <Reveal delay={100}>
+                <div style={showcase.bubbles}>
+                  {BUBBLES[selectedIndustry].map(b => (
+                    <button
+                      key={b.key}
+                      onClick={() => setActiveBubble(b.key)}
+                      style={{
+                        ...showcase.bubble,
+                        background: activeBubble === b.key ? 'var(--brand)' : 'var(--surface)',
+                        color: activeBubble === b.key ? 'var(--bg)' : 'var(--text2)',
+                        borderColor: activeBubble === b.key ? 'var(--brand)' : 'var(--border)',
+                      }}
+                    >
+                      {b.label}
+                    </button>
+                  ))}
+                </div>
+              </Reveal>
             )}
-            {selectedIndustry === 'museum' && (
-              <div style={demoWrap}>
-                <MuseumShowcase />
-              </div>
-            )}
-            {/* Industries without full demos yet */}
-            {!['medspa', 'museum'].includes(selectedIndustry) && (
-              <div style={comingSoonWrap}>
-                <div style={comingSoonInner}>
-                  <div style={{ fontSize: 48, color: 'var(--brand)', opacity: 0.3, marginBottom: 20 }}>{industry?.icon}</div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: 500, color: 'var(--text)', marginBottom: 12 }}>
-                    {industry?.name} Platform
+
+            {/* Browser Frame */}
+            <Reveal delay={200}>
+              <div style={showcase.browser}>
+                <div style={showcase.browserBar}>
+                  <div style={showcase.browserDots}>
+                    <span style={{ ...showcase.dot, background: '#ff5f57' }} />
+                    <span style={{ ...showcase.dot, background: '#febc2e' }} />
+                    <span style={{ ...showcase.dot, background: '#28c840' }} />
                   </div>
-                  <div style={{ fontSize: 15, lineHeight: 1.7, color: 'var(--text2)', maxWidth: 500, marginBottom: 32 }}>
-                    This platform is currently in development. The full interactive demo — storefront, admin dashboard, and client portal — is coming soon.
+                  <div style={showcase.browserUrl}>
+                    {industry?.name?.toLowerCase().replace(/[^a-z0-9]/g, '')}.vercel.app / {activeBubble}
                   </div>
-                  <a href="mailto:hello@getstoa.io" style={{ display: 'inline-block', padding: '14px 32px', background: 'var(--brand)', color: 'var(--bg)', fontSize: 13, fontWeight: 600, borderRadius: 100, fontFamily: 'var(--font-body)' }}>
-                    Book a Demo
-                  </a>
+                </div>
+                <div style={showcase.browserBody}>
+                  <Suspense fallback={<div style={{ padding: 80, textAlign: 'center', color: '#999' }}>Loading...</div>}>
+                    {selectedIndustry === 'medspa' && (
+                      <MedSpaShowcase activePage={activeBubble} onPageChange={setActiveBubble} />
+                    )}
+                    {selectedIndustry === 'museum' && (
+                      <MuseumShowcase activePage={activeBubble} onPageChange={setActiveBubble} />
+                    )}
+                    {!['medspa', 'museum'].includes(selectedIndustry) && (
+                      <div style={{ padding: 80, textAlign: 'center' }}>
+                        <div style={{ fontSize: 40, color: 'var(--brand)', opacity: 0.2, marginBottom: 16 }}>{industry?.icon}</div>
+                        <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)', marginBottom: 8 }}>{industry?.name}</div>
+                        <div style={{ fontSize: 14, color: 'var(--text2)', marginBottom: 24 }}>Full interactive demo coming soon</div>
+                        <a href="mailto:hello@getstoa.io" style={{ display: 'inline-block', padding: '12px 28px', background: 'var(--brand)', color: 'var(--bg)', fontSize: 13, fontWeight: 600, borderRadius: 100, fontFamily: 'var(--font-body)' }}>
+                          Book a Demo
+                        </a>
+                      </div>
+                    )}
+                  </Suspense>
                 </div>
               </div>
-            )}
-          </Suspense>
+            </Reveal>
+          </div>
         </div>
       )}
 
@@ -616,23 +683,50 @@ const iHero = {
   btnGhost: { display: 'inline-block', padding: '14px 32px', background: 'transparent', color: 'var(--brand)', fontSize: 13, fontWeight: 500, borderRadius: 100, border: '1px solid var(--brand)', cursor: 'pointer', fontFamily: 'var(--font-body)', transition: 'background 0.3s ease, color 0.3s ease' },
 }
 
-const demoWrap = {
-  minHeight: '80vh',
-  borderTop: '1px solid var(--border)',
-}
-
-const comingSoonWrap = {
-  minHeight: '60vh',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderTop: '1px solid var(--border)',
-}
-
-const comingSoonInner = {
-  textAlign: 'center',
-  padding: '80px 24px',
-  maxWidth: 600,
+const showcase = {
+  section: { maxWidth: 1200, margin: '0 auto', padding: '60px 24px 80px' },
+  label: {
+    textAlign: 'center', padding: '0 0 28px',
+    fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '0.25em',
+    color: 'var(--muted)',
+  },
+  bubbles: {
+    display: 'flex', flexWrap: 'wrap', gap: 8,
+    justifyContent: 'center', padding: '0 0 28px',
+  },
+  bubble: {
+    display: 'inline-flex', alignItems: 'center',
+    padding: '8px 18px', borderRadius: 100,
+    border: '1px solid',
+    fontSize: 12, fontWeight: 600, letterSpacing: '0.02em',
+    fontFamily: 'var(--font-body)',
+    cursor: 'pointer',
+    transition: 'all 0.3s cubic-bezier(.16,1,.3,1)',
+  },
+  browser: {
+    borderRadius: 14, overflow: 'hidden',
+    border: '1px solid var(--border)',
+    boxShadow: '0 20px 80px rgba(0,0,0,0.3)',
+    background: 'var(--surface)',
+  },
+  browserBar: {
+    display: 'flex', alignItems: 'center', gap: 12,
+    padding: '10px 16px',
+    background: 'var(--surface2)',
+    borderBottom: '1px solid var(--border)',
+  },
+  browserDots: { display: 'flex', gap: 6, flexShrink: 0 },
+  dot: { width: 10, height: 10, borderRadius: '50%', display: 'block' },
+  browserUrl: {
+    flex: 1, textAlign: 'center',
+    fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: 'var(--muted)',
+    letterSpacing: '0.02em',
+  },
+  browserBody: {
+    height: '75vh', minHeight: 550,
+    overflow: 'auto', position: 'relative',
+    background: 'var(--bg2)',
+  },
 }
 
 const aboutS = {

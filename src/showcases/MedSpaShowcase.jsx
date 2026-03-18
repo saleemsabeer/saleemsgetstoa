@@ -1105,8 +1105,10 @@ function ComingSoonPage({ label }) {
 // ============================================================================
 // MAIN SHOWCASE COMPONENT
 // ============================================================================
-export default function MedSpaShowcase() {
-  const [activePage, setActivePage] = useState('dashboard');
+export default function MedSpaShowcase({ activePage: controlledPage, onPageChange }) {
+  const [internalPage, setInternalPage] = useState('dashboard');
+  const activePage = controlledPage || internalPage;
+  const setActivePage = (p) => { setInternalPage(p); onPageChange?.(p); };
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const sidebarWidth = sidebarCollapsed ? 68 : 240;

@@ -74,8 +74,10 @@ const NAV = [
 ]
 
 /* ─── COMPONENT ─── */
-export default function MuseumShowcase() {
-  const [page, setPage] = useState('dashboard')
+export default function MuseumShowcase({ activePage: controlledPage, onPageChange }) {
+  const [internalPage, setInternalPage] = useState('dashboard')
+  const page = controlledPage || internalPage
+  const setPage = (p) => { setInternalPage(p); onPageChange?.(p) }
   const [storeCat, setStoreCat] = useState('All')
   const [invCat, setInvCat] = useState('All')
   const [posCart, setPosCart] = useState([])
