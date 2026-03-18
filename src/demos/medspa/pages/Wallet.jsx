@@ -10,7 +10,7 @@ function save(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
 const fmt = (cents) => `$${(cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 function initWallet() {
-  if (localStorage.getItem('ms_wallet_init')) return;
+  if (localStorage.getItem('ms_wallet_init') && get().length > 0) return;
 
   const patients = getPatients();
   if (patients.length === 0) return;

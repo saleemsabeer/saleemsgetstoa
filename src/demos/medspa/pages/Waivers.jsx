@@ -661,7 +661,7 @@ Date: ____________` },
 ];
 
 function initWaivers() {
-  if (localStorage.getItem('ms_waivers_init')) return;
+  if (localStorage.getItem('ms_waivers_init') && getWaivers().length > 0) return;
   const now = new Date();
   const ago = (days) => new Date(now - days * 86400000).toISOString();
   saveWaivers([

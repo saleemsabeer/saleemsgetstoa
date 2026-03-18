@@ -101,7 +101,7 @@ const TEMPLATES = [
 ];
 
 function initAftercare() {
-  if (localStorage.getItem('ms_aftercare_init')) return;
+  if (localStorage.getItem('ms_aftercare_init') && get().length > 0) return;
 
   const patients = getPatients();
   if (patients.length === 0) return;

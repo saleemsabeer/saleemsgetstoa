@@ -18,7 +18,7 @@ const ANGLES = [...new Set([...FACE_ANGLES, ...BODY_ANGLES, ...SCALP_ANGLES])];
 const LIGHTING = ['Clinical (white)', 'Natural', 'Ring Light'];
 
 function initPhotos() {
-  if (localStorage.getItem('ms_photos_init')) return;
+  if (localStorage.getItem('ms_photos_init') && JSON.parse(localStorage.getItem('ms_photos') || '[]').length > 0) return;
   const store = JSON.parse(localStorage.getItem('ms_photos') || '[]');
   if (store.length > 0) { localStorage.setItem('ms_photos_init', 'true'); return; }
 

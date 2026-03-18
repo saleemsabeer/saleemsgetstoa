@@ -97,7 +97,7 @@ export function initStore() {
   // Always seed missing keys (even if already initialized)
   seedIfEmpty(d, today);
 
-  if (alreadyInit) return;
+  if (alreadyInit && get('ms_patients', []).length > 0) return;
   const t = (h, m) => `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 
   // Providers (6 providers covering all 32 services)
