@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react'
 import LazyVideo from '../components/LazyVideo'
 import { LandingSelector, MiniSwitcher } from '../components/IndustrySelector'
-import FeatureToggles from '../components/FeatureToggles'
-import Storefront from '../sections/Storefront'
-import Dashboard from '../sections/Dashboard'
-import Portal from '../sections/Portal'
-import { industries, getIndustry, getFeatures, FEATURES } from '../industries/index'
+import { industries, getIndustry } from '../industries/index'
+
+/* Lazy-load COPIES of the demos (standalone, no router/store deps) */
+const MedSpaShowcase = lazy(() => import('../showcases/MedSpaShowcase'))
+const MuseumShowcase = lazy(() => import('../showcases/MuseumShowcase'))
 
 const V = 'https://ssdozdtdcrkaoayzhrsa.supabase.co/storage/v1/object/public/videos/'
 
@@ -120,7 +120,6 @@ function saveEdits(e) { localStorage.setItem(EDIT_KEY, JSON.stringify(e)) }
 
 export default function StoaHome() {
   const [selectedIndustry, setSelectedIndustry] = useState(null)
-  const [enabled, setEnabled] = useState({})
   const [heroVis, setHeroVis] = useState(false)
   const [heroVidLoaded, setHeroVidLoaded] = useState(false)
   const [editMode, setEditMode] = useState(false)
@@ -128,7 +127,6 @@ export default function StoaHome() {
   const [brandColor, setBrandColor] = useState(() => localStorage.getItem(COLOR_KEY) || '#D4AF37')
   const [showColorPicker, setShowColorPicker] = useState(false)
   const [transforming, setTransforming] = useState(false)
-  const sectionsRef = useRef(null)
 
   useEffect(() => { setTimeout(() => setHeroVis(true), 300) }, [])
   useEffect(() => { saveEdits(edits) }, [edits])
@@ -138,7 +136,6 @@ export default function StoaHome() {
   }, [brandColor])
 
   const industry = selectedIndustry ? getIndustry(selectedIndustry) : null
-  const features = selectedIndustry ? getFeatures(selectedIndustry) : {}
 
   // Apply theme when industry changes
   useEffect(() => {
@@ -160,9 +157,7 @@ export default function StoaHome() {
   const handleSelectIndustry = useCallback((id) => {
     setTransforming(true)
     setTimeout(() => {
-      const ind = getIndustry(id)
       setSelectedIndustry(id)
-      setEnabled({ ...ind.defaultEnabled })
       setTransforming(false)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }, 400)
@@ -172,14 +167,9 @@ export default function StoaHome() {
     setTransforming(true)
     setTimeout(() => {
       setSelectedIndustry(null)
-      setEnabled({})
       setTransforming(false)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }, 400)
-  }, [])
-
-  const handleToggle = useCallback((key) => {
-    setEnabled(prev => ({ ...prev, [key]: !prev[key] }))
   }, [])
 
   // Editable text component
@@ -375,58 +365,36 @@ export default function StoaHome() {
             <MiniSwitcher current={selectedIndustry} onSelect={handleSelectIndustry} />
           </div>
 
-          {/* Section Navigation */}
-          <div style={sectionNav.wrap}>
-            <div style={sectionNav.inner}>
-              {['storefront', 'dashboard', 'portal'].map(sec => (
-                <a key={sec} href={`#${sec}`} style={sectionNav.link}>
-                  <span style={sectionNav.icon}>
-                    {sec === 'storefront' ? '◈' : sec === 'dashboard' ? '▦' : '◇'}
-                  </span>
-                  <span>{sec === 'storefront' ? 'Storefront' : sec === 'dashboard' ? 'Dashboard' : 'Portal'}</span>
-                </a>
-              ))}
-              <div style={sectionNav.featureCount}>
-                {Object.values(enabled).filter(Boolean).length} features active
+          {/* ── ACTUAL DEMO APP ── */}
+          <Suspense fallback={<div style={{ padding: 80, textAlign: 'center', color: 'var(--text2)' }}>Loading demo...</div>}>
+            {selectedIndustry === 'medspa' && (
+              <div style={demoWrap}>
+                <MedSpaShowcase />
               </div>
-            </div>
-          </div>
-
-          {/* ── STOREFRONT SECTIONS ── */}
-          <div id="storefront">
-            <Storefront data={industry} enabled={enabled} />
-          </div>
-
-          {/* ── Section Divider ── */}
-          <div style={divider.wrap}>
-            <div style={divider.line} />
-            <div style={divider.label}>▦ ADMIN DASHBOARD</div>
-            <div style={divider.line} />
-          </div>
-
-          {/* ── DASHBOARD SECTIONS ── */}
-          <div id="dashboard">
-            <Dashboard data={industry} enabled={enabled} />
-          </div>
-
-          {/* ── Section Divider ── */}
-          <div style={divider.wrap}>
-            <div style={divider.line} />
-            <div style={divider.label}>◇ CLIENT PORTAL</div>
-            <div style={divider.line} />
-          </div>
-
-          {/* ── PORTAL SECTIONS ── */}
-          <div id="portal">
-            <Portal data={industry} enabled={enabled} />
-          </div>
-
-          {/* ── Feature Toggles Sidebar ── */}
-          <FeatureToggles
-            features={features}
-            enabled={enabled}
-            onToggle={handleToggle}
-          />
+            )}
+            {selectedIndustry === 'museum' && (
+              <div style={demoWrap}>
+                <MuseumShowcase />
+              </div>
+            )}
+            {/* Industries without full demos yet */}
+            {!['medspa', 'museum'].includes(selectedIndustry) && (
+              <div style={comingSoonWrap}>
+                <div style={comingSoonInner}>
+                  <div style={{ fontSize: 48, color: 'var(--brand)', opacity: 0.3, marginBottom: 20 }}>{industry?.icon}</div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: 500, color: 'var(--text)', marginBottom: 12 }}>
+                    {industry?.name} Platform
+                  </div>
+                  <div style={{ fontSize: 15, lineHeight: 1.7, color: 'var(--text2)', maxWidth: 500, marginBottom: 32 }}>
+                    This platform is currently in development. The full interactive demo — storefront, admin dashboard, and client portal — is coming soon.
+                  </div>
+                  <a href="mailto:hello@getstoa.io" style={{ display: 'inline-block', padding: '14px 32px', background: 'var(--brand)', color: 'var(--bg)', fontSize: 13, fontWeight: 600, borderRadius: 100, fontFamily: 'var(--font-body)' }}>
+                    Book a Demo
+                  </a>
+                </div>
+              </div>
+            )}
+          </Suspense>
         </div>
       )}
 
@@ -648,18 +616,23 @@ const iHero = {
   btnGhost: { display: 'inline-block', padding: '14px 32px', background: 'transparent', color: 'var(--brand)', fontSize: 13, fontWeight: 500, borderRadius: 100, border: '1px solid var(--brand)', cursor: 'pointer', fontFamily: 'var(--font-body)', transition: 'background 0.3s ease, color 0.3s ease' },
 }
 
-const sectionNav = {
-  wrap: { position: 'sticky', top: 72, zIndex: 100, background: 'var(--surface)', borderBottom: '1px solid var(--border)', backdropFilter: 'blur(20px)' },
-  inner: { maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 32, padding: '12px 24px', flexWrap: 'wrap' },
-  link: { display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 600, color: 'var(--text2)', textDecoration: 'none', padding: '8px 16px', borderRadius: 100, transition: 'all 0.3s ease' },
-  icon: { fontSize: 14, color: 'var(--brand)' },
-  featureCount: { fontFamily: "'JetBrains Mono'", fontSize: 10, letterSpacing: '0.1em', color: 'var(--brand)', background: 'var(--brand-glow)', padding: '6px 14px', borderRadius: 100, fontWeight: 600 },
+const demoWrap = {
+  minHeight: '80vh',
+  borderTop: '1px solid var(--border)',
 }
 
-const divider = {
-  wrap: { display: 'flex', alignItems: 'center', gap: 20, maxWidth: 1100, margin: '0 auto', padding: '20px 24px' },
-  line: { flex: 1, height: 1, background: 'var(--border)' },
-  label: { fontFamily: "'JetBrains Mono'", fontSize: 10, letterSpacing: '0.2em', color: 'var(--brand)', whiteSpace: 'nowrap' },
+const comingSoonWrap = {
+  minHeight: '60vh',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderTop: '1px solid var(--border)',
+}
+
+const comingSoonInner = {
+  textAlign: 'center',
+  padding: '80px 24px',
+  maxWidth: 600,
 }
 
 const aboutS = {
