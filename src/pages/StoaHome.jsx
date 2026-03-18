@@ -158,28 +158,28 @@ export default function StoaHome() {
   // Feature bubbles per industry — maps to showcase page keys
   const BUBBLES = {
     medspa: [
-      { key: 'dashboard', label: 'Dashboard' },
-      { key: 'patients', label: 'Patients' },
-      { key: 'schedule', label: 'Schedule' },
-      { key: 'inventory', label: 'Inventory' },
-      { key: 'inbox', label: 'DM Inbox' },
-      { key: 'email', label: 'Email Marketing' },
-      { key: 'checkin', label: 'Check-In' },
-      { key: 'treatments', label: 'Treatment Plans' },
-      { key: 'charts', label: 'Clinical Charts' },
-      { key: 'photos', label: 'Before & After' },
-      { key: 'memberships', label: 'Memberships' },
-      { key: 'reports', label: 'Reports' },
+      { key: 'dashboard', label: 'Dashboard', desc: 'Command center with today\'s appointments, revenue KPIs, client retention metrics, low stock alerts, and an AI-generated daily summary.' },
+      { key: 'patients', label: 'Patients', desc: 'Complete client records — contact info, treatment history, consent forms, photos, notes, membership tier, and lifetime spending totals.' },
+      { key: 'schedule', label: 'Schedule', desc: 'Visual calendar with day, week, and list views. See all appointments by provider, manage availability, and spot scheduling gaps.' },
+      { key: 'inventory', label: 'Inventory', desc: 'Track injectables, skincare products, and supplies. Lot numbers, expiration dates, stock levels, and automated reorder alerts.' },
+      { key: 'inbox', label: 'DM Inbox', desc: 'Unified social media inbox — Instagram, Facebook, and TikTok DMs in one place. Track which conversations drive revenue.' },
+      { key: 'email', label: 'Email Marketing', desc: 'Email campaign builder with templates for promotions, appointment reminders, and post-treatment follow-ups. Open and click analytics.' },
+      { key: 'checkin', label: 'Check-In', desc: 'Front desk check-in flow. Verify client info, process consent forms, collect payments, and update visit status in real time.' },
+      { key: 'treatments', label: 'Treatment Plans', desc: 'Multi-session treatment tracking. Build custom plans, schedule follow-ups, and monitor progress across visits.' },
+      { key: 'charts', label: 'Clinical Charts', desc: 'SOAP notes with injection mapping. Document treatments with precise facial diagrams, dosages, and provider notes.' },
+      { key: 'photos', label: 'Before & After', desc: 'Photo gallery management for treatment results. Upload, tag by treatment type, and showcase transformations on the website.' },
+      { key: 'memberships', label: 'Memberships', desc: 'Manage membership tiers, track active members, process renewals, and analyze membership revenue and retention.' },
+      { key: 'reports', label: 'Reports', desc: 'Revenue by provider, treatment popularity, client retention rates, membership analytics, and financial CSV exports.' },
     ],
     museum: [
-      { key: 'dashboard', label: 'Dashboard' },
-      { key: 'store', label: 'Gift Shop' },
-      { key: 'events', label: 'Events' },
-      { key: 'inventory', label: 'Inventory' },
-      { key: 'orders', label: 'Orders' },
-      { key: 'donations', label: 'Donations' },
-      { key: 'email', label: 'Email Marketing' },
-      { key: 'pos', label: 'Point of Sale' },
+      { key: 'dashboard', label: 'Dashboard', desc: 'Real-time command center with visitor counts, revenue tracking, gift shop sales, event bookings, and AI-generated operational summary.' },
+      { key: 'store', label: 'Gift Shop', desc: 'Online store with products synced from Printify. Category filters, search, product detail pages, variants, and Stripe checkout.' },
+      { key: 'events', label: 'Events', desc: 'Create and manage events — set capacity limits, track RSVPs, handle ticket sales, and manage private bookings from one place.' },
+      { key: 'inventory', label: 'Inventory', desc: 'Full inventory management synced with Printify. Stock levels, variants, categories, and automated low-stock alerts.' },
+      { key: 'orders', label: 'Orders', desc: 'Order management with status tracking, fulfillment workflow, customer details, and shipping integration.' },
+      { key: 'donations', label: 'Donations', desc: 'Track donations, manage donors, generate tax receipts, view giving trends, and manage recurring gift campaigns.' },
+      { key: 'email', label: 'Email Marketing', desc: 'Email campaign builder with audience segmentation, open/click analytics, scheduling, and branded templates.' },
+      { key: 'pos', label: 'Point of Sale', desc: 'Tablet-ready POS terminal for in-person transactions. Quick-add products, apply discounts, process payments, and print receipts.' },
     ],
   }
 
@@ -461,6 +461,20 @@ export default function StoaHome() {
                 </div>
               </div>
             </Reveal>
+
+            {/* Description below browser frame */}
+            {BUBBLES[selectedIndustry] && (() => {
+              const active = BUBBLES[selectedIndustry].find(b => b.key === activeBubble)
+              if (!active) return null
+              return (
+                <Reveal delay={300}>
+                  <div style={showcase.desc}>
+                    <div style={showcase.descTitle}>{active.label}</div>
+                    <p style={showcase.descText}>{active.desc}</p>
+                  </div>
+                </Reveal>
+              )
+            })()}
           </div>
         </div>
       )}
@@ -726,6 +740,17 @@ const showcase = {
     height: '75vh', minHeight: 550,
     overflow: 'auto', position: 'relative',
     background: 'var(--bg2)',
+  },
+  desc: {
+    textAlign: 'center', maxWidth: 700, margin: '0 auto',
+    padding: '32px 24px 0',
+  },
+  descTitle: {
+    fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 600,
+    color: 'var(--text)', marginBottom: 8,
+  },
+  descText: {
+    fontSize: 15, lineHeight: 1.7, color: 'var(--text2)', margin: 0,
   },
 }
 
