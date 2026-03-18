@@ -347,6 +347,102 @@ export default function StoaHome({ onBuild }) {
           </div>
         </Reveal>
 
+        {/* ── Woolson Audio ── */}
+        <Reveal>
+          <div style={{ ...work.card, flexDirection: 'row-reverse' }}>
+            <div style={work.cardLeft}>
+              <div style={work.cardTag}>VINTAGE AUDIO · E-COMMERCE · LUXURY RETAIL</div>
+              <h3 style={work.cardTitle}>Woolson Audio</h3>
+              <p style={work.cardDesc}>
+                Premium e-commerce storefront for a Phoenix vintage audio dealer. Curated collection of
+                professionally restored Marantz, Pioneer, JBL, Sansui, and Technics equipment. Dark luxury
+                aesthetic with product catalog, gallery, featured spotlight pieces, and newsletter signup.
+              </p>
+              <div style={work.chipRow}>
+                {['Product Catalog', 'Collections', 'Featured Spotlight', 'Gallery', 'Newsletter', 'Brand Marquee', 'Contact Form'].map(c => (
+                  <span key={c} style={work.chip}>{c}</span>
+                ))}
+              </div>
+              <a href="https://woolson-audio.vercel.app" target="_blank" rel="noopener" style={work.cardLink}>
+                View Live Site →
+              </a>
+            </div>
+            <div style={work.cardRight}>
+              <div style={work.browser}>
+                <div style={work.browserBar}>
+                  <div style={work.browserDots}><span /><span /><span /></div>
+                  <div style={work.browserUrl}>woolson-audio.vercel.app</div>
+                </div>
+                <div style={{ ...work.browserBody, background: 'linear-gradient(135deg, #0a0a0a, #1a1510)' }}>
+                  <div style={{ padding: 24, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 10 }}>
+                    <div style={{ fontSize: 9, letterSpacing: '0.3em', color: '#8B7355' }}>PHOENIX, ARIZONA</div>
+                    <div style={{ fontFamily: "'Playfair Display'", fontSize: 26, color: '#D4AF37', fontWeight: 400 }}>Woolson Audio</div>
+                    <div style={{ fontSize: 11, color: '#666', lineHeight: 1.5, maxWidth: 220 }}>Vintage &amp; high-end audio — sourced, tested, restored</div>
+                    <div style={{ display: 'flex', gap: 6, marginTop: 4, flexWrap: 'wrap', justifyContent: 'center' }}>
+                      {['Marantz', 'Pioneer', 'JBL', 'Sansui'].map(b => (
+                        <span key={b} style={{ padding: '4px 10px', borderRadius: 100, border: '1px solid rgba(212,175,55,0.2)', color: '#8B7355', fontSize: 9, letterSpacing: '0.1em' }}>{b}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* ── MedSpa Platform ── */}
+        <Reveal>
+          <div style={work.card}>
+            <div style={work.cardLeft}>
+              <div style={work.cardTag}>MEDSPA · 25 PAGES · FULL ADMIN</div>
+              <h3 style={work.cardTitle}>MedSpa Platform</h3>
+              <p style={work.cardDesc}>
+                25-page white-label platform for aesthetic clinics. Schedule with day/week/list views.
+                Clinical charts with SOAP notes and injection mapping. DM inbox tracking Instagram revenue.
+                Patient portal. Memberships with tiers. Retention engine. 32 services. 15 consent forms.
+                Text and email marketing. Before &amp; after photos. Inventory. POS check-in. Reports.
+              </p>
+              <div style={work.chipRow}>
+                {['Schedule & Booking', 'Clinical Charts', 'Injection Mapping', 'DM Inbox', 'Patient Portal', 'Memberships', 'Retention Engine', 'Consent Forms', 'Aftercare', 'Text & Email', 'Reports', 'POS Check-In'].map(c => (
+                  <span key={c} style={work.chip}>{c}</span>
+                ))}
+              </div>
+              <a href="/demo/medspa" style={work.cardLink}>
+                Explore Full Demo →
+              </a>
+            </div>
+            <div style={work.cardRight}>
+              <div style={work.browser}>
+                <div style={work.browserBar}>
+                  <div style={work.browserDots}><span /><span /><span /></div>
+                  <div style={work.browserUrl}>getstoa.io/demo/medspa</div>
+                </div>
+                <div style={{ ...work.browserBody, background: '#F5F3F0' }}>
+                  <div style={{ padding: 16, display: 'flex', gap: 12, height: '100%' }}>
+                    <div style={{ width: 120, background: '#fff', borderRadius: 10, padding: '14px 10px', display: 'flex', flexDirection: 'column', gap: 4, flexShrink: 0 }}>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: '#111', marginBottom: 6 }}>Glow Aesthetics</div>
+                      {['Dashboard', 'Patients', 'Schedule', 'Charts', 'Inbox', 'Inventory'].map(n => (
+                        <div key={n} style={{ fontSize: 9, color: n === 'Dashboard' ? '#111' : '#999', padding: '3px 6px', borderRadius: 4, background: n === 'Dashboard' ? '#f5f5f5' : 'transparent' }}>{n}</div>
+                      ))}
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: '#111' }}>Good morning, team</div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+                        {[{ v: '8', l: 'Appointments' }, { v: '$4,200', l: 'Revenue' }, { v: '247', l: 'Patients' }, { v: '3', l: 'Alerts' }].map(k => (
+                          <div key={k.l} style={{ background: '#fff', borderRadius: 8, padding: '8px 10px', border: '1px solid rgba(0,0,0,0.04)' }}>
+                            <div style={{ fontSize: 14, fontWeight: 700, color: '#111' }}>{k.v}</div>
+                            <div style={{ fontSize: 8, color: '#999', textTransform: 'uppercase', letterSpacing: 0.5 }}>{k.l}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
         {/* ── MedFlow ── */}
         <Reveal>
           <div style={{ ...work.card, flexDirection: 'row-reverse' }}>
@@ -396,19 +492,189 @@ export default function StoaHome({ onBuild }) {
           </div>
         </Reveal>
 
-        {/* ── MedSpa ── */}
+        {/* ── Taco Boy's ── */}
+        <Reveal>
+          <div style={work.card}>
+            <div style={work.cardLeft}>
+              <div style={work.cardTag}>RESTAURANT · ORDERING · MEMBER PORTAL</div>
+              <h3 style={work.cardTitle}>Taco Boy's</h3>
+              <p style={work.cardDesc}>
+                Full restaurant platform for Taco Boy's — Sonoran Style Since 2019. Customer-facing menu
+                and ordering, admin dashboard for managing operations, and a member portal with loyalty rewards.
+                Not just a website — a system that runs the business.
+              </p>
+              <div style={work.chipRow}>
+                {['Online Menu', 'Ordering System', 'Admin Dashboard', 'Member Portal', 'Loyalty Rewards', 'Sign-In'].map(c => (
+                  <span key={c} style={work.chip}>{c}</span>
+                ))}
+              </div>
+            </div>
+            <div style={work.cardRight}>
+              <div style={work.browser}>
+                <div style={work.browserBar}>
+                  <div style={work.browserDots}><span /><span /><span /></div>
+                  <div style={work.browserUrl}>tacoboys.vercel.app</div>
+                </div>
+                <div style={{ ...work.browserBody, background: 'linear-gradient(135deg, #1a1a1a, #2d1f0e)' }}>
+                  <div style={{ padding: 24, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 12 }}>
+                    <div style={{ fontSize: 11, letterSpacing: '0.25em', color: '#D4AF37' }}>SONORAN STYLE SINCE 2019</div>
+                    <div style={{ fontFamily: "'Playfair Display'", fontSize: 28, color: '#fff', fontWeight: 500 }}>Taco Boy's</div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      {['Menu', 'Order', 'Rewards'].map(s => (
+                        <span key={s} style={{ padding: '6px 14px', borderRadius: 100, background: 'rgba(212,175,55,0.15)', color: '#D4AF37', fontSize: 11, fontWeight: 600 }}>{s}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* ── Media4You ── */}
+        <Reveal>
+          <div style={{ ...work.card, flexDirection: 'row-reverse' }}>
+            <div style={work.cardLeft}>
+              <div style={work.cardTag}>SOCIAL MEDIA · MARKETING · ANALYTICS</div>
+              <h3 style={work.cardTitle}>Media4You</h3>
+              <p style={work.cardDesc}>
+                Social media marketing agency dashboard with campaign analytics, performance charts,
+                and content management. Built for agencies managing multiple client accounts across
+                Instagram, Facebook, and TikTok with real-time data visualization.
+              </p>
+              <div style={work.chipRow}>
+                {['Campaign Analytics', 'Performance Charts', 'Content Calendar', 'Client Management', 'Multi-Platform', 'Data Visualization'].map(c => (
+                  <span key={c} style={work.chip}>{c}</span>
+                ))}
+              </div>
+            </div>
+            <div style={work.cardRight}>
+              <div style={work.browser}>
+                <div style={work.browserBar}>
+                  <div style={work.browserDots}><span /><span /><span /></div>
+                  <div style={work.browserUrl}>media4you.vercel.app</div>
+                </div>
+                <div style={{ ...work.browserBody, background: 'linear-gradient(135deg, #f5f0ff, #ece5ff)' }}>
+                  <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <div style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: 11, color: '#7C3AED', letterSpacing: '0.15em' }}>AGENCY DASHBOARD</div>
+                    <div style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: 20, fontWeight: 700, color: '#1a1a2e' }}>Media4You</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+                      {[{ v: '142K', l: 'Reach' }, { v: '8.2%', l: 'Engagement' }, { v: '24', l: 'Campaigns' }].map(k => (
+                        <div key={k.l} style={{ background: '#fff', borderRadius: 10, padding: '12px 10px', border: '1px solid #e5e5e5' }}>
+                          <div style={{ fontSize: 18, fontWeight: 700, color: '#1a1a2e' }}>{k.v}</div>
+                          <div style={{ fontSize: 9, color: '#888' }}>{k.l}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* ── Create & Source ── */}
+        <Reveal>
+          <div style={work.card}>
+            <div style={work.cardLeft}>
+              <div style={work.cardTag}>MERCHANDISE · SOURCING · OPERATIONS</div>
+              <h3 style={work.cardTitle}>Create &amp; Source</h3>
+              <p style={work.cardDesc}>
+                Two-app merchandise sourcing platform — a client portal where brands submit product requests and
+                track orders, and an internal ops dashboard for managing sourcing, quotes, suppliers, and fulfillment.
+                Built on React + TypeScript with an AWS Lambda backend.
+              </p>
+              <div style={work.chipRow}>
+                {['Client Portal', 'Ops Dashboard', 'Order Tracking', 'Supplier Management', 'Quote Builder', 'AWS Backend', 'TypeScript'].map(c => (
+                  <span key={c} style={work.chip}>{c}</span>
+                ))}
+              </div>
+              <a href="https://createandsource-website.vercel.app" target="_blank" rel="noopener" style={work.cardLink}>
+                View Company Site →
+              </a>
+            </div>
+            <div style={work.cardRight}>
+              <div style={work.browser}>
+                <div style={work.browserBar}>
+                  <div style={work.browserDots}><span /><span /><span /></div>
+                  <div style={work.browserUrl}>createandsource-website.vercel.app</div>
+                </div>
+                <div style={{ ...work.browserBody, background: '#faf8f5' }}>
+                  <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <div style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: 11, color: '#8B6914', letterSpacing: '0.15em' }}>CLIENT PORTAL</div>
+                    <div style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: 20, fontWeight: 700, color: '#1a1a1a' }}>Create &amp; Source</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+                      {[{ v: '12', l: 'Active Orders' }, { v: '4', l: 'Pending Quotes' }, { v: '89%', l: 'On-Time' }].map(k => (
+                        <div key={k.l} style={{ background: '#fff', borderRadius: 10, padding: '12px 10px', border: '1px solid #e5e5e5' }}>
+                          <div style={{ fontSize: 18, fontWeight: 700, color: '#1a1a1a' }}>{k.v}</div>
+                          <div style={{ fontSize: 9, color: '#888' }}>{k.l}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ background: 'rgba(139,105,20,0.06)', borderRadius: 10, padding: 12 }}>
+                      <div style={{ fontSize: 10, color: '#8B6914', fontWeight: 600, marginBottom: 4 }}>◈ Recent Activity</div>
+                      <div style={{ fontSize: 11, color: '#555', lineHeight: 1.5 }}>New quote for 500 tees. Shipment #4821 arrived. Supplier invoice pending.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* ── SEAR Festival ── */}
+        <Reveal>
+          <div style={{ ...work.card, flexDirection: 'row-reverse' }}>
+            <div style={work.cardLeft}>
+              <div style={work.cardTag}>FOOD FESTIVAL · TICKETS · MERCH SHOP</div>
+              <h3 style={work.cardTitle}>SEAR Festival</h3>
+              <p style={work.cardDesc}>
+                Salt. Smoke. Savagery. A primal feast experience in San Diego — July 2026.
+                Full event platform with chef profiles, ticket purchasing and checkout, merchandise shop,
+                user accounts, check-in system, and Supabase backend for real-time data.
+              </p>
+              <div style={work.chipRow}>
+                {['Ticket Sales', 'Chef Profiles', 'Merch Shop', 'Checkout', 'User Accounts', 'Check-In System', 'Supabase Backend'].map(c => (
+                  <span key={c} style={work.chip}>{c}</span>
+                ))}
+              </div>
+            </div>
+            <div style={work.cardRight}>
+              <div style={work.browser}>
+                <div style={work.browserBar}>
+                  <div style={work.browserDots}><span /><span /><span /></div>
+                  <div style={work.browserUrl}>sear-festival.vercel.app</div>
+                </div>
+                <div style={{ ...work.browserBody, background: 'linear-gradient(135deg, #1a0a00, #2d1200)' }}>
+                  <div style={{ padding: 24, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 12 }}>
+                    <div style={{ fontSize: 10, letterSpacing: '0.3em', color: '#E07A4F' }}>SALT · SMOKE · SAVAGERY</div>
+                    <div style={{ fontFamily: "'Playfair Display'", fontSize: 32, color: '#fff', fontWeight: 500 }}>SEAR</div>
+                    <div style={{ fontSize: 12, color: '#E07A4F', fontWeight: 500 }}>San Diego · July 18-19, 2026</div>
+                    <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                      {['Tickets', 'Chefs', 'Merch'].map(s => (
+                        <span key={s} style={{ padding: '6px 14px', borderRadius: 100, background: 'rgba(224,122,79,0.15)', color: '#E07A4F', fontSize: 11, fontWeight: 600 }}>{s}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* ── Haus of Confidence ── */}
         <Reveal>
           <div style={work.card}>
             <div style={work.cardLeft}>
               <div style={work.cardTag}>MEDSPA · BOOKING · CLIENT PORTAL</div>
               <h3 style={work.cardTitle}>Haus of Confidence</h3>
               <p style={work.cardDesc}>
-                White-label medspa management platform. 22 pages covering appointment booking,
-                service catalogs, client records, treatment tracking, staff management,
-                inventory, analytics, and payment processing. Built as a demo for Scottsdale medspas.
+                The original medspa platform built for Haus of Confidence in Scottsdale. 22 pages covering
+                appointment booking, service catalogs, client records, treatment tracking, staff management,
+                inventory, analytics, and payment processing. The foundation that became our white-label MedSpa product.
               </p>
               <div style={work.chipRow}>
-                {['Appointment Booking', 'Service Catalog', 'Client Portal', 'Staff Management', 'Treatment Tracking', 'Analytics'].map(c => (
+                {['Appointment Booking', 'Service Catalog', 'Client Portal', 'Staff Management', 'Treatment Tracking', 'Analytics', 'Payments'].map(c => (
                   <span key={c} style={work.chip}>{c}</span>
                 ))}
               </div>
@@ -420,7 +686,7 @@ export default function StoaHome({ onBuild }) {
                   <div style={work.browserUrl}>medspa-platform.vercel.app</div>
                 </div>
                 <div style={{ ...work.browserBody, background: 'linear-gradient(135deg, #f8f0e8, #faf5ef)' }}>
-                  <div style={{ padding: 24, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                  <div style={{ padding: 24, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 12 }}>
                     <div style={{ fontSize: 11, letterSpacing: '0.2em', color: '#b08d6e' }}>HAUS OF CONFIDENCE</div>
                     <div style={{ fontFamily: "'Playfair Display'", fontSize: 22, color: '#3d2e1e', fontWeight: 500 }}>Book Your Experience</div>
                     <div style={{ display: 'flex', gap: 8 }}>
