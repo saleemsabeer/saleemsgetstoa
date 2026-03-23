@@ -1,4 +1,3 @@
-import mespaConfig from './medspa'
 import museumConfig from './museum'
 import ecommerceConfig from './ecommerce'
 import medflowConfig from './medflow'
@@ -56,64 +55,6 @@ export const FEATURES = {
 /* ══════════════════════════════════════════════════════
    SECTION DATA — storefront / dashboard / portal content per industry
    ══════════════════════════════════════════════════════ */
-
-const medspaData = {
-  availableFeatures: ['services','booking','memberships','beforeAfter','kpis','inventory','appointments','clientRecords','staffMgmt','email','reports','treatments','loyalty'],
-  defaultEnabled: { services:true, booking:true, memberships:true, beforeAfter:true, kpis:true, inventory:true, appointments:true, clientRecords:true, staffMgmt:true, email:true, reports:true, treatments:true, loyalty:true },
-  storefront: {
-    heroTag: 'HAUS OF CONFIDENCE',
-    heroTitle: 'Your Glow.\nElevated.',
-    heroSub: 'Premium aesthetic treatments in Scottsdale. Online booking, membership perks, and a treatment experience designed around you.',
-    heroCta: 'Book Now',
-    heroCta2: 'View Services',
-    services: [
-      { title: 'Botox — Full Face', price: '$450', duration: '30 min', desc: 'Smooth forehead lines, crow\'s feet, and frown lines with precision injections.', tag: 'POPULAR' },
-      { title: 'Dermal Fillers — Lips', price: '$650', duration: '45 min', desc: 'Natural-looking volume and definition with hyaluronic acid fillers.' },
-      { title: 'HydraFacial + LED', price: '$250', duration: '60 min', desc: 'Deep cleansing, extraction, hydration, and LED light therapy for radiant skin.' },
-      { title: 'Body Contouring', price: '$800', duration: '90 min', desc: 'Non-invasive fat reduction and skin tightening for targeted body areas.', tag: 'NEW' },
-    ],
-    memberships: [
-      { name: 'Glow', price: '$149/mo', perks: ['1 HydraFacial/month', '10% off all services', 'Priority booking', 'Birthday treatment'] },
-      { name: 'Radiance', price: '$299/mo', perks: ['1 HydraFacial + 1 Botox/month', '20% off all services', 'Priority booking', 'Free aftercare products', 'VIP events access'] },
-      { name: 'Luxe', price: '$499/mo', perks: ['2 treatments/month (any)', '25% off everything', 'Same-day booking', 'Complimentary skincare kit', 'Personal aesthetics consultant'] },
-    ],
-  },
-  dashboard: {
-    greeting: 'Good morning, Haus of Confidence',
-    kpis: [
-      { label: 'Today\'s Appointments', value: '8', change: '2 more than yesterday', up: true },
-      { label: 'Revenue (MTD)', value: '$42,800', change: '+18%', up: true },
-      { label: 'Active Members', value: '247', change: '+12 this month', up: true },
-      { label: 'Client Retention', value: '94%', change: '+2%', up: true },
-    ],
-    aiSummary: 'Revenue is up 18% this month. 3 clients are due for Botox follow-ups this week. Jennifer L. has been a member for 6 months — consider a loyalty reward. Two openings tomorrow afternoon.',
-    recentOrders: [
-      { id: '#HC-1204', customer: 'Jennifer L.', items: 'Botox (40 units)', total: '$450', status: 'Completed' },
-      { id: '#HC-1203', customer: 'Amanda R.', items: 'HydraFacial + LED', total: '$250', status: 'Scheduled' },
-      { id: '#HC-1202', customer: 'Michelle S.', items: 'Dermal Fillers', total: '$650', status: 'Completed' },
-      { id: '#HC-1201', customer: 'Rachel K.', items: 'Body Contouring', total: '$800', status: 'Pending' },
-    ],
-    inventoryAlerts: [
-      { item: 'Botox (50 units)', stock: 4, status: 'Low Stock' },
-      { item: 'Juvederm Voluma', stock: 2, status: 'Low Stock' },
-      { item: 'HydraFacial Tips', stock: 0, status: 'Out of Stock' },
-    ],
-  },
-  portal: {
-    welcome: 'Welcome back, Jennifer',
-    memberSince: 'Member since October 2025 · Radiance Tier',
-    tier: 'Radiance',
-    points: 2480,
-    nextReward: '520 more points for a free HydraFacial upgrade',
-    benefits: ['1 HydraFacial + 1 Botox per month', '20% off all services', 'Priority booking access', 'Free aftercare products', 'VIP events invitations'],
-    history: [
-      { date: 'Mar 12', event: 'Botox — Forehead & Crow\'s Feet (40 units)', type: 'Treatment · Dr. Smith' },
-      { date: 'Feb 28', event: 'HydraFacial + LED Add-On', type: 'Treatment · Dr. Johnson' },
-      { date: 'Feb 15', event: 'Membership renewed — Radiance tier', type: 'Billing · $299' },
-      { date: 'Jan 15', event: 'Dermal Fillers — Nasolabial Folds', type: 'Treatment · Dr. Smith' },
-    ],
-  },
-}
 
 const museumData = {
   availableFeatures: ['events','shop','memberships','donations','kpis','inventory','orders','pos','socialMedia','email','facilityBooking','reports','volunteers'],
@@ -526,7 +467,6 @@ const createandsourceData = {
    COMBINED INDUSTRY EXPORT — theme config + section data
    ══════════════════════════════════════════════════════ */
 export const industries = [
-  { ...mespaConfig, icon: '◈', ...medspaData },
   { ...museumConfig, icon: '✦', ...museumData },
   { ...ecommerceConfig, icon: '▦', ...ecommerceData },
   { ...medflowConfig, icon: '◇', ...medflowData },

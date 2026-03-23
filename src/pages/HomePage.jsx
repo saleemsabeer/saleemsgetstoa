@@ -185,7 +185,6 @@ export default function HomePage({ editMode }) {
           {[
             { name: 'Dark Sky Discovery Center', type: 'Nonprofit · Gift Shop · Events · 22+ Admin Pages', desc: 'Full storefront with video backgrounds, AI design studio, POS, edit mode CMS, social media creator, volunteer portal, facility booking.' },
             { name: 'MedFlow', type: 'Medical Sales CRM · 3 Portals · 22 Admin Pages', desc: 'Admin, sales rep, and doctor portals. AI coaching, compliance tracking, commission tiers, route planning, content library.' },
-            { name: 'Haus of Confidence', type: 'MedSpa · Booking · Client Portal', desc: 'Appointment booking, service catalog, staff management, client records, treatment tracking, payment processing.' },
             { name: 'Create & Source', type: 'Merchandise · Sourcing · Operations', desc: 'Client portal and internal ops dashboard. Order tracking, vendor management, product sourcing, team collaboration.' },
           ].map(c => (
             <div key={c.name} style={styles.caseCard}>

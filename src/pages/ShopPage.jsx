@@ -90,11 +90,11 @@ export default function ShopPage() {
       {/* Cart drawer */}
       {cartOpen && (
         <>
-          <div style={styles.cartOverlay} onClick={() => setCartOpen(false)} />
+          <div style={styles.cartOverlay} onClick={() => setCartOpen(false)} role="presentation" />
           <div style={styles.cartDrawer}>
             <div style={styles.cartHeader}>
               <span style={styles.cartTitle}>Cart ({count})</span>
-              <button style={styles.cartClose} onClick={() => setCartOpen(false)}>✕</button>
+              <button style={styles.cartClose} onClick={() => setCartOpen(false)} aria-label="Close cart">✕</button>
             </div>
             {cart.length === 0 ? (
               <div style={styles.cartEmpty}>Your cart is empty</div>

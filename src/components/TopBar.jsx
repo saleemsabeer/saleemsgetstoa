@@ -5,7 +5,7 @@ export default function TopBar({ page, onMenu, editMode, onEditToggle, isAdmin }
       background: isAdmin ? 'rgba(250,250,248,0.95)' : 'rgba(0,0,0,0.9)',
       borderBottom: isAdmin ? '1px solid #e5e5e5' : '1px solid #1a1a1a',
     }}>
-      <button style={{ ...styles.menuBtn, color: isAdmin ? '#1A1A2E' : '#888' }} onClick={onMenu}>
+      <button style={{ ...styles.menuBtn, color: isAdmin ? '#1A1A2E' : '#888' }} onClick={onMenu} aria-label="Open menu">
         <span style={styles.hamburger}>☰</span>
       </button>
 
@@ -24,6 +24,7 @@ export default function TopBar({ page, onMenu, editMode, onEditToggle, isAdmin }
             color: editMode ? '#000' : '#888',
           }}
           onClick={onEditToggle}
+          aria-label={editMode ? 'Exit edit mode' : 'Enter edit mode'}
         >
           ✎
         </button>

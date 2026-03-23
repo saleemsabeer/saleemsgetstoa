@@ -69,7 +69,7 @@ export default function EventsPage() {
 
       {/* Modal */}
       {modal && (
-        <div style={styles.overlay} onClick={() => setModal(null)}>
+        <div role="presentation" style={styles.overlay} onClick={() => setModal(null)}>
           <div style={styles.modal} onClick={e => e.stopPropagation()}>
             <div style={styles.modalTitle}>Reserve Your Spot</div>
             <div style={styles.modalEv}>{modal.title} · {modal.date} {modal.time}</div>

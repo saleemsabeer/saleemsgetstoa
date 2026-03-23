@@ -79,7 +79,7 @@ export default function Portal({ data, enabled }) {
         </div>
       </Reveal>
 
-      {/* ── Treatment History (medspa) ── */}
+      {/* ── Treatment History ── */}
       {enabled.treatments && (
         <Reveal delay={350}>
           <div style={s.historyCard}>
@@ -104,7 +104,7 @@ export default function Portal({ data, enabled }) {
         </Reveal>
       )}
 
-      {/* ── Loyalty Program (medspa, ecommerce) ── */}
+      {/* ── Loyalty Program ── */}
       {enabled.loyalty && (
         <Reveal delay={350}>
           <div style={s.historyCard}>
@@ -297,10 +297,6 @@ function getQuickActions(industryId, enabled) {
   if (industryId === 'museum') {
     base.push({ icon: '✦', label: 'Upcoming Events' })
     if (enabled.donations) base.push({ icon: '♡', label: 'Donation History' })
-  }
-  if (industryId === 'medspa') {
-    base.push({ icon: '◈', label: 'Book Appointment' })
-    base.push({ icon: '✦', label: 'Treatment Plan' })
   }
   if (industryId === 'ecommerce') {
     base.push({ icon: '▦', label: 'Track Orders' })

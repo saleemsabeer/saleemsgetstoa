@@ -49,12 +49,12 @@ export default function Dashboard({ data, enabled }) {
         {enabled.kpis && (
           <Reveal delay={300}>
             <div style={s.tableCard}>
-              <div style={s.tableTitle}>Recent {data.id === 'medspa' ? 'Appointments' : 'Orders'}</div>
+              <div style={s.tableTitle}>Recent Orders</div>
               <div style={s.tableScroll}>
                 <div style={s.table}>
                   <div style={s.tableHeader}>
                     <span style={s.th}>Order</span>
-                    <span style={{ ...s.th, flex: 2 }}>{data.id === 'medspa' ? 'Client' : 'Customer'}</span>
+                    <span style={{ ...s.th, flex: 2 }}>Customer</span>
                     <span style={s.th}>Total</span>
                     <span style={s.th}>Status</span>
                   </div>
@@ -332,7 +332,7 @@ export default function Dashboard({ data, enabled }) {
         </Reveal>
       )}
 
-      {/* ── Appointment Manager (medspa) ── */}
+      {/* ── Appointment Manager ── */}
       {enabled.appointments && (
         <Reveal delay={500}>
           <div style={s.reportCard}>
@@ -360,7 +360,7 @@ export default function Dashboard({ data, enabled }) {
         </Reveal>
       )}
 
-      {/* ── Client Records (medspa) ── */}
+      {/* ── Client Records ── */}
       {enabled.clientRecords && (
         <Reveal delay={500}>
           <div style={s.reportCard}>
@@ -409,7 +409,7 @@ export default function Dashboard({ data, enabled }) {
         </Reveal>
       )}
 
-      {/* ── Staff Management (medspa) ── */}
+      {/* ── Staff Management ── */}
       {enabled.staffMgmt && (
         <Reveal delay={500}>
           <div style={s.reportCard}>

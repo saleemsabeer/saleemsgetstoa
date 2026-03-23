@@ -83,7 +83,7 @@ export default function Storefront({ data, enabled }) {
           </Reveal>
         )}
 
-        {/* ── SERVICES (medspa) ── */}
+        {/* ── SERVICES ── */}
         {enabled.services && sf.services && (
           <Reveal>
             <div style={s.block}>
@@ -244,7 +244,7 @@ export default function Storefront({ data, enabled }) {
           </Reveal>
         )}
 
-        {/* ── BEFORE & AFTER (medspa) ── */}
+        {/* ── BEFORE & AFTER ── */}
         {enabled.beforeAfter && (
           <Reveal>
             <div style={s.block}>
@@ -378,7 +378,7 @@ export default function Storefront({ data, enabled }) {
           </Reveal>
         )}
 
-        {/* ── BOOKING (medspa) ── */}
+        {/* ── BOOKING ── */}
         {enabled.booking && (
           <Reveal>
             <div style={s.block}>

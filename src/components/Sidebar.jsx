@@ -11,7 +11,7 @@ export default function Sidebar({ pages, active, onNavigate, open, onClose }) {
       <div style={styles.logoWrap}>
         <img src="/images/logo.png" alt="STOA" style={styles.logo} />
         <div style={styles.logoText}>STOA</div>
-        <button style={styles.closeBtn} onClick={onClose}>✕</button>
+        <button style={styles.closeBtn} onClick={onClose} aria-label="Close sidebar">✕</button>
       </div>
 
       <div style={styles.tagline}>THE SELLER'S PLATFORM</div>

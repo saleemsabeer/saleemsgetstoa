@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 
 const industries = [
-  { id: 'medspa', icon: '◈', title: 'MedSpa / Wellness', sub: 'Booking, services, client portal, treatments', preview: 'Haus of Confidence' },
   { id: 'museum', icon: '✦', title: 'Museum / Nonprofit', sub: 'Events, gift shop, donations, volunteer portal', preview: 'Desert Science Center' },
   { id: 'ecommerce', icon: '▦', title: 'Ecommerce / Retail', sub: 'Vintage audio, collections, gallery, about', preview: 'Woolson Audio' },
   { id: 'medflow', icon: '◇', title: 'Medical Sales', sub: 'Pipeline CRM, compliance, commissions, AI coach', preview: 'MedFlow' },

@@ -47,7 +47,6 @@ const FEATURES = [
 ]
 
 const PRESETS = {
-  medspa: { name: 'MedSpa', ids: ['hero','services','booking','gallery','testimonials','team','contact','dashboard','patients','schedule','charts','waivers','treatments','aftercare','checkin','dm_inbox','email','sms','reviews','retention','referrals','wallets','giftcards','portal','reports','inventory'] },
   museum: { name: 'Museum', ids: ['hero','events','shop','memberships','donations','gallery','team','contact','dashboard','inventory','orders','pos','email','social','reports','volunteer'] },
   retail: { name: 'Retail', ids: ['hero','shop','testimonials','contact','dashboard','inventory','orders','pos','email','sms','social','reviews','referrals','giftcards','portal','reports'] },
   salon: { name: 'Salon', ids: ['hero','services','booking','gallery','testimonials','team','contact','dashboard','patients','schedule','dm_inbox','email','sms','reviews','retention','referrals','wallets','portal','reports'] },
@@ -57,7 +56,7 @@ const PRESETS = {
 const CATS = [...new Set(FEATURES.map(f => f.cat))]
 
 function load() { try { return JSON.parse(localStorage.getItem(SAVE_KEY)) } catch { return null } }
-function save(d) { localStorage.setItem(SAVE_KEY, JSON.stringify(d)) }
+function save(d) { try { localStorage.setItem(SAVE_KEY, JSON.stringify(d)) } catch (e) { console.warn('localStorage save failed:', e.message) } }
 
 /* ── Reveal on scroll ── */
 function Reveal({ children, delay = 0, style = {} }) {
@@ -543,7 +542,7 @@ export default function PlatformBuilder({ onBack }) {
 
       {/* ═══ FEATURE MENU ═══ */}
       {menuOpen && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 250, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)' }} onClick={() => setMenuOpen(false)}>
+        <div role="presentation" style={{ position: 'fixed', inset: 0, zIndex: 250, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)' }} onClick={() => setMenuOpen(false)}>
           <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 360, maxWidth: '90vw', background: 'var(--bg)', borderLeft: '1px solid var(--border)', overflowY: 'auto', padding: '28px 20px' }} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 400, color: 'var(--text)' }}>Features</h3>
@@ -580,7 +579,7 @@ export default function PlatformBuilder({ onBack }) {
 
       {/* ═══ ADMIN DRAWER ═══ */}
       {adminFeature && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)' }} onClick={() => setAdminFeature(null)}>
+        <div role="presentation" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)' }} onClick={() => setAdminFeature(null)}>
           <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 560, maxWidth: '95vw', background: '#FAFAF8', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
             <div style={{ padding: '16px 20px', borderBottom: '1px solid #E5E5E5', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', position: 'sticky', top: 0, zIndex: 10 }}>
               <div>
@@ -677,7 +676,7 @@ export default function PlatformBuilder({ onBack }) {
               <div style={{ width: 1, height: 40, background: `linear-gradient(to bottom, transparent, ${color}, transparent)`, animation: 'float 2s ease-in-out infinite' }} />
             </div>
 
-            {editing && <div onClick={() => setAdminFeature('hero')} style={{ position: 'absolute', top: 80, right: 20, zIndex: 10, padding: '4px 10px', borderRadius: 6, background: `${color}20`, fontFamily: 'var(--font-mono)', fontSize: 9, color: color, cursor: 'pointer', backdropFilter: 'blur(8px)' }}>OPEN ADMIN</div>}
+            {editing && <div role="button" tabIndex={0} onClick={() => setAdminFeature('hero')} style={{ position: 'absolute', top: 80, right: 20, zIndex: 10, padding: '4px 10px', borderRadius: 6, background: `${color}20`, fontFamily: 'var(--font-mono)', fontSize: 9, color: color, cursor: 'pointer', backdropFilter: 'blur(8px)' }}>OPEN ADMIN</div>}
           </section>
         )}
 
@@ -836,8 +835,8 @@ export default function PlatformBuilder({ onBack }) {
               <div style={{ display: 'grid', gap: 16 }}>
                 {[
                   { text: 'Absolutely transformed my skin. The team is incredible and made me feel so comfortable throughout.', name: 'Sarah M.', stars: 5 },
-                  { text: 'Best medspa experience ever. The results are amazing and the staff truly cares about each client.', name: 'Jessica L.', stars: 5 },
-                  { text: 'I\'ve been to many medspas and this is by far the most professional and luxurious experience.', name: 'Lauren K.', stars: 5 },
+                  { text: 'Best experience ever. The results are amazing and the staff truly cares about each client.', name: 'Jessica L.', stars: 5 },
+                  { text: 'This is by far the most professional and well-organized experience I\'ve had.', name: 'Lauren K.', stars: 5 },
                 ].map((t, i) => (
                   <Reveal key={i} delay={200 + i * 100}>
                     <div style={{

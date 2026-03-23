@@ -2,17 +2,6 @@ import { useNavigate } from 'react-router-dom'
 
 const demos = [
   {
-    id: 'medspa',
-    categories: 'MEDSPA · CLINIC · WELLNESS',
-    title: 'MedSpa Platform',
-    desc: '25-page admin system for aesthetic clinics. Booking, clinical charts with injection mapping, DM inbox with revenue tracking, patient portal, memberships, retention engine, 32 services, 15 consent forms, text + email marketing, and more.',
-    features: ['Schedule & Booking', 'Clinical Charts', 'DM Inbox', 'Patient Portal', 'Memberships', 'Retention Engine', 'Consent & Waivers', 'Aftercare', 'Text & Email', 'Reports', 'Inventory', 'POS Check-In'],
-    path: '/demo/medspa',
-    pages: '25 pages',
-    previewUrl: '/demo/medspa',
-    previewLabel: 'getstoa.io/demo/medspa',
-  },
-  {
     id: 'museum',
     categories: 'NONPROFIT · GIFT SHOP · EVENTS',
     title: 'Dark Sky Discovery Center',

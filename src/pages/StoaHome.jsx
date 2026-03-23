@@ -4,7 +4,6 @@ import { LandingSelector, MiniSwitcher } from '../components/IndustrySelector'
 import { industries, getIndustry } from '../industries/index'
 
 /* Lazy-load COPIES of the demos (standalone, no router/store deps) */
-const MedSpaShowcase = lazy(() => import('../showcases/MedSpaShowcase'))
 const MuseumShowcase = lazy(() => import('../showcases/MuseumShowcase'))
 
 const V = 'https://ssdozdtdcrkaoayzhrsa.supabase.co/storage/v1/object/public/videos/'
@@ -116,7 +115,7 @@ const EDIT_KEY = 'stoa_edits'
 const COLOR_KEY = 'stoa_color'
 
 function loadEdits() { try { return JSON.parse(localStorage.getItem(EDIT_KEY)) || {} } catch { return {} } }
-function saveEdits(e) { localStorage.setItem(EDIT_KEY, JSON.stringify(e)) }
+function saveEdits(e) { try { localStorage.setItem(EDIT_KEY, JSON.stringify(e)) } catch {} }
 
 export default function StoaHome() {
   const [selectedIndustry, setSelectedIndustry] = useState(null)
@@ -132,7 +131,7 @@ export default function StoaHome() {
   useEffect(() => { setTimeout(() => setHeroVis(true), 300) }, [])
   useEffect(() => { saveEdits(edits) }, [edits])
   useEffect(() => {
-    localStorage.setItem(COLOR_KEY, brandColor)
+    try { localStorage.setItem(COLOR_KEY, brandColor) } catch {}
     document.documentElement.style.setProperty('--brand', brandColor)
   }, [brandColor])
 
@@ -157,20 +156,6 @@ export default function StoaHome() {
 
   // Feature bubbles per industry — maps to showcase page keys
   const BUBBLES = {
-    medspa: [
-      { key: 'dashboard', label: 'Dashboard', desc: 'Command center with today\'s appointments, revenue KPIs, client retention metrics, low stock alerts, and an AI-generated daily summary.' },
-      { key: 'patients', label: 'Patients', desc: 'Complete client records — contact info, treatment history, consent forms, photos, notes, membership tier, and lifetime spending totals.' },
-      { key: 'schedule', label: 'Schedule', desc: 'Visual calendar with day, week, and list views. See all appointments by provider, manage availability, and spot scheduling gaps.' },
-      { key: 'inventory', label: 'Inventory', desc: 'Track injectables, skincare products, and supplies. Lot numbers, expiration dates, stock levels, and automated reorder alerts.' },
-      { key: 'inbox', label: 'DM Inbox', desc: 'Unified social media inbox — Instagram, Facebook, and TikTok DMs in one place. Track which conversations drive revenue.' },
-      { key: 'email', label: 'Email Marketing', desc: 'Email campaign builder with templates for promotions, appointment reminders, and post-treatment follow-ups. Open and click analytics.' },
-      { key: 'checkin', label: 'Check-In', desc: 'Front desk check-in flow. Verify client info, process consent forms, collect payments, and update visit status in real time.' },
-      { key: 'treatments', label: 'Treatment Plans', desc: 'Multi-session treatment tracking. Build custom plans, schedule follow-ups, and monitor progress across visits.' },
-      { key: 'charts', label: 'Clinical Charts', desc: 'SOAP notes with injection mapping. Document treatments with precise facial diagrams, dosages, and provider notes.' },
-      { key: 'photos', label: 'Before & After', desc: 'Photo gallery management for treatment results. Upload, tag by treatment type, and showcase transformations on the website.' },
-      { key: 'memberships', label: 'Memberships', desc: 'Manage membership tiers, track active members, process renewals, and analyze membership revenue and retention.' },
-      { key: 'reports', label: 'Reports', desc: 'Revenue by provider, treatment popularity, client retention rates, membership analytics, and financial CSV exports.' },
-    ],
     museum: [
       { key: 'dashboard', label: 'Dashboard', desc: 'Real-time command center with visitor counts, revenue tracking, gift shop sales, event bookings, and AI-generated operational summary.' },
       { key: 'store', label: 'Gift Shop', desc: 'Online store with products synced from Printify. Category filters, search, product detail pages, variants, and Stripe checkout.' },
@@ -441,13 +426,10 @@ export default function StoaHome() {
                 </div>
                 <div style={showcase.browserBody}>
                   <Suspense fallback={<div style={{ padding: 80, textAlign: 'center', color: '#999' }}>Loading...</div>}>
-                    {selectedIndustry === 'medspa' && (
-                      <MedSpaShowcase activePage={activeBubble} onPageChange={setActiveBubble} />
-                    )}
                     {selectedIndustry === 'museum' && (
                       <MuseumShowcase activePage={activeBubble} onPageChange={setActiveBubble} />
                     )}
-                    {!['medspa', 'museum'].includes(selectedIndustry) && (
+                    {selectedIndustry !== 'museum' && (
                       <div style={{ padding: 80, textAlign: 'center' }}>
                         <div style={{ fontSize: 40, color: 'var(--brand)', opacity: 0.2, marginBottom: 16 }}>{industry?.icon}</div>
                         <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)', marginBottom: 8 }}>{industry?.name}</div>
@@ -566,7 +548,7 @@ export default function StoaHome() {
           <button onClick={() => {
             setEditMode(!editMode)
             setShowColorPicker(false)
-            if (!editMode) localStorage.setItem('stoa_pencil_clicked', 'true')
+            if (!editMode) try { localStorage.setItem('stoa_pencil_clicked', 'true') } catch {}
           }} style={{
             width: editMode ? 'auto' : 56, height: 56, borderRadius: editMode ? 100 : '50%',
             padding: editMode ? '0 24px' : 0,

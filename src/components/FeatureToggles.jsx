@@ -24,7 +24,7 @@ export default function FeatureToggles({ features, enabled, onToggle }) {
       </button>
 
       {/* Backdrop */}
-      {open && <div style={s.backdrop} onClick={() => setOpen(false)} />}
+      {open && <div style={s.backdrop} onClick={() => setOpen(false)} role="presentation" />}
 
       {/* Panel */}
       <div style={{
