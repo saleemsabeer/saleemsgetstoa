@@ -44,7 +44,7 @@ function FadeIn({children,delay=0,style={}}) {
 
 function Header({onMenuOpen}) {
   return <div style={{position:"fixed",top:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,zIndex:99,background:"rgba(8,8,8,0.88)",backdropFilter:"blur(40px) saturate(180%)",WebkitBackdropFilter:"blur(40px) saturate(180%)",borderBottom:"1px solid "+C.border,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 20px",paddingTop:"max(12px, env(safe-area-inset-top))"}}>
-    <div style={{fontSize:12,fontFamily:sans,fontWeight:600,color:C.accent,letterSpacing:2,textTransform:"uppercase"}}>Stoa</div>
+    <div style={{fontSize:12,fontFamily:sans,fontWeight:600,color:C.accent,letterSpacing:8,textTransform:"uppercase"}}>GetStoa</div>
     <button onClick={onMenuOpen} style={{background:"none",border:"none",cursor:"pointer",fontSize:18,color:C.text,opacity:0.7,transition:transitionSmooth}}>=</button>
   </div>;
 }
@@ -94,7 +94,7 @@ function PremiumMenu({open,onNav,onClose}) {
 function SL({children,right}) {
   return <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",padding:"0 4px"}}>
     <span style={{fontSize:10,fontFamily:sans,fontWeight:600,color:C.text3,letterSpacing:3.5,textTransform:"uppercase"}}>{children}</span>
-    {right&&<span style={{fontSize:11,fontFamily:sans,color:C.text3}}>{right}</span>}
+    {right&&<span style={{fontSize:11,fontFamily:sans,color:C.text3,fontWeight:400}}>{right}</span>}
   </div>;
 }
 
@@ -123,12 +123,19 @@ function VideoModal({video,onClose}) {
   </div>;
 }
 
-function HomePage({selectedVideo, setSelectedVideo}) {
+function BackButton({onClick}) {
+  return <button onClick={onClick} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 0",background:"none",border:"none",cursor:"pointer",fontSize:14,color:C.text3,transition:transitionSmooth}}>
+    <span>←</span> <span style={{fontSize:10,fontFamily:sans,letterSpacing:1,textTransform:"uppercase"}}>Back</span>
+  </button>;
+}
+
+function HomePage({selectedVideo, setSelectedVideo, onNavigate}) {
   const [mood,setMood]=useState(null);
   const [time,setTime]=useState("");
   useEffect(()=>{const h=new Date().getHours();setTime(h<12?"Good morning":h<17?"Good afternoon":h<21?"Good evening":"Goodnight")},[]);
   const moods=[{emoji:"✦",label:"Radiant",color:C.accent},{emoji:"☀",label:"Good",color:C.warm},{emoji:"~",label:"Neutral",color:C.text2},{emoji:"☁",label:"Low",color:C.rose},{emoji:"◆",label:"Heavy",color:C.purple}];
   const stats=[{icon:"◦",label:"Water",value:"5",unit:"of 8",sub:"glasses",color:C.accent,progress:0.625},{icon:"↗",label:"Movement",value:"22",unit:"of 30",sub:"minutes",color:C.warm,progress:0.73},{icon:"●",label:"Stillness",value:"15",unit:"of 20",sub:"minutes",color:C.purple,progress:0.75},{icon:"☽",label:"Sleep",value:"7.2",unit:"of 8",sub:"hours",color:C.rose,progress:0.9}];
+  const quickLinks=[{label:"Sleep Tracker",icon:"☽",page:"sleep"},{label:"Workout Builder",icon:"↗",page:"workout"},{label:"Book a Trainer",icon:"👤",page:"trainer"}];
   const playlists=[{name:"Morning Ritual",by:"Sarah M.",tracks:12,color:"#2a3328"},{name:"Deep Focus",by:"Amara J.",tracks:18,color:"#2d2a22"},{name:"Wind Down",by:"Nadia C.",tracks:9,color:"#2a2533"}];
   const movements=[{type:"Yoga",name:"Morning Flow",by:"Sarah M.",dur:"25 min"},{type:"Pilates",name:"Sculpt & Tone",by:"Nadia C.",dur:"30 min"},{type:"Walk",name:"Walk + Breathe",by:"Amara J.",dur:"20 min"},{type:"Strength",name:"Full Body",by:"Sarah M.",dur:"35 min"}];
   const groups=[{name:"Morning Circle",members:248},{name:"Pilates Sisters",members:186},{name:"Mind Matters",members:412}];
@@ -136,7 +143,7 @@ function HomePage({selectedVideo, setSelectedVideo}) {
   return <div style={{display:"flex",flexDirection:"column",gap:28,paddingBottom:100}}>
     <FadeIn><div style={{height:340,borderRadius:24,overflow:"hidden",position:"relative",background:"linear-gradient(135deg, "+C.surface+" 0%, #1a201a 50%, "+C.surface+" 100%)"}}>
       <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 70% 30%, "+C.accentSoft+" 0%, transparent 60%), radial-gradient(ellipse at 30% 80%, rgba(184,130,138,0.05) 0%, transparent 50%)"}}/>
-      <div style={{position:"absolute",top:44,left:0,right:0,textAlign:"center",fontSize:12,fontFamily:sans,fontWeight:500,color:C.text3,letterSpacing:8,textTransform:"uppercase"}}>Stoa</div>
+      <div style={{position:"absolute",top:44,left:0,right:0,textAlign:"center",fontSize:12,fontFamily:sans,fontWeight:600,color:C.text,letterSpacing:8,textTransform:"uppercase"}}>GetStoa</div>
       <div style={{position:"absolute",bottom:36,left:28,right:28}}>
         <div style={{fontSize:36,fontFamily:serif,fontWeight:300,color:C.text,lineHeight:1.1}}>{time}</div>
         <div style={{fontSize:14,fontFamily:serif,fontWeight:300,fontStyle:"italic",color:C.text2,marginTop:8}}>Rest is sacred.</div>
@@ -167,7 +174,7 @@ function HomePage({selectedVideo, setSelectedVideo}) {
     <FadeIn delay={0.15}>
       <SL right="Edit">Today</SL>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginTop:14}}>
-        {stats.map((s,i)=><div key={i} style={{background:C.surface,borderRadius:16,padding:"18px 18px 16px",border:"1px solid "+C.border,position:"relative",overflow:"hidden",transition:transitionSmooth}}>
+        {stats.map((s,i)=><div key={i} style={{background:C.surface,borderRadius:16,padding:"18px 18px 16px",border:"1px solid "+C.border,position:"relative",overflow:"hidden",transition:transitionSmooth,boxShadow:`inset 0 1px 0 rgba(255,255,255,0.03)`,cursor:"pointer"}}>
           <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:C.border,borderRadius:"16px 16px 0 0"}}><div style={{height:"100%",width:(s.progress*100)+"%",background:s.color,borderRadius:2,transition:"width 1.5s cubic-bezier(0.16,1,0.3,1)"}}/></div>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
             <span style={{fontSize:15,color:s.color,opacity:0.7}}>{s.icon}</span>
@@ -181,6 +188,13 @@ function HomePage({selectedVideo, setSelectedVideo}) {
         </div>)}
       </div>
     </FadeIn>
+
+    <FadeIn delay={0.22}><SL>Quick Start</SL><div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginTop:14}}>
+      {quickLinks.map((link,i)=><div key={i} onClick={()=>onNavigate(link.page)} style={{background:C.surface,borderRadius:16,padding:18,textAlign:"center",border:"1px solid "+C.border,cursor:"pointer",transition:transitionSmooth,boxShadow:`inset 0 1px 0 rgba(255,255,255,0.03)`}}>
+        <div style={{fontSize:24,marginBottom:8}}>{link.icon}</div>
+        <div style={{fontSize:11,fontFamily:sans,fontWeight:600,color:C.text,lineHeight:1.2}}>{link.label}</div>
+      </div>)}
+    </div></FadeIn>
 
     <FadeIn delay={0.2}><div style={{borderRadius:22,overflow:"hidden",position:"relative",height:200,background:"linear-gradient(160deg, #141a14 0%, #0f1510 50%, #121212 100%)",border:"1px solid "+C.border}}>
       <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 80% 50%, rgba(124,154,126,0.08) 0%, transparent 60%)"}}/>
@@ -306,12 +320,12 @@ function HomePage({selectedVideo, setSelectedVideo}) {
   </div>;
 }
 
-function MindPage() {
+function MindPage({onNavigate}) {
   const [activeSession,setActiveSession]=useState(null);
   const items=[{title:"Breathing",sub:"4-7-8 technique",dur:"5 min",color:C.accentSoft,accent:C.accent,type:"breathe"},{title:"Body Scan",sub:"Progressive relaxation",dur:"12 min",color:C.purpleSoft,accent:C.purple},{title:"Loving Kindness",sub:"Metta meditation",dur:"15 min",color:C.roseSoft,accent:C.rose},{title:"Sound Bath",sub:"Tibetan singing bowls",dur:"20 min",color:C.warmSoft,accent:C.warm}];
   return <div style={{display:"flex",flexDirection:"column",gap:28,paddingBottom:100}}>
     <FadeIn><div style={{padding:"20px 0 0"}}><div style={{fontSize:28,fontFamily:serif,fontWeight:300,color:C.text}}>Your Mind</div><div style={{fontSize:13,fontFamily:serif,fontStyle:"italic",color:C.text2,marginTop:6}}>Cultivate inner stillness</div></div></FadeIn>
-    {items.map((item,i)=><FadeIn key={i} delay={0.1+i*0.06}><div onClick={()=>setActiveSession(activeSession===i?null:i)} style={{background:C.surface,borderRadius:18,padding:22,cursor:"pointer",border:"1px solid "+C.border,display:"flex",justifyContent:"space-between",alignItems:"center",transition:transitionSmooth}}>
+    {items.map((item,i)=><FadeIn key={i} delay={0.1+i*0.06}><div onClick={()=>setActiveSession(activeSession===i?null:i)} style={{background:C.surface,borderRadius:18,padding:22,cursor:"pointer",border:"1px solid "+C.border,display:"flex",justifyContent:"space-between",alignItems:"center",transition:transitionSmooth,boxShadow:`inset 0 1px 0 rgba(255,255,255,0.03)`,transform:"scale(1)"}}>
       <div style={{display:"flex",alignItems:"center",gap:16}}>
         <div style={{width:48,height:48,borderRadius:14,background:item.color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,color:item.accent}}>◎</div>
         <div><div style={{fontSize:14,fontFamily:sans,fontWeight:500,color:C.text}}>{item.title}</div><div style={{fontSize:11,fontFamily:sans,color:C.text3,marginTop:2}}>{item.sub}</div></div>
@@ -328,131 +342,66 @@ function MindPage() {
 }
 
 function ProgressPage() {
-  const [hoveredDay,setHoveredDay]=useState(null);
-  const days=Array.from({length:35},(_,i)=>({date:`Mar ${i+1}`,active:Math.random()>0.35,intensity:Math.random(),mood:["Radiant","Good","Neutral","Low","Heavy"][Math.floor(Math.random()*5)],minutes:Math.floor(Math.random()*40)+5}));
-  const moodData=[3.2,4.1,3.8,4.5,4.2,4.8,4.6,3.9,4.3,4.7,4.4,4.1,4.6,4.9,4.5,3.8,4.2,4.5,4.8,4.3,4.7,4.6,4.2,4.4,4.9,4.1,4.8,4.5,4.3,4.7];
-  const maxMood=5;
-  const paths=moodData.map((v,i)=>`${i*8},${100-(v/maxMood*80)}`).join(" L ");
-  function ProgressRing({val, max, label, unit, color}) {
-    const radius = 35;
-    const circ = 2 * Math.PI * radius;
-    const strokeDash = circ * (val / max);
-    const pct = Math.round((val/max)*100);
-    return <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
-      <div style={{position:"relative",width:100,height:100}}>
-        <svg width={100} height={100} style={{transform:"rotate(-90deg)"}}>
-          <circle cx={50} cy={50} r={radius} fill="none" stroke={C.border} strokeWidth={2}/>
-          <circle cx={50} cy={50} r={radius} fill="none" stroke={color} strokeWidth={2.5} strokeDasharray={circ} strokeDashoffset={circ-strokeDash} strokeLinecap="round" style={{transition:"stroke-dashoffset 1.5s cubic-bezier(0.16,1,0.3,1)"}}/>
-        </svg>
-        <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-          <div style={{fontSize:20,fontFamily:serif,fontWeight:300,color:C.text}}>{val}</div>
-          <div style={{fontSize:9,fontFamily:sans,color:C.text3}}>{pct}%</div>
+  const [coachMessages,setCoachMessages]=useState([{type:"ai",text:"You're making great progress on your stillness goal! Your average this week is up by 10%. Let's focus on movement today."}]);
+  const [coachInput,setCoachInput]=useState("");
+  const stats=[{icon:"◦",label:"Water",value:"5",unit:"of 8",sub:"glasses",color:C.accent,progress:0.625},{icon:"↗",label:"Movement",value:"22",unit:"of 30",sub:"minutes",color:C.warm,progress:0.73},{icon:"●",label:"Stillness",value:"15",unit:"of 20",sub:"minutes",color:C.purple,progress:0.75},{icon:"☽",label:"Sleep",value:"7.2",unit:"of 8",sub:"hours",color:C.rose,progress:0.9}];
+  const quickActions=["Track Progress","Ask a Question","Daily Check-in"];
+  const handleCoachSend=(text)=>{if(!text.trim())return;setCoachMessages([...coachMessages,{type:"user",text}]);setTimeout(()=>setCoachMessages(m=>[...m,{type:"ai",text:"Great question! Based on your recent data, I'd recommend focusing on increasing your water intake and maintaining your current sleep schedule. You're doing wonderfully!"}]),400);setCoachInput("");};
+  return <div style={{display:"flex",flexDirection:"column",gap:24,paddingBottom:100}}>
+    <FadeIn><div style={{padding:"20px 0 0",textAlign:"center"}}>
+      <div style={{fontSize:28,fontFamily:serif,fontWeight:300,color:C.text}}>GetStoa</div>
+      <div style={{fontSize:16,fontFamily:serif,fontWeight:300,color:C.text2,marginTop:4}}>Progress & AI Coach</div>
+    </div></FadeIn>
+    <FadeIn delay={0.06}><div>
+      <div style={{fontSize:14,fontFamily:sans,fontWeight:600,color:C.text,marginBottom:14}}>Transformation</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
+        <div style={{borderRadius:18,border:"2px dashed "+C.border,padding:28,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:160,background:C.card,cursor:"pointer",transition:transitionSmooth}}>
+          <div style={{width:48,height:48,borderRadius:12,border:"2px solid "+C.border,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:10}}>
+            <span style={{fontSize:22,color:C.text3}}>📷</span>
+          </div>
+          <div style={{fontSize:12,fontFamily:sans,fontWeight:600,color:C.text}}>Before</div>
+        </div>
+        <div style={{borderRadius:18,border:"2px dashed "+C.border,padding:28,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:160,background:C.card,cursor:"pointer",transition:transitionSmooth}}>
+          <div style={{width:48,height:48,borderRadius:12,border:"2px solid "+C.border,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:10}}>
+            <span style={{fontSize:22,color:C.text3}}>📷</span>
+          </div>
+          <div style={{fontSize:12,fontFamily:sans,fontWeight:600,color:C.text}}>Current</div>
         </div>
       </div>
-      <div style={{textAlign:"center"}}>
-        <div style={{fontSize:10,fontFamily:sans,fontWeight:600,color:C.text3,letterSpacing:1,textTransform:"uppercase"}}>{label}</div>
-        <div style={{fontSize:9,fontFamily:sans,color:C.text3,marginTop:2}}>{unit}</div>
-      </div>
-    </div>;
-  }
-  function WellnessRadar() {
-    const metrics=[{label:"Stillness",val:85},{label:"Movement",val:72},{label:"Water",val:88},{label:"Sleep",val:92},{label:"Mood",val:86}];
-    const n = metrics.length;
-    const angle = (2*Math.PI)/n;
-    const size = 80;
-    const points = metrics.map((m,i)=>{
-      const a = angle*i - Math.PI/2;
-      const r = (m.val/100)*size;
-      return [50+r*Math.cos(a), 50+r*Math.sin(a)];
-    });
-    const radarPoints = points.map(p=>p.join(",")).join(" ");
-    const avgScore = Math.round(metrics.reduce((s,m)=>s+m.val,0)/n);
-    return <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:12}}>
-      <svg width={180} height={180} viewBox="0 0 100 100" style={{display:"block"}}>
-        <defs>
-          <linearGradient id="radarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style={{stopColor:C.accent,stopOpacity:0.3}}/>
-            <stop offset="100%" style={{stopColor:C.accent,stopOpacity:0.1}}/>
-          </linearGradient>
-        </defs>
-        {[20,40,60,80].map((r,i)=><circle key={i} cx={50} cy={50} r={r} fill="none" stroke={C.border} strokeWidth={0.5} opacity={0.3}/>)}
-        {metrics.map((m,i)=>{
-          const a = angle*i - Math.PI/2;
-          const x2 = 50 + 85*Math.cos(a);
-          const y2 = 50 + 85*Math.sin(a);
-          return <line key={`axis-${i}`} x1={50} y1={50} x2={x2} y2={y2} stroke={C.border} strokeWidth={0.3} opacity={0.2}/>;
-        })}
-        <polygon points={radarPoints} fill="url(#radarGrad)" stroke={C.accent} strokeWidth={1.2} opacity={0.8}/>
-        {metrics.map((m,i)=>{
-          const a = angle*i - Math.PI/2;
-          const x = 50 + 92*Math.cos(a);
-          const y = 50 + 92*Math.sin(a);
-          return <text key={`label-${i}`} x={x} y={y} textAnchor="middle" dominantBaseline="middle" fill={C.text3} fontSize={7} fontFamily={sans} fontWeight={500}>{m.label}</text>;
-        })}
-      </svg>
-      <div style={{textAlign:"center"}}>
-        <div style={{fontSize:16,fontFamily:serif,fontWeight:300,color:C.text}}>Balance</div>
-        <div style={{fontSize:24,fontFamily:serif,fontWeight:300,color:C.accent,marginTop:2}}>{avgScore}</div>
-      </div>
-    </div>;
-  }
-  return <div style={{display:"flex",flexDirection:"column",gap:28,paddingBottom:100}}>
-    <FadeIn><div style={{padding:"20px 0 0"}}><div style={{fontSize:32,fontFamily:serif,fontWeight:300,color:C.text}}>Progress</div><div style={{fontSize:13,fontFamily:serif,fontStyle:"italic",color:C.text2,marginTop:6}}>Your wellness journey</div></div></FadeIn>
-    <FadeIn delay={0.1}><div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,justifyItems:"center"}}>
-      <ProgressRing val={47} max={100} label="Day Streak" unit="days" color={C.accent}/>
-      <ProgressRing val={86} max={100} label="Avg Mood" unit="↑12%" color={C.warm}/>
-      <ProgressRing val={128} max={200} label="Stillness Hours" unit="total" color={C.rose}/>
     </div></FadeIn>
-    <FadeIn delay={0.18}><SL>Wellness Balance</SL><div style={{background:C.surface,borderRadius:18,padding:24,marginTop:14,border:"1px solid "+C.border,display:"flex",justifyContent:"center"}}>
-      <WellnessRadar/>
-    </div></FadeIn>
-    <FadeIn delay={0.25}><SL>Mood Trend (30 days)</SL><div style={{background:C.surface,borderRadius:18,padding:24,marginTop:14,border:"1px solid "+C.border}}>
-      <svg width="100%" height="140" viewBox="0 0 240 110" style={{display:"block"}}>
-        <defs>
-          <linearGradient id="moodGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style={{stopColor:C.accent,stopOpacity:0.25}}/>
-            <stop offset="100%" style={{stopColor:C.accent,stopOpacity:0.02}}/>
-          </linearGradient>
-        </defs>
-        {[20,40,60,80].map((y,i)=><line key={i} x1={0} y1={y} x2={240} y2={y} stroke={C.border} strokeWidth={0.5} opacity={0.1}/>)}
-        <text x={-3} y={95} fontSize={7} fill={C.text3} fontFamily={sans} textAnchor="end">Low</text>
-        <text x={-3} y={20} fontSize={7} fill={C.text3} fontFamily={sans} textAnchor="end">High</text>
-        <polygon points={paths+" L 240,105 L 0,105"} fill="url(#moodGrad)"/>
-        <polyline points={paths} fill="none" stroke={C.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/>
-        {moodData.map((v,i)=><circle key={i} cx={i*8} cy={100-(v/maxMood*80)} r={1.5} fill={C.accent} opacity={0.6}/>)}
-      </svg>
-      <div style={{fontSize:11,fontFamily:serif,fontStyle:"italic",color:C.text2,textAlign:"center",marginTop:12}}>Calmer tides this month</div>
-    </div></FadeIn>
-    <FadeIn delay={0.32}><SL>Activity Heatmap</SL><div style={{background:C.surface,borderRadius:18,padding:20,marginTop:14,border:"1px solid "+C.border}}>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(7, 1fr)",gap:4}}>
-        {days.map((day,i)=>(
-          <div key={i} onMouseEnter={()=>setHoveredDay(i)} onMouseLeave={()=>setHoveredDay(null)} style={{position:"relative",aspectRatio:"1"}}>
-            <div style={{width:"100%",height:"100%",borderRadius:4,background:day.active?"rgba(124,154,126,"+(0.15+day.intensity*0.45)+")":"rgba(240,237,230,0.03)",cursor:"pointer",transition:transitionSmooth,border:hoveredDay===i?"1px solid "+C.accent:"1px solid transparent"}}/>
-            {hoveredDay===i&&<div style={{position:"absolute",bottom:"100%",left:"50%",transform:"translateX(-50%)",marginBottom:6,background:C.surface,border:"1px solid "+C.border,borderRadius:8,padding:"8px 10px",whiteSpace:"nowrap",fontSize:9,fontFamily:sans,color:C.text,zIndex:10,boxShadow:"0 4px 12px rgba(0,0,0,0.3)"}}>
-              <div style={{fontWeight:600,color:C.accent}}>{day.date}: {day.mood}</div>
-              <div style={{color:C.text3,marginTop:2}}>{day.minutes} min stillness</div>
-            </div>}
-          </div>
-        ))}
-      </div>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:14}}><span style={{fontSize:9,fontFamily:sans,color:C.text3}}>Less activity</span><div style={{display:"flex",gap:2,alignItems:"center"}}>
-        {[0.08,0.2,0.35,0.5,0.7].map((o,i)=><div key={i} style={{width:8,height:8,borderRadius:2,background:"rgba(124,154,126,"+o+")"}}/>)}</div><span style={{fontSize:9,fontFamily:sans,color:C.text3}}>More</span></div>
-    </div></FadeIn>
-    <FadeIn delay={0.4}><SL>Unlocked Milestones</SL><div style={{display:"flex",gap:10,overflowX:"auto",paddingBottom:4,marginTop:14,scrollbarWidth:"none"}}>
-      {[{emoji:"🌱",label:"Rooted",sub:"7 day streak"},{emoji:"🧙",label:"Sage of Stillness",sub:"100 sessions"},{emoji:"💎",label:"Unbreakable Ritual",sub:"Never missed"}].map((m,i)=><div key={i} style={{minWidth:110,background:C.surface,borderRadius:14,border:"1px solid "+C.accent,padding:12,textAlign:"center",flexShrink:0,cursor:"pointer",transition:transitionSmooth,display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
-        <div style={{fontSize:26}}>{m.emoji}</div>
-        <div style={{fontSize:10,fontFamily:sans,fontWeight:600,color:C.accent}}>{m.label}</div>
-        <div style={{fontSize:8,fontFamily:sans,color:C.text3}}>{m.sub}</div>
+    <FadeIn delay={0.1}><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+      {stats.map((s,i)=><div key={i} style={{background:C.surface,borderRadius:16,padding:"18px 18px 16px",border:"1px solid "+C.border,position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:C.border}}><div style={{height:"100%",width:(s.progress*100)+"%",background:s.color,borderRadius:2,transition:"width 1.5s cubic-bezier(0.16,1,0.3,1)"}}/></div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+          <span style={{fontSize:8,fontFamily:sans,fontWeight:600,color:C.text3,letterSpacing:1.5,textTransform:"uppercase"}}>{s.label}</span>
+        </div>
+        <div style={{display:"flex",alignItems:"baseline",gap:4}}>
+          <span style={{fontSize:28,fontFamily:serif,fontWeight:300,color:C.text,lineHeight:1}}>{s.value}</span>
+          <span style={{fontSize:12,fontFamily:sans,color:C.text2}}>{s.unit}</span>
+        </div>
+        <div style={{fontSize:10,fontFamily:sans,color:C.text3,marginTop:4}}>{s.sub}</div>
       </div>)}
     </div></FadeIn>
-    <FadeIn delay={0.48}><div style={{background:C.accentSoft,borderRadius:18,padding:24,border:"1px solid rgba(124,154,126,0.2)",textAlign:"center"}}>
-      <div style={{fontSize:14,fontFamily:serif,fontWeight:300,fontStyle:"italic",color:C.text,lineHeight:1.8,letterSpacing:0.5}}>Your evenings hold the deepest stillness — guard them as sacred ground.</div>
-    </div></FadeIn>
-    <FadeIn delay={0.55}><SL>Weekly Summary</SL><div style={{background:C.surface,borderRadius:18,padding:20,marginTop:14,border:"1px solid "+C.border,display:"flex",flexDirection:"column",gap:14}}>
-      {[{label:"Movement",val:"4.2 hrs",pct:84,color:C.accent},{label:"Stillness",val:"98 min",pct:70,color:C.purple},{label:"Journaling",val:"6 entries",pct:86,color:C.warm},{label:"Sleep quality",val:"7.2 avg",pct:90,color:C.rose}].map((item,i)=><div key={i}>
-        <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}><span style={{fontSize:12,fontFamily:sans,fontWeight:500,color:C.text}}>{item.label}</span><span style={{fontSize:12,fontFamily:sans,color:C.text2}}>{item.val}</span></div>
-        <div style={{height:2,background:C.border,borderRadius:1,overflow:"hidden"}}><div style={{height:"100%",width:item.pct+"%",background:item.color,borderRadius:1,transition:"width 1.5s cubic-bezier(0.16,1,0.3,1)"}}/></div>
-      </div>)}
+    <FadeIn delay={0.16}><div style={{background:C.surface,borderRadius:20,padding:24,border:"1px solid "+C.border,position:"relative"}}>
+      <div style={{position:"absolute",top:-18,right:16,width:40,height:40,borderRadius:"50%",background:C.accent,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 16px rgba(124,154,126,0.4)",cursor:"pointer"}}>
+        <span style={{fontSize:18,color:C.bg}}>✤</span>
+      </div>
+      <div style={{textAlign:"center",marginBottom:16}}>
+        <div style={{fontSize:16,fontFamily:serif,fontWeight:400,color:C.text}}>GetStoa AI</div>
+        <div style={{fontSize:10,fontFamily:sans,color:C.text3,marginTop:2,fontStyle:"italic"}}>Cormorant Garamond</div>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:10,maxHeight:200,overflowY:"auto",marginBottom:16}}>
+        {coachMessages.map((m,i)=><div key={i} style={{display:"flex",justifyContent:m.type==="user"?"flex-end":"flex-start"}}>
+          <div style={{maxWidth:"85%",padding:"12px 16px",borderRadius:m.type==="user"?"16px 16px 4px 16px":"16px 16px 16px 4px",background:m.type==="user"?C.accent:C.card,color:m.type==="user"?C.bg:C.text,fontSize:13,fontFamily:sans,lineHeight:1.5}}>{m.text}</div>
+        </div>)}
+      </div>
+      <div style={{display:"flex",gap:8,marginBottom:12}}>
+        <input value={coachInput} onChange={e=>setCoachInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleCoachSend(coachInput)} placeholder="Ask your AI coach..." style={{flex:1,background:C.card,border:"1px solid "+C.border,borderRadius:12,padding:"10px 14px",fontSize:12,fontFamily:sans,color:C.text}}/>
+        <button onClick={()=>handleCoachSend(coachInput)} style={{background:C.accent,border:"none",borderRadius:12,width:40,height:40,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:C.bg,cursor:"pointer"}}>→</button>
+      </div>
+      <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+        {quickActions.map(a=><button key={a} onClick={()=>handleCoachSend(a)} style={{padding:"8px 14px",background:C.accentSoft,border:"1px solid rgba(124,154,126,0.25)",borderRadius:999,fontSize:11,fontFamily:sans,fontWeight:600,color:C.accent,cursor:"pointer",transition:transitionSmooth}}>{a}</button>)}
+      </div>
     </div></FadeIn>
   </div>;
 }
@@ -484,7 +433,7 @@ function ProfilePage() {
         </div>)}
       </div>
     </FadeIn>
-    <FadeIn delay={0.2}>{["Wellness Goals","Notifications","Appearance","Privacy","Help & Support","About Stoa"].map((item,i)=><div key={i} style={{padding:"16px 4px",borderBottom:i<5?"1px solid "+C.border:"none",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer",transition:transitionSmooth}}>
+    <FadeIn delay={0.2}>{["Wellness Goals","Notifications","Appearance","Privacy","Help & Support","About GetStoa"].map((item,i)=><div key={i} style={{padding:"16px 4px",borderBottom:i<5?"1px solid "+C.border:"none",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer",transition:transitionSmooth}}>
       <span style={{fontSize:14,fontFamily:sans,color:C.text}}>{item}</span><span style={{fontSize:14,color:C.text3}}>›</span>
     </div>)}</FadeIn>
   </div>;
@@ -656,10 +605,182 @@ function CoachPage() {
   </div>;
 }
 
+function SleepTrackerPage({onNavigate}) {
+  const sleepScore=82;
+  const sleepData=[{day:"M",quality:65,color:C.accent},{day:"T",quality:78,color:C.accent},{day:"W",quality:55,color:C.warm},{day:"T",quality:88,color:C.accent},{day:"F",quality:72,color:C.accent},{day:"S",quality:92,color:C.accent},{day:"S",quality:82,color:C.accent}];
+  const radius=72;const circ=2*Math.PI*radius;const strokeDash=circ*(sleepScore/100);
+  const scoreLabel=sleepScore>=80?"Good":sleepScore>=60?"Fair":"Needs Work";
+  return <div style={{display:"flex",flexDirection:"column",gap:28,paddingBottom:100}}>
+    <FadeIn><BackButton onClick={()=>onNavigate("home")}/><div style={{fontSize:10,fontFamily:sans,fontWeight:600,color:C.text3,letterSpacing:6,textTransform:"uppercase",marginTop:12}}>STOA</div></FadeIn>
+    <FadeIn delay={0.08}><div style={{display:"flex",justifyContent:"center",padding:"8px 0"}}>
+      <div style={{position:"relative",width:190,height:190}}>
+        <svg width={190} height={190} style={{transform:"rotate(-90deg)"}}>
+          <circle cx={95} cy={95} r={radius} fill="none" stroke={C.border} strokeWidth={5}/>
+          <circle cx={95} cy={95} r={radius} fill="none" stroke={C.accent} strokeWidth={5} strokeDasharray={circ} strokeDashoffset={circ-strokeDash} strokeLinecap="round" style={{transition:"stroke-dashoffset 1.5s cubic-bezier(0.16,1,0.3,1)"}}/>
+          <circle cx={95} cy={95} r={radius} fill="none" stroke={C.rose} strokeWidth={5} strokeDasharray={circ} strokeDashoffset={circ-(circ*0.15)} strokeLinecap="round" opacity={0.3} style={{transformOrigin:"50% 50%",transform:`rotate(${(sleepScore/100)*360}deg)`}}/>
+        </svg>
+        <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+          <div style={{fontSize:48,fontFamily:serif,fontWeight:300,color:C.text,lineHeight:1}}>{sleepScore}</div>
+          <div style={{fontSize:12,fontFamily:sans,fontWeight:500,color:C.text2,marginTop:4}}>Sleep Score</div>
+          <div style={{fontSize:10,fontFamily:sans,color:C.bg,background:C.accent,borderRadius:999,padding:"3px 12px",marginTop:6,fontWeight:600}}>{scoreLabel}</div>
+        </div>
+      </div>
+    </div></FadeIn>
+    <FadeIn delay={0.12}><div style={{display:"flex",gap:12}}>
+      <div style={{flex:1,background:C.surface,borderRadius:16,padding:"16px 18px",border:"1px solid "+C.border,display:"flex",alignItems:"center",gap:12}}>
+        <span style={{fontSize:20,color:C.purple}}>☽</span>
+        <div><div style={{fontSize:10,fontFamily:sans,color:C.text3,fontWeight:500}}>Bedtime</div><div style={{fontSize:16,fontFamily:sans,fontWeight:600,color:C.text}}>11:15 PM</div></div>
+      </div>
+      <div style={{flex:1,background:C.surface,borderRadius:16,padding:"16px 18px",border:"1px solid "+C.border,display:"flex",alignItems:"center",gap:12}}>
+        <span style={{fontSize:20,color:C.warm}}>☀</span>
+        <div><div style={{fontSize:10,fontFamily:sans,color:C.text3,fontWeight:500}}>Wake Time</div><div style={{fontSize:16,fontFamily:sans,fontWeight:600,color:C.text}}>7:30 AM</div></div>
+      </div>
+    </div></FadeIn>
+    <FadeIn delay={0.18}><div>
+      <div style={{fontSize:16,fontFamily:serif,fontWeight:400,color:C.text,marginBottom:16}}>Sleep Quality</div>
+      <div style={{background:C.surface,borderRadius:18,padding:"20px 16px",border:"1px solid "+C.border}}>
+        <div style={{display:"flex",alignItems:"flex-end",gap:8,height:120}}>
+          {sleepData.map((d,i)=><div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
+            <div style={{height:d.quality*1.1,width:"100%",maxWidth:24,background:d.quality>70?C.accent:C.warm,borderRadius:5,opacity:0.85,transition:"height 1.2s cubic-bezier(0.16,1,0.3,1)"}}/>
+            <div style={{fontSize:10,fontFamily:sans,color:C.text3,fontWeight:500}}>{d.day}</div>
+          </div>)}
+        </div>
+      </div>
+    </div></FadeIn>
+    <FadeIn delay={0.22}><div style={{background:C.surface,borderRadius:18,padding:"20px 22px",border:"1px solid "+C.border,display:"flex",gap:14,alignItems:"flex-start"}}>
+      <span style={{fontSize:20,color:C.accent,marginTop:2}}>🌿</span>
+      <div>
+        <div style={{fontSize:13,fontFamily:sans,fontWeight:600,color:C.text,marginBottom:6}}>Wind down tip</div>
+        <div style={{fontSize:13,fontFamily:sans,color:C.text2,lineHeight:1.5}}>Try a 5-minute meditation before bed to improve deep sleep and relaxation.</div>
+      </div>
+    </div></FadeIn>
+  </div>;
+}
+
+function WorkoutBuilderPage({onNavigate}) {
+  const [workoutName,setWorkoutName]=useState("");
+  const [selectedCat,setSelectedCat]=useState("Strength");
+  const [exercises,setExercises]=useState([{name:"Goblet Squat",sets:3,reps:12,rest:60,done:true},{name:"Push-ups",sets:3,reps:12,rest:60,done:true},{name:"Plank",sets:3,reps:12,rest:60,done:false}]);
+  const categories=[{id:"Strength",icon:"🏋️"},{id:"Yoga",icon:"🧘"},{id:"Pilates",icon:"🌿"},{id:"Cardio",icon:"❤️"},{id:"Recovery",icon:"🔄"}];
+  const totalDuration=exercises.length*15;
+  const addExercise=()=>setExercises([...exercises,{name:"",sets:3,reps:10,rest:60,done:false}]);
+  return <div style={{display:"flex",flexDirection:"column",gap:24,paddingBottom:100}}>
+    <FadeIn><BackButton onClick={()=>onNavigate("home")}/>
+      <div style={{fontSize:32,fontFamily:serif,fontWeight:300,color:C.text,marginTop:8}}>Build</div>
+      <div style={{fontSize:14,fontFamily:serif,fontStyle:"italic",color:C.text2,marginTop:4}}>Design your practice</div>
+    </FadeIn>
+    <FadeIn delay={0.06}><input value={workoutName} onChange={(e)=>setWorkoutName(e.target.value)} placeholder="Workout Name" style={{width:"100%",background:C.surface,border:"1px solid "+C.border,borderRadius:14,padding:"14px 18px",fontSize:14,fontFamily:sans,color:C.text,boxSizing:"border-box"}}/></FadeIn>
+    <FadeIn delay={0.1}><div style={{display:"flex",gap:8,overflowX:"auto",scrollbarWidth:"none",paddingBottom:4}}>
+      {categories.map(cat=><button key={cat.id} onClick={()=>setSelectedCat(cat.id)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,padding:"12px 16px",borderRadius:14,background:selectedCat===cat.id?C.accentSoft:C.surface,border:"1px solid "+(selectedCat===cat.id?"rgba(124,154,126,0.3)":C.border),cursor:"pointer",transition:transitionSmooth,flexShrink:0,minWidth:68}}>
+        <span style={{fontSize:22}}>{cat.icon}</span>
+        <span style={{fontSize:10,fontFamily:sans,fontWeight:600,color:selectedCat===cat.id?C.accent:C.text3,letterSpacing:0.5}}>{cat.id}</span>
+      </button>)}
+    </div></FadeIn>
+    <FadeIn delay={0.15}><div style={{display:"flex",flexDirection:"column",gap:10}}>
+      {exercises.map((ex,i)=><div key={i} style={{background:C.surface,borderRadius:16,padding:"18px 20px",border:"1px solid "+C.border,display:"flex",alignItems:"center",gap:14}}>
+        <div style={{width:28,height:28,borderRadius:8,background:ex.done?C.accent:"transparent",border:ex.done?"none":"2px solid "+C.border,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,cursor:"pointer",transition:transitionSmooth}} onClick={()=>{const n=[...exercises];n[i].done=!n[i].done;setExercises(n);}}>
+          {ex.done&&<span style={{color:C.bg,fontSize:14,fontWeight:700}}>✓</span>}
+        </div>
+        <div style={{flex:1}}>
+          <div style={{fontSize:15,fontFamily:sans,fontWeight:600,color:C.text}}>{ex.name||"New Exercise"}</div>
+          <div style={{fontSize:12,fontFamily:sans,color:C.text3,marginTop:4}}>{ex.sets} sets x {ex.reps} reps · Rest: {ex.rest}s</div>
+        </div>
+      </div>)}
+    </div></FadeIn>
+    <FadeIn delay={0.2}><button onClick={addExercise} style={{width:"100%",padding:"14px",background:C.accentSoft,border:"1px dashed rgba(124,154,126,0.4)",borderRadius:14,fontSize:13,fontFamily:sans,fontWeight:600,color:C.accent,cursor:"pointer",transition:transitionSmooth,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+      <span style={{fontSize:16}}>+</span> Add Exercise
+    </button></FadeIn>
+    <FadeIn delay={0.25}><div style={{textAlign:"center",padding:"8px 0"}}>
+      <div style={{fontSize:13,fontFamily:sans,color:C.text3}}>Total Duration: <span style={{color:C.text,fontWeight:600}}>{totalDuration} min</span></div>
+    </div></FadeIn>
+    <FadeIn delay={0.28}><button style={{width:"100%",padding:"16px",background:C.accent,border:"none",borderRadius:14,fontSize:14,fontFamily:sans,fontWeight:600,color:C.bg,cursor:"pointer",transition:transitionSmooth}}>Save Workout</button></FadeIn>
+  </div>;
+}
+
+function TrainerBookingPage({onNavigate}) {
+  const [selectedTrainer,setSelectedTrainer]=useState(null);
+  const [selectedDate,setSelectedDate]=useState(null);
+  const [selectedTime,setSelectedTime]=useState("07:00 AM");
+  const trainers=[{id:1,name:"Sarah M.",specialty:"Yoga & Meditation",rating:4.9,initials:"SM"},{id:2,name:"Amara J.",specialty:"Pilates & Strength",rating:4.8,initials:"AJ"},{id:3,name:"Nadia C.",specialty:"Mindfulness & Breathwork",rating:5.0,initials:"NC"}];
+  const dates=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return {num:d.getDate(),day:d.toLocaleDateString('en-US',{weekday:'short'})}});
+  const morningTimes=["07:00 AM","08:30 AM","10:00 AM"];
+  const afternoonTimes=["12:00 PM","01:30 PM","03:00 PM"];
+  const eveningTimes=["05:00 PM","06:30 PM"];
+  return <div style={{display:"flex",flexDirection:"column",gap:24,paddingBottom:100}}>
+    <FadeIn><BackButton onClick={()=>onNavigate("home")}/>
+      <div style={{fontSize:32,fontFamily:serif,fontWeight:300,color:C.text,marginTop:8}}>Book</div>
+      <div style={{fontSize:14,fontFamily:serif,fontStyle:"italic",color:C.text2,marginTop:4}}>Connect with your guide</div>
+    </FadeIn>
+    <FadeIn delay={0.08}><div style={{display:"flex",gap:12,justifyContent:"center"}}>
+      {trainers.map(t=><div key={t.id} onClick={()=>setSelectedTrainer(t.id)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:10,cursor:"pointer",transition:transitionSmooth,opacity:selectedTrainer===t.id||!selectedTrainer?1:0.5}}>
+        <div style={{width:80,height:80,borderRadius:"50%",background:selectedTrainer===t.id?"linear-gradient(135deg, "+C.accent+", #5a7a5c)":"linear-gradient(135deg, #2a2a2a, #1a1a1a)",border:selectedTrainer===t.id?"3px solid "+C.accent:"3px solid "+C.border,display:"flex",alignItems:"center",justifyContent:"center",transition:transitionSmooth}}>
+          <span style={{fontSize:20,fontFamily:serif,fontWeight:600,color:selectedTrainer===t.id?C.bg:C.text2}}>{t.initials}</span>
+        </div>
+        <div style={{textAlign:"center"}}>
+          <div style={{fontSize:13,fontFamily:sans,fontWeight:600,color:C.text}}>{t.name}</div>
+          <div style={{fontSize:10,fontFamily:sans,color:C.text3,marginTop:2,maxWidth:100,lineHeight:1.3}}>{t.specialty}</div>
+          <div style={{fontSize:10,fontFamily:sans,color:C.warm,marginTop:4}}>★ {t.rating}/5</div>
+        </div>
+      </div>)}
+    </div></FadeIn>
+    <FadeIn delay={0.12}><div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:6}}>
+      {dates.map((d,i)=><button key={i} onClick={()=>setSelectedDate(d.num)} style={{padding:"10px 0",background:selectedDate===d.num?C.accent:"transparent",border:selectedDate===d.num?"none":"1px solid "+C.border,borderRadius:12,fontSize:10,fontFamily:sans,fontWeight:600,color:selectedDate===d.num?C.bg:C.text,cursor:"pointer",transition:transitionSmooth,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
+        <span style={{fontSize:9,fontWeight:400,color:selectedDate===d.num?C.bg:C.text3}}>{d.day}</span>
+        <span>{d.num}</span>
+      </button>)}
+    </div></FadeIn>
+    <FadeIn delay={0.16}><div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16}}>
+      {[{label:"Morning",times:morningTimes},{label:"Afternoon",times:afternoonTimes},{label:"Evening",times:eveningTimes}].map(col=><div key={col.label}>
+        <div style={{fontSize:12,fontFamily:sans,fontWeight:600,color:C.text,marginBottom:10,textAlign:"center"}}>{col.label}</div>
+        <div style={{display:"flex",flexDirection:"column",gap:8}}>
+          {col.times.map(t=><button key={t} onClick={()=>setSelectedTime(t)} style={{padding:"12px 8px",background:selectedTime===t?C.accent:C.surface,border:"1px solid "+(selectedTime===t?C.accent:C.border),borderRadius:10,fontSize:11,fontFamily:sans,fontWeight:600,color:selectedTime===t?C.bg:C.text,cursor:"pointer",transition:transitionSmooth,textAlign:"center"}}>
+            {t}
+          </button>)}
+        </div>
+      </div>)}
+    </div></FadeIn>
+    <FadeIn delay={0.22}><button style={{width:"100%",padding:"18px",background:C.accent,border:"none",borderRadius:14,fontSize:15,fontFamily:sans,fontWeight:600,color:C.bg,cursor:"pointer",transition:transitionSmooth,letterSpacing:0.5}}>Confirm Booking</button></FadeIn>
+  </div>;
+}
+
+function AIChatSheet({open,onClose}) {
+  const [messages,setMessages]=useState([{type:"ai",text:"Hi! I'm your wellness coach. How can I support you today?"}]);
+  const [input,setInput]=useState("");
+  const quickPrompts=["How am I doing?","Suggest a ritual","Help me sleep"];
+  const handleSend=(text)=>{if(!text.trim())return;setMessages([...messages,{type:"user",text}]);setTimeout(()=>setMessages(m=>[...m,{type:"ai",text:"That's great! Keep it up. 🌿"}]),300);setInput("");};
+  if(!open)return null;
+  return <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",zIndex:99,display:"flex",alignItems:"flex-end",justifyContent:"center",animation:"fadeIn 0.3s ease"}} onClick={onClose}>
+    <div style={{width:"100%",maxWidth:430,height:"80vh",background:C.surface,borderTopLeftRadius:28,borderTopRightRadius:28,boxShadow:"0 -8px 32px rgba(0,0,0,0.5)",display:"flex",flexDirection:"column",border:"1px solid "+C.border,borderBottom:"none",onClick:e=>e.stopPropagation()}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"20px",borderBottom:"1px solid "+C.border}}>
+        <div style={{fontSize:16,fontFamily:sans,fontWeight:600,color:C.text}}>Wellness Coach</div>
+        <button onClick={onClose} style={{background:"none",border:"none",fontSize:20,color:C.text3,cursor:"pointer"}}>✕</button>
+      </div>
+      <div style={{flex:1,overflowY:"auto",padding:"16px",display:"flex",flexDirection:"column",gap:12}}>
+        {messages.map((m,i)=><div key={i} style={{display:"flex",justifyContent:m.type==="user"?"flex-end":"flex-start"}}><div style={{maxWidth:"80%",padding:"12px",borderRadius:14,background:m.type==="user"?C.accent:C.card,color:m.type==="user"?C.bg:C.text,fontSize:13,fontFamily:sans,lineHeight:1.4}}>{m.text}</div></div>)}
+      </div>
+      <div style={{padding:"12px 16px",borderTop:"1px solid "+C.border}}>
+        {messages.length===1&&<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}}>
+          {quickPrompts.map(p=><button key={p} onClick={()=>handleSend(p)} style={{padding:"8px",background:C.card,border:"1px solid "+C.border,borderRadius:10,fontSize:11,fontFamily:sans,color:C.text2,cursor:"pointer",transition:transitionSmooth}}>
+            {p}
+          </button>)}
+        </div>}
+        <div style={{display:"flex",gap:8}}>
+          <input value={input} onChange={e=>setInput(e.target.value)} onKeyPress={e=>e.key==="Enter"&&handleSend(input)} placeholder="Ask me anything..." style={{flex:1,background:C.card,border:"1px solid "+C.border,borderRadius:12,padding:"10px",fontSize:12,fontFamily:sans,color:C.text}}/>
+          <button onClick={()=>handleSend(input)} style={{background:C.accent,border:"none",borderRadius:12,width:40,height:40,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,cursor:"pointer",transition:transitionSmooth}}>→</button>
+        </div>
+      </div>
+    </div>
+  </div>;
+}
+
 export default function App() {
   const [page,setPage]=useState("home");
   const [menuOpen,setMenuOpen]=useState(false);
   const [selectedVideo,setSelectedVideo]=useState(null);
+  const [chatOpen,setChatOpen]=useState(false);
+  
+  const handleNavigate=(newPage)=>{setPage(newPage);};
+  
   return <div style={{background:C.bg,minHeight:"100vh",maxWidth:430,margin:"0 auto",fontFamily:sans,color:C.text,position:"relative",overflow:"hidden"}}>
     <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');*{box-sizing:border-box;margin:0;padding:0}::-webkit-scrollbar{display:none}html{scroll-behavior:smooth}::placeholder{color:${C.text3}}textarea:focus,textarea{border-color:${C.borderLight}!important;outline:none}button{transition:all 0.3s cubic-bezier(0.16,1,0.3,1)}button:hover{opacity:0.85}button:active{transform:scale(0.98)}@keyframes breathe{0%,100%{transform:translateY(-50%) scale(1);opacity:0.15}50%{transform:translateY(-50%) scale(1.15);opacity:0.25}}@keyframes fall{to{transform:translateY(100vh);opacity:0}}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}`}</style>
     <VideoModal video={selectedVideo} onClose={()=>setSelectedVideo(null)}/>
@@ -667,8 +788,11 @@ export default function App() {
     <Header onMenuOpen={()=>setMenuOpen(true)}/>
     <PremiumMenu open={menuOpen} onNav={setPage} onClose={()=>setMenuOpen(false)}/>
     <div style={{padding:"0 20px",paddingTop:60,paddingBottom:100}}>
-      {page==="home"&&<HomePage selectedVideo={selectedVideo} setSelectedVideo={setSelectedVideo}/>}
-      {page==="mind"&&<MindPage/>}
+      {page==="home"&&<HomePage selectedVideo={selectedVideo} setSelectedVideo={setSelectedVideo} onNavigate={handleNavigate}/>}
+      {page==="mind"&&<MindPage onNavigate={handleNavigate}/>}
+      {page==="sleep"&&<SleepTrackerPage onNavigate={handleNavigate}/>}
+      {page==="workout"&&<WorkoutBuilderPage onNavigate={handleNavigate}/>}
+      {page==="trainer"&&<TrainerBookingPage onNavigate={handleNavigate}/>}
       {page==="community"&&<CommunityPage/>}
       {page==="progress"&&<ProgressPage/>}
       {page==="profile"&&<ProfilePage/>}
@@ -680,6 +804,10 @@ export default function App() {
       {page==="membership"&&<MembershipPage/>}
       {page==="coach"&&<CoachPage/>}
     </div>
+    
+    {page!=="sleep"&&page!=="workout"&&page!=="trainer"&&<button onClick={()=>setChatOpen(true)} style={{position:"fixed",bottom:90,right:20,width:56,height:56,borderRadius:"50%",background:C.accentSoft,border:"1px solid rgba(124,154,126,0.3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,cursor:"pointer",transition:transitionSmooth,boxShadow:`0 8px 24px rgba(124,154,126,0.2)`,zIndex:60}}>💬</button>}
+    
+    <AIChatSheet open={chatOpen} onClose={()=>setChatOpen(false)}/>
     <NavBar active={page} onNav={setPage}/>
   </div>;
 }
