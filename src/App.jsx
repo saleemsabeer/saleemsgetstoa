@@ -328,40 +328,130 @@ function MindPage() {
 }
 
 function ProgressPage() {
-  const days=Array.from({length:35},()=>({active:Math.random()>0.35,intensity:Math.random()}));
+  const [hoveredDay,setHoveredDay]=useState(null);
+  const days=Array.from({length:35},(_,i)=>({date:`Mar ${i+1}`,active:Math.random()>0.35,intensity:Math.random(),mood:["Radiant","Good","Neutral","Low","Heavy"][Math.floor(Math.random()*5)],minutes:Math.floor(Math.random()*40)+5}));
   const moodData=[3.2,4.1,3.8,4.5,4.2,4.8,4.6,3.9,4.3,4.7,4.4,4.1,4.6,4.9,4.5,3.8,4.2,4.5,4.8,4.3,4.7,4.6,4.2,4.4,4.9,4.1,4.8,4.5,4.3,4.7];
   const maxMood=5;
   const paths=moodData.map((v,i)=>`${i*8},${100-(v/maxMood*80)}`).join(" L ");
+  function ProgressRing({val, max, label, unit, color}) {
+    const radius = 35;
+    const circ = 2 * Math.PI * radius;
+    const strokeDash = circ * (val / max);
+    const pct = Math.round((val/max)*100);
+    return <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
+      <div style={{position:"relative",width:100,height:100}}>
+        <svg width={100} height={100} style={{transform:"rotate(-90deg)"}}>
+          <circle cx={50} cy={50} r={radius} fill="none" stroke={C.border} strokeWidth={2}/>
+          <circle cx={50} cy={50} r={radius} fill="none" stroke={color} strokeWidth={2.5} strokeDasharray={circ} strokeDashoffset={circ-strokeDash} strokeLinecap="round" style={{transition:"stroke-dashoffset 1.5s cubic-bezier(0.16,1,0.3,1)"}}/>
+        </svg>
+        <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+          <div style={{fontSize:20,fontFamily:serif,fontWeight:300,color:C.text}}>{val}</div>
+          <div style={{fontSize:9,fontFamily:sans,color:C.text3}}>{pct}%</div>
+        </div>
+      </div>
+      <div style={{textAlign:"center"}}>
+        <div style={{fontSize:10,fontFamily:sans,fontWeight:600,color:C.text3,letterSpacing:1,textTransform:"uppercase"}}>{label}</div>
+        <div style={{fontSize:9,fontFamily:sans,color:C.text3,marginTop:2}}>{unit}</div>
+      </div>
+    </div>;
+  }
+  function WellnessRadar() {
+    const metrics=[{label:"Stillness",val:85},{label:"Movement",val:72},{label:"Water",val:88},{label:"Sleep",val:92},{label:"Mood",val:86}];
+    const n = metrics.length;
+    const angle = (2*Math.PI)/n;
+    const size = 80;
+    const points = metrics.map((m,i)=>{
+      const a = angle*i - Math.PI/2;
+      const r = (m.val/100)*size;
+      return [50+r*Math.cos(a), 50+r*Math.sin(a)];
+    });
+    const radarPoints = points.map(p=>p.join(",")).join(" ");
+    const avgScore = Math.round(metrics.reduce((s,m)=>s+m.val,0)/n);
+    return <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:12}}>
+      <svg width={180} height={180} viewBox="0 0 100 100" style={{display:"block"}}>
+        <defs>
+          <linearGradient id="radarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style={{stopColor:C.accent,stopOpacity:0.3}}/>
+            <stop offset="100%" style={{stopColor:C.accent,stopOpacity:0.1}}/>
+          </linearGradient>
+        </defs>
+        {[20,40,60,80].map((r,i)=><circle key={i} cx={50} cy={50} r={r} fill="none" stroke={C.border} strokeWidth={0.5} opacity={0.3}/>)}
+        {metrics.map((m,i)=>{
+          const a = angle*i - Math.PI/2;
+          const x2 = 50 + 85*Math.cos(a);
+          const y2 = 50 + 85*Math.sin(a);
+          return <line key={`axis-${i}`} x1={50} y1={50} x2={x2} y2={y2} stroke={C.border} strokeWidth={0.3} opacity={0.2}/>;
+        })}
+        <polygon points={radarPoints} fill="url(#radarGrad)" stroke={C.accent} strokeWidth={1.2} opacity={0.8}/>
+        {metrics.map((m,i)=>{
+          const a = angle*i - Math.PI/2;
+          const x = 50 + 92*Math.cos(a);
+          const y = 50 + 92*Math.sin(a);
+          return <text key={`label-${i}`} x={x} y={y} textAnchor="middle" dominantBaseline="middle" fill={C.text3} fontSize={7} fontFamily={sans} fontWeight={500}>{m.label}</text>;
+        })}
+      </svg>
+      <div style={{textAlign:"center"}}>
+        <div style={{fontSize:16,fontFamily:serif,fontWeight:300,color:C.text}}>Balance</div>
+        <div style={{fontSize:24,fontFamily:serif,fontWeight:300,color:C.accent,marginTop:2}}>{avgScore}</div>
+      </div>
+    </div>;
+  }
   return <div style={{display:"flex",flexDirection:"column",gap:28,paddingBottom:100}}>
-    <FadeIn><div style={{padding:"20px 0 0"}}><div style={{fontSize:28,fontFamily:serif,fontWeight:300,color:C.text}}>Progress</div><div style={{fontSize:13,fontFamily:serif,fontStyle:"italic",color:C.text2,marginTop:6}}>Your wellness journey</div></div></FadeIn>
-    <FadeIn delay={0.1}><div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
-      {[{val:"23",label:"Day Streak",icon:"◆"},{val:"4.8",label:"Avg Mood",icon:"☀"},{val:"142",label:"Sessions",icon:"●"}].map((s,i)=><div key={i} style={{background:C.surface,borderRadius:16,padding:"20px 16px",textAlign:"center",border:"1px solid "+C.border}}>
-        <div style={{fontSize:14,color:C.accent,marginBottom:8}}>{s.icon}</div>
-        <div style={{fontSize:26,fontFamily:serif,fontWeight:300,color:C.text}}>{s.val}</div>
-        <div style={{fontSize:9,fontFamily:sans,color:C.text3,letterSpacing:1,textTransform:"uppercase",marginTop:4}}>{s.label}</div>
-      </div>)}
+    <FadeIn><div style={{padding:"20px 0 0"}}><div style={{fontSize:32,fontFamily:serif,fontWeight:300,color:C.text}}>Progress</div><div style={{fontSize:13,fontFamily:serif,fontStyle:"italic",color:C.text2,marginTop:6}}>Your wellness journey</div></div></FadeIn>
+    <FadeIn delay={0.1}><div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,justifyItems:"center"}}>
+      <ProgressRing val={47} max={100} label="Day Streak" unit="days" color={C.accent}/>
+      <ProgressRing val={86} max={100} label="Avg Mood" unit="↑12%" color={C.warm}/>
+      <ProgressRing val={128} max={200} label="Stillness Hours" unit="total" color={C.rose}/>
     </div></FadeIn>
-    <FadeIn delay={0.15}><SL>Activity heatmap</SL><div style={{background:C.surface,borderRadius:18,padding:20,marginTop:14,border:"1px solid "+C.border}}>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(7, 1fr)",gap:4}}>{days.map((d,i)=><div key={i} style={{aspectRatio:"1",borderRadius:4,background:d.active?"rgba(124,154,126,"+(0.15+d.intensity*0.45)+")":"rgba(240,237,230,0.03)",transition:transitionSmooth}}/>)}</div>
-      <div style={{display:"flex",justifyContent:"space-between",marginTop:12}}><span style={{fontSize:9,fontFamily:sans,color:C.text3}}>Less</span><div style={{display:"flex",gap:3}}>{[0.05,0.15,0.3,0.45,0.6].map((o,i)=><div key={i} style={{width:10,height:10,borderRadius:2,background:"rgba(124,154,126,"+o+")"}}/>)}</div><span style={{fontSize:9,fontFamily:sans,color:C.text3}}>More</span></div>
+    <FadeIn delay={0.18}><SL>Wellness Balance</SL><div style={{background:C.surface,borderRadius:18,padding:24,marginTop:14,border:"1px solid "+C.border,display:"flex",justifyContent:"center"}}>
+      <WellnessRadar/>
     </div></FadeIn>
-    <FadeIn delay={0.2}><SL>Mood Trend (30 days)</SL><div style={{background:C.surface,borderRadius:18,padding:20,marginTop:14,border:"1px solid "+C.border}}>
-      <svg width="100%" height="120" viewBox="0 0 240 100" style={{display:"block",marginBottom:6}}>
+    <FadeIn delay={0.25}><SL>Mood Trend (30 days)</SL><div style={{background:C.surface,borderRadius:18,padding:24,marginTop:14,border:"1px solid "+C.border}}>
+      <svg width="100%" height="140" viewBox="0 0 240 110" style={{display:"block"}}>
         <defs>
           <linearGradient id="moodGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style={{stopColor:C.accent,stopOpacity:0.3}}/>
+            <stop offset="0%" style={{stopColor:C.accent,stopOpacity:0.25}}/>
             <stop offset="100%" style={{stopColor:C.accent,stopOpacity:0.02}}/>
           </linearGradient>
         </defs>
-        <polyline points={paths} fill="none" stroke={C.accent} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-        <polygon points={paths+" L 240,100 L 0,100"} fill="url(#moodGrad)" opacity="0.6"/>
+        {[20,40,60,80].map((y,i)=><line key={i} x1={0} y1={y} x2={240} y2={y} stroke={C.border} strokeWidth={0.5} opacity={0.1}/>)}
+        <text x={-3} y={95} fontSize={7} fill={C.text3} fontFamily={sans} textAnchor="end">Low</text>
+        <text x={-3} y={20} fontSize={7} fill={C.text3} fontFamily={sans} textAnchor="end">High</text>
+        <polygon points={paths+" L 240,105 L 0,105"} fill="url(#moodGrad)"/>
+        <polyline points={paths} fill="none" stroke={C.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/>
+        {moodData.map((v,i)=><circle key={i} cx={i*8} cy={100-(v/maxMood*80)} r={1.5} fill={C.accent} opacity={0.6}/>)}
       </svg>
-      <div style={{display:"flex",justifyContent:"space-between",fontSize:9,color:C.text3}}><span>Low</span><span>High</span></div>
+      <div style={{fontSize:11,fontFamily:serif,fontStyle:"italic",color:C.text2,textAlign:"center",marginTop:12}}>Calmer tides this month</div>
     </div></FadeIn>
-    <FadeIn delay={0.25}><SL>Weekly summary</SL><div style={{background:C.surface,borderRadius:18,padding:20,marginTop:14,border:"1px solid "+C.border,display:"flex",flexDirection:"column",gap:16}}>
+    <FadeIn delay={0.32}><SL>Activity Heatmap</SL><div style={{background:C.surface,borderRadius:18,padding:20,marginTop:14,border:"1px solid "+C.border}}>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(7, 1fr)",gap:4}}>
+        {days.map((day,i)=>(
+          <div key={i} onMouseEnter={()=>setHoveredDay(i)} onMouseLeave={()=>setHoveredDay(null)} style={{position:"relative",aspectRatio:"1"}}>
+            <div style={{width:"100%",height:"100%",borderRadius:4,background:day.active?"rgba(124,154,126,"+(0.15+day.intensity*0.45)+")":"rgba(240,237,230,0.03)",cursor:"pointer",transition:transitionSmooth,border:hoveredDay===i?"1px solid "+C.accent:"1px solid transparent"}}/>
+            {hoveredDay===i&&<div style={{position:"absolute",bottom:"100%",left:"50%",transform:"translateX(-50%)",marginBottom:6,background:C.surface,border:"1px solid "+C.border,borderRadius:8,padding:"8px 10px",whiteSpace:"nowrap",fontSize:9,fontFamily:sans,color:C.text,zIndex:10,boxShadow:"0 4px 12px rgba(0,0,0,0.3)"}}>
+              <div style={{fontWeight:600,color:C.accent}}>{day.date}: {day.mood}</div>
+              <div style={{color:C.text3,marginTop:2}}>{day.minutes} min stillness</div>
+            </div>}
+          </div>
+        ))}
+      </div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:14}}><span style={{fontSize:9,fontFamily:sans,color:C.text3}}>Less activity</span><div style={{display:"flex",gap:2,alignItems:"center"}}>
+        {[0.08,0.2,0.35,0.5,0.7].map((o,i)=><div key={i} style={{width:8,height:8,borderRadius:2,background:"rgba(124,154,126,"+o+")"}}/>)}</div><span style={{fontSize:9,fontFamily:sans,color:C.text3}}>More</span></div>
+    </div></FadeIn>
+    <FadeIn delay={0.4}><SL>Unlocked Milestones</SL><div style={{display:"flex",gap:10,overflowX:"auto",paddingBottom:4,marginTop:14,scrollbarWidth:"none"}}>
+      {[{emoji:"🌱",label:"Rooted",sub:"7 day streak"},{emoji:"🧙",label:"Sage of Stillness",sub:"100 sessions"},{emoji:"💎",label:"Unbreakable Ritual",sub:"Never missed"}].map((m,i)=><div key={i} style={{minWidth:110,background:C.surface,borderRadius:14,border:"1px solid "+C.accent,padding:12,textAlign:"center",flexShrink:0,cursor:"pointer",transition:transitionSmooth,display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
+        <div style={{fontSize:26}}>{m.emoji}</div>
+        <div style={{fontSize:10,fontFamily:sans,fontWeight:600,color:C.accent}}>{m.label}</div>
+        <div style={{fontSize:8,fontFamily:sans,color:C.text3}}>{m.sub}</div>
+      </div>)}
+    </div></FadeIn>
+    <FadeIn delay={0.48}><div style={{background:C.accentSoft,borderRadius:18,padding:24,border:"1px solid rgba(124,154,126,0.2)",textAlign:"center"}}>
+      <div style={{fontSize:14,fontFamily:serif,fontWeight:300,fontStyle:"italic",color:C.text,lineHeight:1.8,letterSpacing:0.5}}>Your evenings hold the deepest stillness — guard them as sacred ground.</div>
+    </div></FadeIn>
+    <FadeIn delay={0.55}><SL>Weekly Summary</SL><div style={{background:C.surface,borderRadius:18,padding:20,marginTop:14,border:"1px solid "+C.border,display:"flex",flexDirection:"column",gap:14}}>
       {[{label:"Movement",val:"4.2 hrs",pct:84,color:C.accent},{label:"Stillness",val:"98 min",pct:70,color:C.purple},{label:"Journaling",val:"6 entries",pct:86,color:C.warm},{label:"Sleep quality",val:"7.2 avg",pct:90,color:C.rose}].map((item,i)=><div key={i}>
-        <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}><span style={{fontSize:12,fontFamily:sans,color:C.text}}>{item.label}</span><span style={{fontSize:12,fontFamily:sans,color:C.text2}}>{item.val}</span></div>
-        <div style={{height:3,background:C.border,borderRadius:2}}><div style={{height:"100%",width:item.pct+"%",background:item.color,borderRadius:2,transition:"width 1.5s cubic-bezier(0.16,1,0.3,1)"}}/></div>
+        <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}><span style={{fontSize:12,fontFamily:sans,fontWeight:500,color:C.text}}>{item.label}</span><span style={{fontSize:12,fontFamily:sans,color:C.text2}}>{item.val}</span></div>
+        <div style={{height:2,background:C.border,borderRadius:1,overflow:"hidden"}}><div style={{height:"100%",width:item.pct+"%",background:item.color,borderRadius:1,transition:"width 1.5s cubic-bezier(0.16,1,0.3,1)"}}/></div>
       </div>)}
     </div></FadeIn>
   </div>;
