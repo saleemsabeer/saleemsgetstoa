@@ -16,6 +16,21 @@ const sans = "'DM Sans', system-ui, sans-serif";
 const transitionSmooth = "all 0.3s cubic-bezier(0.16,1,0.3,1)";
 const transitionFade = "opacity 0.3s ease-in-out, background-color 0.3s ease-in-out";
 
+function Confetti() {
+  const confetti = Array.from({length:20},(_,i)=>({id:i,left:Math.random()*100,delay:Math.random()*0.5}));
+  return <div style={{position:"fixed",inset:0,pointerEvents:"none",overflow:"hidden",zIndex:50}}>
+    {confetti.map(p=><div key={p.id} style={{position:"absolute",top:"-20px",left:p.left+"%",width:"8px",height:"8px",borderRadius:"50%",background:C.accent,opacity:0.6,animation:`fall ${1.5+Math.random()}s ease-in forwards`,animationDelay:p.delay+"s"}}/>)}
+  </div>;
+}
+
+function BreathingCircle({size=120,active=true}) {
+  return <div style={{position:"relative",width:size,height:size,margin:"0 auto"}}>
+    <div style={{position:"absolute",inset:`calc(50% - ${size/2}px)`,width:size,height:size,borderRadius:"50%",border:`1px solid ${C.accent}`,opacity:active?0.8:0.3,animation:active?"breathe 6s ease-in-out infinite":"none"}}/>
+    <div style={{position:"absolute",inset:`calc(50% - ${size*.6/2}px)`,width:size*.6,height:size*.6,borderRadius:"50%",border:`1px solid ${C.accent}`,opacity:active?0.5:0.15,animation:active?"breathe 6s ease-in-out infinite 0.2s":"none"}}/>
+    <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%, -50%)",fontSize:"12px",fontFamily:serif,color:C.accent,opacity:active?0.7:0,transition:transitionSmooth}}>{active?"breathe":"∞"}</div>
+  </div>;
+}
+
 function FadeIn({children,delay=0,style={}}) {
   const [v,setV]=useState(false);
   const ref=useRef();
@@ -34,12 +49,25 @@ function Header({onMenuOpen}) {
   </div>;
 }
 
+function AmbientSoundPill() {
+  const [sound,setSound]=useState("rain");
+  const sounds=[{id:"rain",icon:"🌧️",label:"Rain"},{id:"forest",icon:"🌲",label:"Forest"},{id:"fire",icon:"🔥",label:"Fire"}];
+  return <div style={{position:"fixed",bottom:100,right:20,zIndex:60}}>
+    <div style={{background:C.surface,borderRadius:999,padding:"12px 14px",border:"1px solid "+C.border,boxShadow:`0 0 30px ${C.accent}40, inset 0 0 20px rgba(124,154,126,0.1)`,display:"flex",alignItems:"center",gap:8}}>
+      <select value={sound} onChange={(e)=>setSound(e.target.value)} style={{background:"none",border:"none",color:C.text,fontFamily:sans,fontSize:10,cursor:"pointer",outline:"none",appearance:"none",width:50}}>
+        {sounds.map(s=><option key={s.id} value={s.id}>{s.label}</option>)}
+      </select>
+      <span style={{fontSize:14}}>{sounds.find(s=>s.id===sound)?.icon}</span>
+    </div>
+  </div>;
+}
+
 function NavBar({active,onNav}) {
   const items=[{id:"home",label:"Home",icon:"⌂"},{id:"mind",label:"Mind",icon:"◐"},{id:"community",label:"Circle",icon:"◎"},{id:"progress",label:"Progress",icon:"△"},{id:"profile",label:"You",icon:"○"}];
-  return <nav style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,zIndex:100,background:"rgba(8,8,8,0.88)",backdropFilter:"blur(40px) saturate(180%)",WebkitBackdropFilter:"blur(40px) saturate(180%)",borderTop:"1px solid "+C.border,display:"flex",justifyContent:"space-around",alignItems:"center",paddingTop:8,paddingBottom:"max(8px, env(safe-area-inset-bottom))"}}>
-    {items.map(item=><button key={item.id} onClick={()=>onNav(item.id)} style={{background:"none",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,padding:"6px 14px",transition:"all 0.3s",opacity:active===item.id?1:0.35}}>
-      <span style={{fontSize:18,fontFamily:sans,color:C.text,filter:active===item.id?"drop-shadow(0 0 6px "+C.accent+")":"none"}}>{item.icon}</span>
-      <span style={{fontSize:9,fontFamily:sans,fontWeight:active===item.id?600:400,color:C.text,letterSpacing:1.5,textTransform:"uppercase"}}>{item.label}</span>
+  return <nav style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,zIndex:100,background:"rgba(8,8,8,0.92)",backdropFilter:"blur(40px) saturate(180%)",WebkitBackdropFilter:"blur(40px) saturate(180%)",borderTop:"1px solid "+C.border,display:"flex",justifyContent:"space-around",alignItems:"center",paddingTop:10,paddingBottom:"max(10px, env(safe-area-inset-bottom))"}}>
+    {items.map(item=><button key={item.id} onClick={()=>onNav(item.id)} style={{background:"none",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,padding:"8px 14px",transition:"all 0.3s",opacity:active===item.id?1:0.35}}>
+      <span style={{fontSize:18,fontFamily:sans,color:C.text,filter:active===item.id?`drop-shadow(0 0 10px ${C.accent})`:"none"}}>{item.icon}</span>
+      <span style={{fontSize:8,fontFamily:sans,fontWeight:active===item.id?700:400,color:C.text,letterSpacing:1.5,textTransform:"uppercase"}}>{item.label}</span>
     </button>)}
   </nav>;
 }
@@ -117,6 +145,15 @@ function HomePage({selectedVideo, setSelectedVideo}) {
       <div style={{position:"absolute",top:"50%",left:"65%",transform:"translate(-50%,-50%)",width:140,height:140,borderRadius:"50%",border:"1px solid "+C.border,opacity:0.25}}/>
     </div></FadeIn>
 
+    <FadeIn delay={0.08}><div style={{background:C.surface,borderRadius:18,padding:20,border:"1px solid "+C.border,boxShadow:`inset 0 0 20px rgba(124,154,126,0.08)`}}>
+      <div style={{fontSize:10,fontFamily:sans,fontWeight:600,color:C.text3,letterSpacing:2.5,textTransform:"uppercase",marginBottom:12}}>Your Path Today</div>
+      <div style={{fontSize:14,fontFamily:serif,fontWeight:300,color:C.text,lineHeight:1.6,marginBottom:12}}>20 min<br/>Box Breathing + Gentle Sunrise Walk</div>
+      <div style={{display:"flex",gap:8}}>
+        <div style={{flex:1,padding:"9px 12px",background:C.accentSoft,borderRadius:10,fontSize:10,fontFamily:sans,color:C.accent,textAlign:"center",border:"1px solid rgba(124,154,126,0.2)"}}>Box Breathe</div>
+        <div style={{flex:1,padding:"9px 12px",background:"transparent",borderRadius:10,fontSize:10,fontFamily:sans,color:C.text3,textAlign:"center",border:"1px solid "+C.border}}>Walk</div>
+      </div>
+    </div></FadeIn>
+
     <FadeIn delay={0.1}><div style={{background:C.surface,borderRadius:18,padding:"20px 22px",border:"1px solid "+C.border}}>
       <div style={{fontSize:13,fontFamily:sans,fontWeight:500,color:C.text,marginBottom:16}}>How are you feeling?</div>
       <div style={{display:"flex",justifyContent:"space-between"}}>
@@ -165,11 +202,23 @@ function HomePage({selectedVideo, setSelectedVideo}) {
         <span style={{fontSize:16,color:C.text3}}>→</span>
       </div>
       <div style={{background:C.surface,borderRadius:16,padding:20,border:"1px solid "+C.border}}>
-        <div style={{fontSize:9,fontFamily:sans,fontWeight:600,color:C.text3,letterSpacing:2.5,textTransform:"uppercase",marginBottom:14}}>Today I'm grateful for</div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+          <div style={{fontSize:9,fontFamily:sans,fontWeight:600,color:C.text3,letterSpacing:2.5,textTransform:"uppercase"}}>Today I'm grateful for</div>
+          <button style={{background:"none",border:"none",cursor:"pointer",fontSize:14,color:C.accent,opacity:0.7,transition:transitionSmooth,padding:"4px 8px"}}>🎙️</button>
+        </div>
         <textarea placeholder="What brought you peace today?" style={{width:"100%",minHeight:70,background:"rgba(240,237,230,0.02)",border:"1px solid "+C.border,borderRadius:12,padding:"14px 16px",fontSize:13,fontFamily:serif,fontWeight:300,fontStyle:"italic",color:C.text,resize:"none",outline:"none",lineHeight:1.6,boxSizing:"border-box",transition:transitionSmooth}}/>
         <button style={{width:"100%",padding:"13px 0",borderRadius:999,marginTop:14,background:"rgba(240,237,230,0.04)",border:"none",fontSize:12,fontFamily:sans,fontWeight:600,color:C.text3,cursor:"pointer",transition:transitionSmooth}}>Save Gratitude</button>
       </div>
     </div></FadeIn>
+
+    <FadeIn delay={0.3}>
+      <SL>Gratitude Reflections</SL>
+      <div style={{display:"flex",gap:12,overflowX:"auto",paddingBottom:4,marginTop:14,scrollbarWidth:"none"}}>
+        {["Today I am grateful for quiet strength","Every breath is a gift","Stillness reveals my purpose","Peace flows through me","I honor my inner sanctuary"].map((q,i)=><div key={i} style={{minWidth:240,background:C.surface,borderRadius:18,border:"1px solid "+C.border,padding:24,display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",height:140,cursor:"pointer",flexShrink:0,transition:transitionSmooth,textAlign:"center"}}>
+          <div style={{fontSize:15,fontFamily:serif,fontWeight:300,fontStyle:"italic",color:C.text,lineHeight:1.6}}>{q}</div>
+        </div>)}
+      </div>
+    </FadeIn>
 
     <FadeIn delay={0.28}><div style={{background:C.surface,borderRadius:20,padding:"32px 28px",textAlign:"center",border:"1px solid "+C.border}}>
       <div style={{width:32,height:1,background:C.border,margin:"0 auto 20px",borderRadius:1}}/>
@@ -258,21 +307,31 @@ function HomePage({selectedVideo, setSelectedVideo}) {
 }
 
 function MindPage() {
-  const items=[{title:"Breathing",sub:"4-7-8 technique",dur:"5 min",color:C.accentSoft,accent:C.accent},{title:"Body Scan",sub:"Progressive relaxation",dur:"12 min",color:C.purpleSoft,accent:C.purple},{title:"Loving Kindness",sub:"Metta meditation",dur:"15 min",color:C.roseSoft,accent:C.rose},{title:"Sound Bath",sub:"Tibetan singing bowls",dur:"20 min",color:C.warmSoft,accent:C.warm}];
+  const [activeSession,setActiveSession]=useState(null);
+  const items=[{title:"Breathing",sub:"4-7-8 technique",dur:"5 min",color:C.accentSoft,accent:C.accent,type:"breathe"},{title:"Body Scan",sub:"Progressive relaxation",dur:"12 min",color:C.purpleSoft,accent:C.purple},{title:"Loving Kindness",sub:"Metta meditation",dur:"15 min",color:C.roseSoft,accent:C.rose},{title:"Sound Bath",sub:"Tibetan singing bowls",dur:"20 min",color:C.warmSoft,accent:C.warm}];
   return <div style={{display:"flex",flexDirection:"column",gap:28,paddingBottom:100}}>
     <FadeIn><div style={{padding:"20px 0 0"}}><div style={{fontSize:28,fontFamily:serif,fontWeight:300,color:C.text}}>Your Mind</div><div style={{fontSize:13,fontFamily:serif,fontStyle:"italic",color:C.text2,marginTop:6}}>Cultivate inner stillness</div></div></FadeIn>
-    {items.map((item,i)=><FadeIn key={i} delay={0.1+i*0.06}><div style={{background:C.surface,borderRadius:18,padding:22,cursor:"pointer",border:"1px solid "+C.border,display:"flex",justifyContent:"space-between",alignItems:"center",transition:transitionSmooth}}>
+    {items.map((item,i)=><FadeIn key={i} delay={0.1+i*0.06}><div onClick={()=>setActiveSession(activeSession===i?null:i)} style={{background:C.surface,borderRadius:18,padding:22,cursor:"pointer",border:"1px solid "+C.border,display:"flex",justifyContent:"space-between",alignItems:"center",transition:transitionSmooth}}>
       <div style={{display:"flex",alignItems:"center",gap:16}}>
         <div style={{width:48,height:48,borderRadius:14,background:item.color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,color:item.accent}}>◎</div>
         <div><div style={{fontSize:14,fontFamily:sans,fontWeight:500,color:C.text}}>{item.title}</div><div style={{fontSize:11,fontFamily:sans,color:C.text3,marginTop:2}}>{item.sub}</div></div>
       </div>
       <div style={{fontSize:10,fontFamily:sans,color:C.text3,background:"rgba(240,237,230,0.04)",padding:"6px 12px",borderRadius:999}}>{item.dur}</div>
     </div></FadeIn>)}
+    {activeSession!==null&&<FadeIn delay={0.3}><div style={{background:C.surface,borderRadius:18,padding:32,border:"1px solid "+C.border,textAlign:"center"}}>
+      <div style={{fontSize:12,fontFamily:sans,fontWeight:600,color:items[activeSession].accent,letterSpacing:2,textTransform:"uppercase",marginBottom:20}}>Now Breathing</div>
+      <BreathingCircle size={140} active={true}/>
+      <div style={{fontSize:12,fontFamily:sans,color:C.text3,marginTop:20}}>Inhale 4 counts • Hold 4 • Exhale 4</div>
+      <button style={{marginTop:24,padding:"12px 28px",borderRadius:999,background:items[activeSession].color,border:`1px solid ${items[activeSession].accent}40`,fontSize:11,fontFamily:sans,fontWeight:600,color:items[activeSession].accent,cursor:"pointer",transition:transitionSmooth}}>End Session</button>
+    </div></FadeIn>}
   </div>;
 }
 
 function ProgressPage() {
   const days=Array.from({length:35},()=>({active:Math.random()>0.35,intensity:Math.random()}));
+  const moodData=[3.2,4.1,3.8,4.5,4.2,4.8,4.6,3.9,4.3,4.7,4.4,4.1,4.6,4.9,4.5,3.8,4.2,4.5,4.8,4.3,4.7,4.6,4.2,4.4,4.9,4.1,4.8,4.5,4.3,4.7];
+  const maxMood=5;
+  const paths=moodData.map((v,i)=>`${i*8},${100-(v/maxMood*80)}`).join(" L ");
   return <div style={{display:"flex",flexDirection:"column",gap:28,paddingBottom:100}}>
     <FadeIn><div style={{padding:"20px 0 0"}}><div style={{fontSize:28,fontFamily:serif,fontWeight:300,color:C.text}}>Progress</div><div style={{fontSize:13,fontFamily:serif,fontStyle:"italic",color:C.text2,marginTop:6}}>Your wellness journey</div></div></FadeIn>
     <FadeIn delay={0.1}><div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
@@ -286,7 +345,20 @@ function ProgressPage() {
       <div style={{display:"grid",gridTemplateColumns:"repeat(7, 1fr)",gap:4}}>{days.map((d,i)=><div key={i} style={{aspectRatio:"1",borderRadius:4,background:d.active?"rgba(124,154,126,"+(0.15+d.intensity*0.45)+")":"rgba(240,237,230,0.03)",transition:transitionSmooth}}/>)}</div>
       <div style={{display:"flex",justifyContent:"space-between",marginTop:12}}><span style={{fontSize:9,fontFamily:sans,color:C.text3}}>Less</span><div style={{display:"flex",gap:3}}>{[0.05,0.15,0.3,0.45,0.6].map((o,i)=><div key={i} style={{width:10,height:10,borderRadius:2,background:"rgba(124,154,126,"+o+")"}}/>)}</div><span style={{fontSize:9,fontFamily:sans,color:C.text3}}>More</span></div>
     </div></FadeIn>
-    <FadeIn delay={0.2}><SL>Weekly summary</SL><div style={{background:C.surface,borderRadius:18,padding:20,marginTop:14,border:"1px solid "+C.border,display:"flex",flexDirection:"column",gap:16}}>
+    <FadeIn delay={0.2}><SL>Mood Trend (30 days)</SL><div style={{background:C.surface,borderRadius:18,padding:20,marginTop:14,border:"1px solid "+C.border}}>
+      <svg width="100%" height="120" viewBox="0 0 240 100" style={{display:"block",marginBottom:6}}>
+        <defs>
+          <linearGradient id="moodGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style={{stopColor:C.accent,stopOpacity:0.3}}/>
+            <stop offset="100%" style={{stopColor:C.accent,stopOpacity:0.02}}/>
+          </linearGradient>
+        </defs>
+        <polyline points={paths} fill="none" stroke={C.accent} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <polygon points={paths+" L 240,100 L 0,100"} fill="url(#moodGrad)" opacity="0.6"/>
+      </svg>
+      <div style={{display:"flex",justifyContent:"space-between",fontSize:9,color:C.text3}}><span>Low</span><span>High</span></div>
+    </div></FadeIn>
+    <FadeIn delay={0.25}><SL>Weekly summary</SL><div style={{background:C.surface,borderRadius:18,padding:20,marginTop:14,border:"1px solid "+C.border,display:"flex",flexDirection:"column",gap:16}}>
       {[{label:"Movement",val:"4.2 hrs",pct:84,color:C.accent},{label:"Stillness",val:"98 min",pct:70,color:C.purple},{label:"Journaling",val:"6 entries",pct:86,color:C.warm},{label:"Sleep quality",val:"7.2 avg",pct:90,color:C.rose}].map((item,i)=><div key={i}>
         <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}><span style={{fontSize:12,fontFamily:sans,color:C.text}}>{item.label}</span><span style={{fontSize:12,fontFamily:sans,color:C.text2}}>{item.val}</span></div>
         <div style={{height:3,background:C.border,borderRadius:2}}><div style={{height:"100%",width:item.pct+"%",background:item.color,borderRadius:2,transition:"width 1.5s cubic-bezier(0.16,1,0.3,1)"}}/></div>
@@ -296,10 +368,14 @@ function ProgressPage() {
 }
 
 function ProfilePage() {
+  const [showConfetti,setShowConfetti]=useState(false);
+  const milestones=[{badge:"🌱",label:"Rooted",sub:"7 day streak"},{badge:"🧙",label:"Sage of Stillness",sub:"100 sessions"},{badge:"💎",label:"Unbreakable Ritual",sub:"Never missed"}];
+  const handleMilestone=()=>{setShowConfetti(true);setTimeout(()=>setShowConfetti(false),2000);};
   return <div style={{display:"flex",flexDirection:"column",gap:28,paddingBottom:100}}>
+    {showConfetti&&<Confetti/>}
     <FadeIn><div style={{textAlign:"center",padding:"30px 0 10px"}}>
       <div style={{width:80,height:80,borderRadius:"50%",margin:"0 auto 16px",background:C.accentSoft,border:"2px solid rgba(124,154,126,0.3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,fontFamily:serif,fontWeight:300,color:C.accent}}>S</div>
-      <div style={{fontSize:22,fontFamily:serif,fontWeight:400,color:C.text}}>Sarah</div>
+      <div style={{fontSize:22,fontFamily:serif,fontWeight:400,color:C.text}}>Saleem</div>
       <div style={{fontSize:12,fontFamily:sans,color:C.text3,marginTop:4}}>Member since January 2024</div>
     </div></FadeIn>
     <FadeIn delay={0.1}><div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
@@ -308,23 +384,46 @@ function ProfilePage() {
         <div style={{fontSize:9,fontFamily:sans,color:C.text3,marginTop:4,letterSpacing:0.5,textTransform:"uppercase"}}>{s.label}</div>
       </div>)}
     </div></FadeIn>
-    <FadeIn delay={0.15}>{["Wellness Goals","Notifications","Appearance","Privacy","Help & Support","About Stoa"].map((item,i)=><div key={i} style={{padding:"16px 4px",borderBottom:i<5?"1px solid "+C.border:"none",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer",transition:transitionSmooth}}>
+    <FadeIn delay={0.15}>
+      <SL>Unlocked Milestones</SL>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginTop:14}}>
+        {milestones.map((m,i)=><div key={i} onClick={handleMilestone} style={{background:C.surface,borderRadius:16,padding:16,border:"1px solid "+C.border,textAlign:"center",cursor:"pointer",transition:transitionSmooth}}>
+          <div style={{fontSize:28,marginBottom:8}}>{m.badge}</div>
+          <div style={{fontSize:11,fontFamily:sans,fontWeight:600,color:C.accent}}>{m.label}</div>
+          <div style={{fontSize:9,fontFamily:sans,color:C.text3,marginTop:4}}>{m.sub}</div>
+        </div>)}
+      </div>
+    </FadeIn>
+    <FadeIn delay={0.2}>{["Wellness Goals","Notifications","Appearance","Privacy","Help & Support","About Stoa"].map((item,i)=><div key={i} style={{padding:"16px 4px",borderBottom:i<5?"1px solid "+C.border:"none",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer",transition:transitionSmooth}}>
       <span style={{fontSize:14,fontFamily:sans,color:C.text}}>{item}</span><span style={{fontSize:14,color:C.text3}}>›</span>
     </div>)}</FadeIn>
   </div>;
 }
 
 function CommunityPage() {
+  const [isLiveActive,setIsLiveActive]=useState(true);
+  const [liveCount]=useState(73);
   return <div style={{display:"flex",flexDirection:"column",gap:28,paddingBottom:100}}>
     <FadeIn><div style={{padding:"20px 0 0"}}><div style={{fontSize:28,fontFamily:serif,fontWeight:300,color:C.text}}>Circle</div><div style={{fontSize:13,fontFamily:serif,fontStyle:"italic",color:C.text2,marginTop:6}}>Your wellness community</div></div></FadeIn>
-    <FadeIn delay={0.1}><SL right="See all">Groups</SL><div style={{display:"flex",flexDirection:"column",gap:10,marginTop:14}}>
+    
+    {isLiveActive&&<FadeIn delay={0.08}><div style={{background:`linear-gradient(135deg, ${C.accentSoft} 0%, rgba(124,154,126,0.05) 100%)`,borderRadius:20,padding:28,border:`1px solid rgba(124,154,126,0.3)`,textAlign:"center"}}>
+      <div style={{fontSize:10,fontFamily:sans,fontWeight:700,color:C.accent,letterSpacing:2,textTransform:"uppercase",marginBottom:16}}>◉ Live Now</div>
+      <div style={{fontSize:20,fontFamily:serif,fontWeight:300,color:C.text,marginBottom:20}}>Stillness Hour</div>
+      <BreathingCircle size={100} active={true}/>
+      <div style={{fontSize:12,fontFamily:sans,color:C.text3,marginTop:16}}>
+        <span style={{fontSize:18,color:C.accent}}>{liveCount}</span> breathing with you right now
+      </div>
+      <button style={{marginTop:20,padding:"11px 24px",borderRadius:999,background:C.accentSoft,border:`1px solid ${C.accent}40`,fontSize:11,fontFamily:sans,fontWeight:600,color:C.accent,cursor:"pointer",transition:transitionSmooth}}>Join Now</button>
+    </div></FadeIn>}
+
+    <FadeIn delay={isLiveActive?0.15:0.08}><SL right="See all">Groups</SL><div style={{display:"flex",flexDirection:"column",gap:10,marginTop:14}}>
       {[{name:"Morning Ritual Circle",members:248,desc:"Start each day with intention"},{name:"Manifestation Lab",members:412,desc:"Visualize your best life"},{name:"Pilates Sisters",members:186,desc:"Strength through movement"}].map((g,i)=><div key={i} style={{background:C.surface,borderRadius:18,padding:20,border:"1px solid "+C.border,cursor:"pointer",transition:transitionSmooth}}>
         <div style={{fontSize:14,fontFamily:sans,fontWeight:500,color:C.text}}>{g.name}</div>
         <div style={{fontSize:11,fontFamily:sans,color:C.text3,marginTop:4}}>{g.desc}</div>
         <div style={{fontSize:10,fontFamily:sans,color:C.text3,marginTop:8,background:"rgba(240,237,230,0.04)",display:"inline-block",padding:"4px 10px",borderRadius:999}}>{g.members} members</div>
       </div>)}
     </div></FadeIn>
-    <FadeIn delay={0.2}><button style={{width:"100%",padding:16,borderRadius:999,cursor:"pointer",background:C.accentSoft,border:"1px solid rgba(124,154,126,0.2)",fontSize:12,fontFamily:sans,fontWeight:600,color:C.accent,letterSpacing:1,textTransform:"uppercase",transition:transitionSmooth}}>Create a Group</button></FadeIn>
+    <FadeIn delay={isLiveActive?0.2:0.12}><button style={{width:"100%",padding:16,borderRadius:999,cursor:"pointer",background:C.accentSoft,border:"1px solid rgba(124,154,126,0.2)",fontSize:12,fontFamily:sans,fontWeight:600,color:C.accent,letterSpacing:1,textTransform:"uppercase",transition:transitionSmooth}}>Create a Group</button></FadeIn>
   </div>;
 }
 
@@ -472,8 +571,9 @@ export default function App() {
   const [menuOpen,setMenuOpen]=useState(false);
   const [selectedVideo,setSelectedVideo]=useState(null);
   return <div style={{background:C.bg,minHeight:"100vh",maxWidth:430,margin:"0 auto",fontFamily:sans,color:C.text,position:"relative",overflow:"hidden"}}>
-    <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');*{box-sizing:border-box;margin:0;padding:0}::-webkit-scrollbar{display:none}html{scroll-behavior:smooth}::placeholder{color:${C.text3}}textarea:focus,textarea{border-color:${C.borderLight}!important;outline:none}button{transition:all 0.3s cubic-bezier(0.16,1,0.3,1)}button:hover{opacity:0.85}button:active{transform:scale(0.98)}@keyframes breathe{0%,100%{transform:translateY(-50%) scale(1);opacity:0.15}50%{transform:translateY(-50%) scale(1.15);opacity:0.25}}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}`}</style>
+    <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');*{box-sizing:border-box;margin:0;padding:0}::-webkit-scrollbar{display:none}html{scroll-behavior:smooth}::placeholder{color:${C.text3}}textarea:focus,textarea{border-color:${C.borderLight}!important;outline:none}button{transition:all 0.3s cubic-bezier(0.16,1,0.3,1)}button:hover{opacity:0.85}button:active{transform:scale(0.98)}@keyframes breathe{0%,100%{transform:translateY(-50%) scale(1);opacity:0.15}50%{transform:translateY(-50%) scale(1.15);opacity:0.25}}@keyframes fall{to{transform:translateY(100vh);opacity:0}}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}`}</style>
     <VideoModal video={selectedVideo} onClose={()=>setSelectedVideo(null)}/>
+    <AmbientSoundPill/>
     <Header onMenuOpen={()=>setMenuOpen(true)}/>
     <PremiumMenu open={menuOpen} onNav={setPage} onClose={()=>setMenuOpen(false)}/>
     <div style={{padding:"0 20px",paddingTop:60,paddingBottom:100}}>
