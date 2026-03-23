@@ -705,47 +705,52 @@ function WorkoutBuilderPage({onNavigate}) {
 
 function TrainerBookingPage({onNavigate}) {
   const [selectedTrainer,setSelectedTrainer]=useState(null);
-  const [selectedDate,setSelectedDate]=useState(null);
+  const [selectedDate,setSelectedDate]=useState(12);
   const [selectedTime,setSelectedTime]=useState("07:00 AM");
-  const trainers=[{id:1,name:"Sarah M.",specialty:"Yoga & Meditation",rating:4.9,initials:"SM"},{id:2,name:"Amara J.",specialty:"Pilates & Strength",rating:4.8,initials:"AJ"},{id:3,name:"Nadia C.",specialty:"Mindfulness & Breathwork",rating:5.0,initials:"NC"}];
-  const dates=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return {num:d.getDate(),day:d.toLocaleDateString('en-US',{weekday:'short'})}});
+  const trainers=[
+    {id:1,name:"Sarah M.",specialty:"Yoga & Meditation",rating:4.9,photo:"https://images.unsplash.com/photo-1548690312-e3b507d8c110?w=300&h=350&fit=crop&crop=face"},
+    {id:2,name:"Amara J.",specialty:"Pilates & Strength",rating:4.8,photo:"https://images.unsplash.com/photo-1594381898411-846e7d193883?w=300&h=350&fit=crop&crop=face"},
+    {id:3,name:"Nadia C.",specialty:"Mindfulness & Breathwork",rating:5.0,photo:"https://images.unsplash.com/photo-1518611012118-696072aa579a?w=300&h=350&fit=crop&crop=face"}
+  ];
+  const calDays=[{day:"Mon",num:10},{day:"Tue",num:11},{day:"Wed",num:12},{day:"Thu",num:13},{day:"Fri",num:14},{day:"Sat",num:15},{day:"Sun",num:16}];
   const morningTimes=["07:00 AM","08:30 AM","10:00 AM"];
   const afternoonTimes=["12:00 PM","01:30 PM","03:00 PM"];
-  const eveningTimes=["05:00 PM","06:30 PM"];
+  const eveningTimes=["05:00 PM","06:30 PM","08:00 PM"];
   return <div style={{display:"flex",flexDirection:"column",gap:24,paddingBottom:100}}>
     <FadeIn><BackButton onClick={()=>onNavigate("home")}/>
       <div style={{fontSize:32,fontFamily:serif,fontWeight:300,color:C.text,marginTop:8}}>Book</div>
-      <div style={{fontSize:14,fontFamily:serif,fontStyle:"italic",color:C.text2,marginTop:4}}>Connect with your guide</div>
+      <div style={{fontSize:14,fontFamily:sans,color:C.text2,marginTop:4}}>Connect with your guide</div>
     </FadeIn>
-    <FadeIn delay={0.08}><div style={{display:"flex",gap:12,justifyContent:"center"}}>
-      {trainers.map(t=><div key={t.id} onClick={()=>setSelectedTrainer(t.id)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:10,cursor:"pointer",transition:transitionSmooth,opacity:selectedTrainer===t.id||!selectedTrainer?1:0.5}}>
-        <div style={{width:80,height:80,borderRadius:"50%",background:selectedTrainer===t.id?"linear-gradient(135deg, "+C.accent+", #5a7a5c)":"linear-gradient(135deg, #2a2940, #1a1929)",border:selectedTrainer===t.id?"3px solid "+C.accent:"3px solid "+C.border,display:"flex",alignItems:"center",justifyContent:"center",transition:transitionSmooth}}>
-          <span style={{fontSize:20,fontFamily:serif,fontWeight:600,color:selectedTrainer===t.id?C.bg:C.text2}}>{t.initials}</span>
+    <FadeIn delay={0.08}><div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
+      {trainers.map(t=><div key={t.id} onClick={()=>setSelectedTrainer(t.id)} style={{cursor:"pointer",transition:transitionSmooth,opacity:selectedTrainer===t.id||!selectedTrainer?1:0.5}}>
+        <div style={{width:"100%",aspectRatio:"0.85",borderRadius:12,overflow:"hidden",background:C.surface,border:selectedTrainer===t.id?"2px solid "+C.accent:"2px solid "+C.border,transition:transitionSmooth}}>
+          <img src={t.photo} alt={t.name} style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
         </div>
-        <div style={{textAlign:"center"}}>
-          <div style={{fontSize:13,fontFamily:sans,fontWeight:600,color:C.text}}>{t.name}</div>
-          <div style={{fontSize:10,fontFamily:sans,color:C.text3,marginTop:2,maxWidth:100,lineHeight:1.3}}>{t.specialty}</div>
-          <div style={{fontSize:10,fontFamily:sans,color:C.warm,marginTop:4}}>★ {t.rating}/5</div>
+        <div style={{marginTop:10}}>
+          <div style={{fontSize:14,fontFamily:sans,fontWeight:600,color:C.text}}>{t.name}</div>
+          <div style={{fontSize:11,fontFamily:sans,color:C.text3,marginTop:2,lineHeight:1.3}}>{t.specialty}</div>
+          <div style={{fontSize:11,fontFamily:sans,color:C.warm,marginTop:4}}>★ {t.rating}/5</div>
         </div>
       </div>)}
     </div></FadeIn>
-    <FadeIn delay={0.12}><div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:6}}>
-      {dates.map((d,i)=><button key={i} onClick={()=>setSelectedDate(d.num)} style={{padding:"10px 0",background:selectedDate===d.num?C.accent:"transparent",border:selectedDate===d.num?"none":"1px solid "+C.border,borderRadius:12,fontSize:10,fontFamily:sans,fontWeight:600,color:selectedDate===d.num?C.bg:C.text,cursor:"pointer",transition:transitionSmooth,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
-        <span style={{fontSize:9,fontWeight:400,color:selectedDate===d.num?C.bg:C.text3}}>{d.day}</span>
-        <span>{d.num}</span>
+    <FadeIn delay={0.12}><div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:4}}>
+      {calDays.map(d=><button key={d.num} onClick={()=>setSelectedDate(d.num)} style={{padding:"8px 0",background:selectedDate===d.num?C.accent:"transparent",border:"none",borderRadius:10,cursor:"pointer",transition:transitionSmooth,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
+        <span style={{fontSize:11,fontFamily:sans,fontWeight:400,color:selectedDate===d.num?C.bg:C.text3}}>{d.day}</span>
+        <span style={{fontSize:16,fontFamily:sans,fontWeight:600,color:selectedDate===d.num?C.bg:C.text}}>{d.num}</span>
       </button>)}
     </div></FadeIn>
-    <FadeIn delay={0.16}><div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16}}>
+    <FadeIn delay={0.14}><div style={{height:1,background:C.border}}/></FadeIn>
+    <FadeIn delay={0.16}><div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
       {[{label:"Morning",times:morningTimes},{label:"Afternoon",times:afternoonTimes},{label:"Evening",times:eveningTimes}].map(col=><div key={col.label}>
-        <div style={{fontSize:12,fontFamily:sans,fontWeight:600,color:C.text,marginBottom:10,textAlign:"center"}}>{col.label}</div>
+        <div style={{fontSize:13,fontFamily:sans,fontWeight:600,color:C.text,marginBottom:10,textAlign:"center"}}>{col.label}</div>
         <div style={{display:"flex",flexDirection:"column",gap:8}}>
-          {col.times.map(t=><button key={t} onClick={()=>setSelectedTime(t)} style={{padding:"12px 8px",background:selectedTime===t?C.accent:C.surface,border:"1px solid "+(selectedTime===t?C.accent:C.border),borderRadius:10,fontSize:11,fontFamily:sans,fontWeight:600,color:selectedTime===t?C.bg:C.text,cursor:"pointer",transition:transitionSmooth,textAlign:"center"}}>
+          {col.times.map(t=><button key={t} onClick={()=>setSelectedTime(t)} style={{padding:"14px 6px",background:selectedTime===t?C.accent:C.surface,border:"none",borderRadius:10,fontSize:12,fontFamily:sans,fontWeight:600,color:selectedTime===t?C.bg:C.text,cursor:"pointer",transition:transitionSmooth,textAlign:"center"}}>
             {t}
           </button>)}
         </div>
       </div>)}
     </div></FadeIn>
-    <FadeIn delay={0.22}><button style={{width:"100%",padding:"18px",background:C.accent,border:"none",borderRadius:14,fontSize:15,fontFamily:sans,fontWeight:600,color:C.bg,cursor:"pointer",transition:transitionSmooth,letterSpacing:0.5}}>Confirm Booking</button></FadeIn>
+    <FadeIn delay={0.22}><button style={{width:"100%",padding:"18px",background:C.accent,border:"none",borderRadius:14,fontSize:16,fontFamily:sans,fontWeight:600,color:C.bg,cursor:"pointer",transition:transitionSmooth,letterSpacing:0.5}}>Confirm Booking</button></FadeIn>
   </div>;
 }
 
