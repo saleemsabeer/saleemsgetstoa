@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 const C = {
-  bg:"#080808",surface:"#131313",card:"#151515",
+  bg:"#0f0e1a",surface:"#1a1929",card:"#1e1d2e",
   text:"#f0ede6",text2:"rgba(240,237,230,0.55)",text3:"rgba(240,237,230,0.3)",
   accent:"#7c9a7e",accentSoft:"rgba(124,154,126,0.12)",
   warm:"#c4a882",warmSoft:"rgba(196,168,130,0.1)",
@@ -43,7 +43,7 @@ function FadeIn({children,delay=0,style={}}) {
 }
 
 function Header({onMenuOpen}) {
-  return <div style={{position:"fixed",top:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,zIndex:99,background:"rgba(8,8,8,0.88)",backdropFilter:"blur(40px) saturate(180%)",WebkitBackdropFilter:"blur(40px) saturate(180%)",borderBottom:"1px solid "+C.border,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 20px",paddingTop:"max(12px, env(safe-area-inset-top))"}}>
+  return <div style={{position:"fixed",top:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,zIndex:99,background:"rgba(15,14,26,0.88)",backdropFilter:"blur(40px) saturate(180%)",WebkitBackdropFilter:"blur(40px) saturate(180%)",borderBottom:"1px solid "+C.border,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 20px",paddingTop:"max(12px, env(safe-area-inset-top))"}}>
     <div style={{fontSize:12,fontFamily:sans,fontWeight:600,color:C.accent,letterSpacing:8,textTransform:"uppercase"}}>GetStoa</div>
     <button onClick={onMenuOpen} style={{background:"none",border:"none",cursor:"pointer",fontSize:18,color:C.text,opacity:0.7,transition:transitionSmooth}}>=</button>
   </div>;
@@ -64,7 +64,7 @@ function AmbientSoundPill() {
 
 function NavBar({active,onNav}) {
   const items=[{id:"home",label:"Home",icon:"⌂"},{id:"mind",label:"Mind",icon:"◐"},{id:"community",label:"Circle",icon:"◎"},{id:"progress",label:"Progress",icon:"△"},{id:"profile",label:"You",icon:"○"}];
-  return <nav style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,zIndex:100,background:"rgba(8,8,8,0.92)",backdropFilter:"blur(40px) saturate(180%)",WebkitBackdropFilter:"blur(40px) saturate(180%)",borderTop:"1px solid "+C.border,display:"flex",justifyContent:"space-around",alignItems:"center",paddingTop:10,paddingBottom:"max(10px, env(safe-area-inset-bottom))"}}>
+  return <nav style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,zIndex:100,background:"rgba(15,14,26,0.92)",backdropFilter:"blur(40px) saturate(180%)",WebkitBackdropFilter:"blur(40px) saturate(180%)",borderTop:"1px solid "+C.border,display:"flex",justifyContent:"space-around",alignItems:"center",paddingTop:10,paddingBottom:"max(10px, env(safe-area-inset-bottom))"}}>
     {items.map(item=><button key={item.id} onClick={()=>onNav(item.id)} style={{background:"none",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,padding:"8px 14px",transition:"all 0.3s",opacity:active===item.id?1:0.35}}>
       <span style={{fontSize:18,fontFamily:sans,color:C.text,filter:active===item.id?`drop-shadow(0 0 10px ${C.accent})`:"none"}}>{item.icon}</span>
       <span style={{fontSize:8,fontFamily:sans,fontWeight:active===item.id?700:400,color:C.text,letterSpacing:1.5,textTransform:"uppercase"}}>{item.label}</span>
@@ -136,12 +136,12 @@ function HomePage({selectedVideo, setSelectedVideo, onNavigate}) {
   const moods=[{emoji:"✦",label:"Radiant",color:C.accent},{emoji:"☀",label:"Good",color:C.warm},{emoji:"~",label:"Neutral",color:C.text2},{emoji:"☁",label:"Low",color:C.rose},{emoji:"◆",label:"Heavy",color:C.purple}];
   const stats=[{icon:"◦",label:"Water",value:"5",unit:"of 8",sub:"glasses",color:C.accent,progress:0.625},{icon:"↗",label:"Movement",value:"22",unit:"of 30",sub:"minutes",color:C.warm,progress:0.73},{icon:"●",label:"Stillness",value:"15",unit:"of 20",sub:"minutes",color:C.purple,progress:0.75},{icon:"☽",label:"Sleep",value:"7.2",unit:"of 8",sub:"hours",color:C.rose,progress:0.9}];
   const quickLinks=[{label:"Sleep Tracker",icon:"☽",page:"sleep"},{label:"Workout Builder",icon:"↗",page:"workout"},{label:"Book a Trainer",icon:"👤",page:"trainer"}];
-  const playlists=[{name:"Morning Ritual",by:"Sarah M.",tracks:12,color:"#2a3328"},{name:"Deep Focus",by:"Amara J.",tracks:18,color:"#2d2a22"},{name:"Wind Down",by:"Nadia C.",tracks:9,color:"#2a2533"}];
+  const playlists=[{name:"Morning Ritual",by:"Sarah M.",tracks:12,color:"#1e2d2a"},{name:"Deep Focus",by:"Amara J.",tracks:18,color:"#2a2538"},{name:"Wind Down",by:"Nadia C.",tracks:9,color:"#251e2e"}];
   const movements=[{type:"Yoga",name:"Morning Flow",by:"Sarah M.",dur:"25 min"},{type:"Pilates",name:"Sculpt & Tone",by:"Nadia C.",dur:"30 min"},{type:"Walk",name:"Walk + Breathe",by:"Amara J.",dur:"20 min"},{type:"Strength",name:"Full Body",by:"Sarah M.",dur:"35 min"}];
   const groups=[{name:"Morning Circle",members:248},{name:"Pilates Sisters",members:186},{name:"Mind Matters",members:412}];
 
   return <div style={{display:"flex",flexDirection:"column",gap:28,paddingBottom:100}}>
-    <FadeIn><div style={{height:340,borderRadius:24,overflow:"hidden",position:"relative",background:"linear-gradient(135deg, "+C.surface+" 0%, #1a201a 50%, "+C.surface+" 100%)"}}>
+    <FadeIn><div style={{height:340,borderRadius:24,overflow:"hidden",position:"relative",background:"linear-gradient(135deg, "+C.surface+" 0%, #1a1f2a 50%, "+C.surface+" 100%)"}}>
       <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 70% 30%, "+C.accentSoft+" 0%, transparent 60%), radial-gradient(ellipse at 30% 80%, rgba(184,130,138,0.05) 0%, transparent 50%)"}}/>
       <div style={{position:"absolute",top:44,left:0,right:0,textAlign:"center",fontSize:12,fontFamily:sans,fontWeight:600,color:C.text,letterSpacing:8,textTransform:"uppercase"}}>GetStoa</div>
       <div style={{position:"absolute",bottom:36,left:28,right:28}}>
@@ -196,7 +196,7 @@ function HomePage({selectedVideo, setSelectedVideo, onNavigate}) {
       </div>)}
     </div></FadeIn>
 
-    <FadeIn delay={0.2}><div style={{borderRadius:22,overflow:"hidden",position:"relative",height:200,background:"linear-gradient(160deg, #141a14 0%, #0f1510 50%, #121212 100%)",border:"1px solid "+C.border}}>
+    <FadeIn delay={0.2}><div style={{borderRadius:22,overflow:"hidden",position:"relative",height:200,background:"linear-gradient(160deg, #1a1929 0%, #151425 50%, #1e1d2e 100%)",border:"1px solid "+C.border}}>
       <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 80% 50%, rgba(124,154,126,0.08) 0%, transparent 60%)"}}/>
       <div style={{position:"absolute",top:24,left:24}}>
         <div style={{fontSize:9,fontFamily:sans,fontWeight:600,color:C.text3,letterSpacing:3,textTransform:"uppercase",marginBottom:10}}>Take a moment</div>
@@ -273,7 +273,7 @@ function HomePage({selectedVideo, setSelectedVideo, onNavigate}) {
       <SL right="See all">Movement Studio</SL>
       <div style={{display:"flex",gap:10,overflowX:"auto",paddingBottom:4,marginTop:14,scrollbarWidth:"none"}}>
         {fitnessVideos.map((v,i)=><div key={v.id} onClick={()=>setSelectedVideo(v)} style={{minWidth:240,background:C.surface,borderRadius:18,border:"1px solid "+C.border,overflow:"hidden",cursor:"pointer",flexShrink:0,transition:"all 0.3s cubic-bezier(0.16,1,0.3,1)",transform:"scale(1)",textDecoration:"none"}}>
-          <div style={{position:"relative",width:"100%",paddingTop:"56.25%",overflow:"hidden",background:"linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)"}}>
+          <div style={{position:"relative",width:"100%",paddingTop:"56.25%",overflow:"hidden",background:"linear-gradient(135deg, #1a1929 0%, #0f0e1a 100%)"}}>
             <img src={v.thumbnail} alt={v.title} loading="lazy" style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover",transition:transitionSmooth}}/>
             <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.3)",display:"flex",alignItems:"center",justifyContent:"center",opacity:0,transition:transitionSmooth}}>
               <span style={{fontSize:36,color:"white",fontWeight:600}}>▶</span>
@@ -615,9 +615,15 @@ function SleepTrackerPage({onNavigate}) {
     <FadeIn delay={0.08}><div style={{display:"flex",justifyContent:"center",padding:"8px 0"}}>
       <div style={{position:"relative",width:190,height:190}}>
         <svg width={190} height={190} style={{transform:"rotate(-90deg)"}}>
+          <defs>
+            <linearGradient id="sleepGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor={C.purple}/>
+              <stop offset="50%" stopColor={C.rose}/>
+              <stop offset="100%" stopColor={C.accent}/>
+            </linearGradient>
+          </defs>
           <circle cx={95} cy={95} r={radius} fill="none" stroke={C.border} strokeWidth={5}/>
-          <circle cx={95} cy={95} r={radius} fill="none" stroke={C.accent} strokeWidth={5} strokeDasharray={circ} strokeDashoffset={circ-strokeDash} strokeLinecap="round" style={{transition:"stroke-dashoffset 1.5s cubic-bezier(0.16,1,0.3,1)"}}/>
-          <circle cx={95} cy={95} r={radius} fill="none" stroke={C.rose} strokeWidth={5} strokeDasharray={circ} strokeDashoffset={circ-(circ*0.15)} strokeLinecap="round" opacity={0.3} style={{transformOrigin:"50% 50%",transform:`rotate(${(sleepScore/100)*360}deg)`}}/>
+          <circle cx={95} cy={95} r={radius} fill="none" stroke="url(#sleepGrad)" strokeWidth={5} strokeDasharray={circ} strokeDashoffset={circ-strokeDash} strokeLinecap="round" style={{transition:"stroke-dashoffset 1.5s cubic-bezier(0.16,1,0.3,1)"}}/>
         </svg>
         <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
           <div style={{fontSize:48,fontFamily:serif,fontWeight:300,color:C.text,lineHeight:1}}>{sleepScore}</div>
@@ -713,7 +719,7 @@ function TrainerBookingPage({onNavigate}) {
     </FadeIn>
     <FadeIn delay={0.08}><div style={{display:"flex",gap:12,justifyContent:"center"}}>
       {trainers.map(t=><div key={t.id} onClick={()=>setSelectedTrainer(t.id)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:10,cursor:"pointer",transition:transitionSmooth,opacity:selectedTrainer===t.id||!selectedTrainer?1:0.5}}>
-        <div style={{width:80,height:80,borderRadius:"50%",background:selectedTrainer===t.id?"linear-gradient(135deg, "+C.accent+", #5a7a5c)":"linear-gradient(135deg, #2a2a2a, #1a1a1a)",border:selectedTrainer===t.id?"3px solid "+C.accent:"3px solid "+C.border,display:"flex",alignItems:"center",justifyContent:"center",transition:transitionSmooth}}>
+        <div style={{width:80,height:80,borderRadius:"50%",background:selectedTrainer===t.id?"linear-gradient(135deg, "+C.accent+", #5a7a5c)":"linear-gradient(135deg, #2a2940, #1a1929)",border:selectedTrainer===t.id?"3px solid "+C.accent:"3px solid "+C.border,display:"flex",alignItems:"center",justifyContent:"center",transition:transitionSmooth}}>
           <span style={{fontSize:20,fontFamily:serif,fontWeight:600,color:selectedTrainer===t.id?C.bg:C.text2}}>{t.initials}</span>
         </div>
         <div style={{textAlign:"center"}}>
@@ -782,7 +788,7 @@ export default function App() {
   const handleNavigate=(newPage)=>{setPage(newPage);};
   
   return <div style={{background:C.bg,minHeight:"100vh",maxWidth:430,margin:"0 auto",fontFamily:sans,color:C.text,position:"relative",overflow:"hidden"}}>
-    <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');*{box-sizing:border-box;margin:0;padding:0}::-webkit-scrollbar{display:none}html{scroll-behavior:smooth}::placeholder{color:${C.text3}}textarea:focus,textarea{border-color:${C.borderLight}!important;outline:none}button{transition:all 0.3s cubic-bezier(0.16,1,0.3,1)}button:hover{opacity:0.85}button:active{transform:scale(0.98)}@keyframes breathe{0%,100%{transform:translateY(-50%) scale(1);opacity:0.15}50%{transform:translateY(-50%) scale(1.15);opacity:0.25}}@keyframes fall{to{transform:translateY(100vh);opacity:0}}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}`}</style>
+    <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');*{box-sizing:border-box;margin:0;padding:0}::-webkit-scrollbar{display:none}html{scroll-behavior:smooth}body{background:#0f0e1a}::placeholder{color:${C.text3}}textarea:focus,textarea{border-color:${C.borderLight}!important;outline:none}button{transition:all 0.3s cubic-bezier(0.16,1,0.3,1)}button:hover{opacity:0.85}button:active{transform:scale(0.98)}@keyframes breathe{0%,100%{transform:translateY(-50%) scale(1);opacity:0.15}50%{transform:translateY(-50%) scale(1.15);opacity:0.25}}@keyframes fall{to{transform:translateY(100vh);opacity:0}}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}`}</style>
     <VideoModal video={selectedVideo} onClose={()=>setSelectedVideo(null)}/>
     <AmbientSoundPill/>
     <Header onMenuOpen={()=>setMenuOpen(true)}/>
