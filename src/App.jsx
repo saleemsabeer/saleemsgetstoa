@@ -70,7 +70,32 @@ function SL({children,right}) {
   </div>;
 }
 
-function HomePage() {
+const fitnessVideos=[
+  {id:"C2HX2pNbUCM",title:"30 MIN FULL BODY PILATES",channel:"Move With Nicole",duration:"30 min",thumbnail:"https://img.youtube.com/vi/C2HX2pNbUCM/maxresdefault.jpg"},
+  {id:"NyP_waVgL1w",title:"25 MIN PILATES FOR BEGINNERS",channel:"Move With Nicole",duration:"25 min",thumbnail:"https://img.youtube.com/vi/NyP_waVgL1w/maxresdefault.jpg"},
+  {id:"V1udz3tn9_s",title:"30 MIN YOGA PILATES FLOW",channel:"Yoga With Kassandra",duration:"30 min",thumbnail:"https://img.youtube.com/vi/V1udz3tn9_s/maxresdefault.jpg"},
+  {id:"Bar742jA-Zg",title:"30 MIN PILATES YOGA FUSION",channel:"Boho Beautiful",duration:"30 min",thumbnail:"https://img.youtube.com/vi/Bar742jA-Zg/maxresdefault.jpg"},
+  {id:"xCCXFt9Cx1k",title:"20 MIN BEGINNER YOGA",channel:"Yoga with Adriene",duration:"20 min",thumbnail:"https://img.youtube.com/vi/xCCXFt9Cx1k/maxresdefault.jpg"},
+  {id:"rBDO6XFQT-s",title:"15 MIN FULL BODY STRENGTH",channel:"MihranTV",duration:"15 min",thumbnail:"https://img.youtube.com/vi/rBDO6XFQT-s/maxresdefault.jpg"},
+  {id:"u80Gq-gXAZY",title:"25 MIN PILATES & YOGA",channel:"Yoga with Tim",duration:"25 min",thumbnail:"https://img.youtube.com/vi/u80Gq-gXAZY/maxresdefault.jpg"},
+  {id:"L_Ib0wCVr9Q",title:"30 MIN CARDIO DANCE",channel:"MihranTV",duration:"30 min",thumbnail:"https://img.youtube.com/vi/L_Ib0wCVr9Q/maxresdefault.jpg"},
+];
+
+function VideoModal({video,onClose}) {
+  if(!video) return null;
+  return <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.9)",zIndex:300,display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
+    <button onClick={onClose} style={{position:"absolute",top:20,right:20,background:"none",border:"none",fontSize:28,color:C.text,cursor:"pointer",opacity:0.7,transition:transitionSmooth}}>✕</button>
+    <div style={{width:"100%",paddingTop:"56.25%",position:"relative",maxWidth:"95vw",maxHeight:"80vh",background:C.bg,borderRadius:8,overflow:"hidden"}}>
+      <iframe style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",border:"none",borderRadius:8}} src={`https://www.youtube.com/embed/${video.id}?autoplay=1&modestbranding=1&rel=0&controls=1`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen/>
+    </div>
+    <div style={{color:C.text,marginTop:20,textAlign:"center"}}>
+      <div style={{fontSize:16,fontFamily:sans,fontWeight:600}}>{video.title}</div>
+      <div style={{fontSize:12,fontFamily:sans,color:C.text3,marginTop:6}}>{video.channel}</div>
+    </div>
+  </div>;
+}
+
+function HomePage({selectedVideo, setSelectedVideo}) {
   const [mood,setMood]=useState(null);
   const [time,setTime]=useState("");
   useEffect(()=>{const h=new Date().getHours();setTime(h<12?"Good morning":h<17?"Good afternoon":h<21?"Good evening":"Goodnight")},[]);
@@ -182,6 +207,25 @@ function HomePage() {
     </FadeIn>
 
     <FadeIn delay={0.36}>
+      <SL right="See all">Movement Studio</SL>
+      <div style={{display:"flex",gap:10,overflowX:"auto",paddingBottom:4,marginTop:14,scrollbarWidth:"none"}}>
+        {fitnessVideos.map((v,i)=><div key={v.id} onClick={()=>setSelectedVideo(v)} style={{minWidth:240,background:C.surface,borderRadius:18,border:"1px solid "+C.border,overflow:"hidden",cursor:"pointer",flexShrink:0,transition:"all 0.3s cubic-bezier(0.16,1,0.3,1)",transform:"scale(1)",textDecoration:"none"}}>
+          <div style={{position:"relative",width:"100%",paddingTop:"56.25%",overflow:"hidden",background:"linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)"}}>
+            <img src={v.thumbnail} alt={v.title} loading="lazy" style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover",transition:transitionSmooth}}/>
+            <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.3)",display:"flex",alignItems:"center",justifyContent:"center",opacity:0,transition:transitionSmooth}}>
+              <span style={{fontSize:36,color:"white",fontWeight:600}}>▶</span>
+            </div>
+            <div style={{position:"absolute",bottom:8,right:8,background:"rgba(0,0,0,0.7)",color:C.text,padding:"4px 10px",borderRadius:6,fontSize:10,fontFamily:sans,fontWeight:600}}>{v.duration}</div>
+          </div>
+          <div style={{padding:14}}>
+            <div style={{fontSize:12,fontFamily:sans,fontWeight:600,color:C.text,lineHeight:1.3,height:32,overflow:"hidden",textOverflow:"ellipsis",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>{v.title}</div>
+            <div style={{fontSize:10,fontFamily:sans,color:C.text3,marginTop:8}}>{v.channel}</div>
+          </div>
+        </div>)}
+      </div>
+    </FadeIn>
+
+    <FadeIn delay={0.38}>
       <SL right="See all">Movement</SL>
       <div style={{display:"flex",gap:10,overflowX:"auto",paddingBottom:4,marginTop:14,scrollbarWidth:"none"}}>
         {movements.map((m,i)=><div key={i} style={{minWidth:140,background:C.surface,borderRadius:16,border:"1px solid "+C.border,padding:"18px 16px",display:"flex",flexDirection:"column",justifyContent:"space-between",height:140,cursor:"pointer",flexShrink:0,transition:transitionSmooth}}>
@@ -192,7 +236,7 @@ function HomePage() {
       </div>
     </FadeIn>
 
-    <FadeIn delay={0.39}>
+    <FadeIn delay={0.42}>
       <SL right="See all">Groups</SL>
       <div style={{display:"flex",gap:10,overflowX:"auto",paddingBottom:4,marginTop:14,scrollbarWidth:"none"}}>
         {groups.map((g,i)=><div key={i} style={{minWidth:130,background:C.surface,borderRadius:16,border:"1px solid "+C.border,padding:16,display:"flex",flexDirection:"column",justifyContent:"space-between",height:120,cursor:"pointer",flexShrink:0,transition:transitionSmooth}}>
@@ -206,7 +250,7 @@ function HomePage() {
       </div>
     </FadeIn>
 
-    <FadeIn delay={0.4}><div style={{textAlign:"center",padding:"24px 20px"}}>
+    <FadeIn delay={0.46}><div style={{textAlign:"center",padding:"24px 20px"}}>
       <div style={{fontSize:14,fontFamily:serif,fontWeight:300,fontStyle:"italic",color:C.text2,lineHeight:1.8}}>"Sleep is the best meditation."</div>
       <div style={{fontSize:10,fontFamily:sans,color:C.text3,marginTop:6}}>— Dalai Lama</div>
     </div></FadeIn>
@@ -426,12 +470,14 @@ function CoachPage() {
 export default function App() {
   const [page,setPage]=useState("home");
   const [menuOpen,setMenuOpen]=useState(false);
+  const [selectedVideo,setSelectedVideo]=useState(null);
   return <div style={{background:C.bg,minHeight:"100vh",maxWidth:430,margin:"0 auto",fontFamily:sans,color:C.text,position:"relative",overflow:"hidden"}}>
     <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');*{box-sizing:border-box;margin:0;padding:0}::-webkit-scrollbar{display:none}html{scroll-behavior:smooth}::placeholder{color:${C.text3}}textarea:focus,textarea{border-color:${C.borderLight}!important;outline:none}button{transition:all 0.3s cubic-bezier(0.16,1,0.3,1)}button:hover{opacity:0.85}button:active{transform:scale(0.98)}@keyframes breathe{0%,100%{transform:translateY(-50%) scale(1);opacity:0.15}50%{transform:translateY(-50%) scale(1.15);opacity:0.25}}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}`}</style>
+    <VideoModal video={selectedVideo} onClose={()=>setSelectedVideo(null)}/>
     <Header onMenuOpen={()=>setMenuOpen(true)}/>
     <PremiumMenu open={menuOpen} onNav={setPage} onClose={()=>setMenuOpen(false)}/>
     <div style={{padding:"0 20px",paddingTop:60,paddingBottom:100}}>
-      {page==="home"&&<HomePage/>}
+      {page==="home"&&<HomePage selectedVideo={selectedVideo} setSelectedVideo={setSelectedVideo}/>}
       {page==="mind"&&<MindPage/>}
       {page==="community"&&<CommunityPage/>}
       {page==="progress"&&<ProgressPage/>}
